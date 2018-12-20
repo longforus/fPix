@@ -1,5 +1,6 @@
+import 'package:fPix/com/longforus/fPix/page/ImagePage.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_module/com/longforus/fPix/page/ImagePage.dart';
+import 'package:fPix/com/longforus/fPix/page/ImagePage.dart';
 
 void main() => runApp(MyApp());
 
