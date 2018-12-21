@@ -1,3 +1,4 @@
+
 import 'package:fPix/com/longforus/fPix/view/GridImageView.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -37,8 +38,6 @@ class _ImagePageState extends State<ImagePage>
     'Buildings',
     'Business'
   ];
-
-  int currentPageIndex = 0;
 
   @override
   Widget build(BuildContext context) {

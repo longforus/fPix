@@ -12,7 +12,7 @@ import 'package:flutter/material.dart';
 /// @date 12/20/2018  3:46 PM
 
 class ImageGridView extends StatelessWidget {
-  const ImageGridView({Key key, this.imageType, this.state}) : super(key: key);
+  ImageGridView({Key key, this.imageType, this.state}) : super(key: key);
 
   final String imageType;
 
@@ -24,6 +24,7 @@ class ImageGridView extends StatelessWidget {
       imageType: imageType,
       state: state,
     );
+
     return new RefreshIndicator(
       child: SafeArea(
         top: true,
@@ -33,32 +34,7 @@ class ImageGridView extends StatelessWidget {
           // the NestedScrollView, so that sliverOverlapAbsorberHandleFor() can
           // find the NestedScrollView.
           builder: (BuildContext context) {
-            return CustomScrollView(
-              // The "controller" and "primary" members should be left
-              // unset, so that the NestedScrollView can control this
-              // inner scroll view.
-              // If the "controller" property is set, then this scroll
-              // view will not be associated with the NestedScrollView.
-              // The PageStorageKey should be unique to this ScrollView;
-              // it allows the list to remember its scroll position when
-              // the tab view is not on the screen.
-              key: PageStorageKey<String>(imageType),
-              slivers: <Widget>[
-//                      SliverOverlapInjector(
-//                        // This is the flip side of the SliverOverlapAbsorber above.
-//                        handle: NestedScrollView.sliverOverlapAbsorberHandleFor(
-//                            context),
-//                      ),
-                SliverPadding(
-                  padding: const EdgeInsets.all(2.0),
-                  // In this example, the inner scroll view has
-                  // fixed-height list items, hence the use of
-                  // SliverFixedExtentList. However, one could use any
-                  // sliver widget here, e.g. SliverList or SliverGrid.
-                  sliver: imageGridDelegate,
-                ),
-              ],
-            );
+            return imageGridDelegate;
           },
         ),
       ),
@@ -95,6 +71,7 @@ class _ImageGridDelegateState extends State<ImageGridDelegate> {
 
   List dataList = new List();
 
+
   _ImageGridDelegateState(String type, this.state)
       : this.imageType = type.toLowerCase();
 
@@ -103,6 +80,8 @@ class _ImageGridDelegateState extends State<ImageGridDelegate> {
     getImageData();
     super.initState();
   }
+
+
 
   void getImageData() async {
     var url = BASE_URL;
@@ -134,8 +113,8 @@ class _ImageGridDelegateState extends State<ImageGridDelegate> {
     // we want to discard the reply rather than calling setState to update our
     // non-existent appearance.
     if (!mounted) return;
-    if (!computer.isCompleted) {
-      computer?.complete();
+    if (computer != null && !computer.isCompleted) {
+      computer.complete();
     }
     if (success) {
       if (currentPageIndex == 1) {
@@ -145,7 +124,6 @@ class _ImageGridDelegateState extends State<ImageGridDelegate> {
         dataList.addAll(currentPageIndex == 1
             ? resultList.sublist(1, resultList.length - 1)
             : resultList);
-        currentPageIndex++;
       });
     }
   }
@@ -156,45 +134,74 @@ class _ImageGridDelegateState extends State<ImageGridDelegate> {
     currentPageIndex = 1;
     dataList.clear();
     getImageData();
-    computer = Completer();
+    computer = Completer.sync();
     return computer.future;
+  }
+
+  void _getMore() {
+    currentPageIndex++;
+    getImageData();
   }
 
   @override
   Widget build(BuildContext context) {
-    return SliverGrid(
-      // The items in this example are fixed to 48 pixels
-      // high. This matches the Material Design spec for
-      // ListTile widgets.
-      delegate: SliverChildBuilderDelegate(
-        (BuildContext context, int index) {
-          // This builder is called for each child.
-          // In this example, we just number each list item.
-          return new Card(
-              margin: const EdgeInsets.all(2.0),
-              elevation: 5,
-              child: Container(
-                padding: const EdgeInsets.all(2.0),
-                decoration: BoxDecoration(
-                    shape: BoxShape.rectangle,
-                    borderRadius: BorderRadius.circular(4),
-                    image: DecorationImage(
-                        image: dataList.isEmpty || dataList.length - 1 < index
-                            ? AssetImage(
-                                'images/placeholder.png',
-                              )
-                            : NetworkImage(dataList[index]['previewURL']),
-                        fit: BoxFit.cover)),
-              ));
-        },
-        // The childCount of the SliverChildBuilderDelegate
-        // specifies how many children this inner list
-        // has. In this example, each tab has a list of
-        // exactly 30 items, but this is arbitrary.
-        childCount: pageSize * currentPageIndex,
-      ),
-      gridDelegate:
-          SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
+    return CustomScrollView(
+      // The "controller" and "primary" members should be left
+      // unset, so that the NestedScrollView can control this
+      // inner scroll view.
+      // If the "controller" property is set, then this scroll
+      // view will not be associated with the NestedScrollView.
+      // The PageStorageKey should be unique to this ScrollView;
+      // it allows the list to remember its scroll position when
+      // the tab view is not on the screen.
+      key: PageStorageKey<String>(imageType),
+      slivers: <Widget>[
+        SliverPadding(
+          padding: const EdgeInsets.all(2.0),
+          // In this example, the inner scroll view has
+          // fixed-height list items, hence the use of
+          // SliverFixedExtentList. However, one could use any
+          // sliver widget here, e.g. SliverList or SliverGrid.
+          sliver: SliverGrid(
+            // The items in this example are fixed to 48 pixels
+            // high. This matches the Material Design spec for
+            // ListTile widgets.
+            delegate: SliverChildBuilderDelegate(
+              (BuildContext context, int index) {
+                // This builder is called for each child.
+                // In this example, we just number each list item.
+                if(index>currentPageIndex*pageSize-2){
+                  _getMore();
+                }
+                return new Card(
+                    margin: const EdgeInsets.all(2.0),
+                    elevation: 5,
+                    child: Container(
+                      padding: const EdgeInsets.all(2.0),
+                      decoration: BoxDecoration(
+                          shape: BoxShape.rectangle,
+                          borderRadius: BorderRadius.circular(4),
+                          image: DecorationImage(
+                              image: dataList.isEmpty ||
+                                      dataList.length - 1 < index
+                                  ? AssetImage(
+                                      'images/placeholder.png',
+                                    )
+                                  : NetworkImage(dataList[index]['previewURL']),
+                              fit: BoxFit.cover)),
+                    ));
+              },
+              // The childCount of the SliverChildBuilderDelegate
+              // specifies how many children this inner list
+              // has. In this example, each tab has a list of
+              // exactly 30 items, but this is arbitrary.
+              childCount: pageSize * currentPageIndex,
+            ),
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2, ),
+          ),
+        ),
+      ],
     );
   }
 }
