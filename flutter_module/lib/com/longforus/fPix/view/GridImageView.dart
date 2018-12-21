@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -19,58 +20,68 @@ class ImageGridView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      top: true,
-      bottom: false,
-      child: Builder(
-        // This Builder is needed to provide a BuildContext that is "inside"
-        // the NestedScrollView, so that sliverOverlapAbsorberHandleFor() can
-        // find the NestedScrollView.
-        builder: (BuildContext context) {
-          return CustomScrollView(
-            // The "controller" and "primary" members should be left
-            // unset, so that the NestedScrollView can control this
-            // inner scroll view.
-            // If the "controller" property is set, then this scroll
-            // view will not be associated with the NestedScrollView.
-            // The PageStorageKey should be unique to this ScrollView;
-            // it allows the list to remember its scroll position when
-            // the tab view is not on the screen.
-            key: PageStorageKey<String>(imageType),
-            slivers: <Widget>[
+    var imageGridDelegate = new ImageGridDelegate(
+      imageType: imageType,
+      state: state,
+    );
+    return new RefreshIndicator(
+      child: SafeArea(
+        top: true,
+        bottom: false,
+        child: Builder(
+          // This Builder is needed to provide a BuildContext that is "inside"
+          // the NestedScrollView, so that sliverOverlapAbsorberHandleFor() can
+          // find the NestedScrollView.
+          builder: (BuildContext context) {
+            return CustomScrollView(
+              // The "controller" and "primary" members should be left
+              // unset, so that the NestedScrollView can control this
+              // inner scroll view.
+              // If the "controller" property is set, then this scroll
+              // view will not be associated with the NestedScrollView.
+              // The PageStorageKey should be unique to this ScrollView;
+              // it allows the list to remember its scroll position when
+              // the tab view is not on the screen.
+              key: PageStorageKey<String>(imageType),
+              slivers: <Widget>[
 //                      SliverOverlapInjector(
 //                        // This is the flip side of the SliverOverlapAbsorber above.
 //                        handle: NestedScrollView.sliverOverlapAbsorberHandleFor(
 //                            context),
 //                      ),
-              SliverPadding(
-                padding: const EdgeInsets.all(2.0),
-                // In this example, the inner scroll view has
-                // fixed-height list items, hence the use of
-                // SliverFixedExtentList. However, one could use any
-                // sliver widget here, e.g. SliverList or SliverGrid.
-                sliver: new ImageGridDelegate(
-                  imageType: imageType,
-                  state: state,
+                SliverPadding(
+                  padding: const EdgeInsets.all(2.0),
+                  // In this example, the inner scroll view has
+                  // fixed-height list items, hence the use of
+                  // SliverFixedExtentList. However, one could use any
+                  // sliver widget here, e.g. SliverList or SliverGrid.
+                  sliver: imageGridDelegate,
                 ),
-              ),
-            ],
-          );
-        },
+              ],
+            );
+          },
+        ),
       ),
+      onRefresh: imageGridDelegate._onRefresh,
     );
   }
 }
 
 class ImageGridDelegate extends StatefulWidget {
-  const ImageGridDelegate({Key key, this.imageType, this.state})
-      : super(key: key);
+  ImageGridDelegate({Key key, this.imageType, this.state}) : super(key: key);
   final String imageType;
   final ImageTopBarState state;
+  Future<void> Function() onRefresh;
+
+  Future<void> _onRefresh() {
+    return onRefresh();
+  }
 
   @override
   State<StatefulWidget> createState() {
-    return _ImageGridDelegateState(imageType, state);
+    var imageGridDelegateState = _ImageGridDelegateState(imageType, state);
+    onRefresh = imageGridDelegateState._onRefresh;
+    return imageGridDelegateState;
   }
 }
 
@@ -92,9 +103,6 @@ class _ImageGridDelegateState extends State<ImageGridDelegate> {
     getImageData();
     super.initState();
   }
-
-
-
 
   void getImageData() async {
     var url = BASE_URL;
@@ -126,7 +134,9 @@ class _ImageGridDelegateState extends State<ImageGridDelegate> {
     // we want to discard the reply rather than calling setState to update our
     // non-existent appearance.
     if (!mounted) return;
-
+    if (!computer.isCompleted) {
+      computer?.complete();
+    }
     if (success) {
       if (currentPageIndex == 1) {
         state.onTopImageChanged(resultList[0]['webformatURL']);
@@ -140,9 +150,14 @@ class _ImageGridDelegateState extends State<ImageGridDelegate> {
     }
   }
 
-  void _onRefresh() {
+  static Completer computer;
+
+  Future<void> _onRefresh() {
     currentPageIndex = 1;
+    dataList.clear();
     getImageData();
+    computer = Completer();
+    return computer.future;
   }
 
   @override
@@ -152,7 +167,7 @@ class _ImageGridDelegateState extends State<ImageGridDelegate> {
       // high. This matches the Material Design spec for
       // ListTile widgets.
       delegate: SliverChildBuilderDelegate(
-            (BuildContext context, int index) {
+        (BuildContext context, int index) {
           // This builder is called for each child.
           // In this example, we just number each list item.
           return new Card(
@@ -164,11 +179,10 @@ class _ImageGridDelegateState extends State<ImageGridDelegate> {
                     shape: BoxShape.rectangle,
                     borderRadius: BorderRadius.circular(4),
                     image: DecorationImage(
-                        image: dataList.isEmpty ||
-                            dataList.length - 1 < index
+                        image: dataList.isEmpty || dataList.length - 1 < index
                             ? AssetImage(
-                          'images/placeholder.png',
-                        )
+                                'images/placeholder.png',
+                              )
                             : NetworkImage(dataList[index]['previewURL']),
                         fit: BoxFit.cover)),
               ));
@@ -180,7 +194,7 @@ class _ImageGridDelegateState extends State<ImageGridDelegate> {
         childCount: pageSize * currentPageIndex,
       ),
       gridDelegate:
-      SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
+          SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
     );
   }
 }
