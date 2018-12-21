@@ -1,10 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:fPix/com/longforus/fPix/page/ImagePage.dart';
-import 'package:flutter/material.dart';
 import 'package:fPix/com/longforus/fPix/Const.dart';
 import 'package:fPix/com/longforus/fPix/page/ImagePage.dart';
+import 'package:fPix/com/longforus/fPix/utils/Toast.dart';
+import 'package:flutter/material.dart';
 
 /// @describe
 /// @author  XQ Yang
@@ -84,15 +84,19 @@ class _ImageGridDelegateState extends State<ImageGridDelegate> {
 
   List dataList = new List();
 
-  _ImageGridDelegateState(this.imageType, this.state);
+  _ImageGridDelegateState(String type, this.state)
+      : this.imageType = type.toLowerCase();
 
   @override
   void initState() {
-    getImageData(imageType.toLowerCase());
+    getImageData();
     super.initState();
   }
 
-  void getImageData(String imageType) async {
+
+
+
+  void getImageData() async {
     var url = BASE_URL;
     var httpClient = new HttpClient();
     bool success = false;
@@ -112,10 +116,10 @@ class _ImageGridDelegateState extends State<ImageGridDelegate> {
           success = true;
         }
       } else {
-        print('Error getting IP address:\nHttp status ${response.statusCode}');
+        Toast.toast(context, 'Error getting status=${response.statusCode}');
       }
     } catch (exception) {
-      print('Failed getting IP address');
+      Toast.toast(context, 'Failed getting');
     }
 
     // If the widget was removed from the tree while the message was in flight,
@@ -136,6 +140,11 @@ class _ImageGridDelegateState extends State<ImageGridDelegate> {
     }
   }
 
+  void _onRefresh() {
+    currentPageIndex = 1;
+    getImageData();
+  }
+
   @override
   Widget build(BuildContext context) {
     return SliverGrid(
@@ -143,24 +152,26 @@ class _ImageGridDelegateState extends State<ImageGridDelegate> {
       // high. This matches the Material Design spec for
       // ListTile widgets.
       delegate: SliverChildBuilderDelegate(
-        (BuildContext context, int index) {
+            (BuildContext context, int index) {
           // This builder is called for each child.
           // In this example, we just number each list item.
           return new Card(
-            margin: const EdgeInsets.all(2.0),
-            child: Container(
-              padding: const EdgeInsets.all(2.0),
-              child:  dataList.isEmpty||dataList.length-1<index
-                  ? Image.asset(
-                'images/placeholder.png',
-                fit: BoxFit.cover,
-              )
-                  : Image.network(
-                dataList[index]['previewURL'],
-                fit: BoxFit.cover,
-              ),
-            )
-          );
+              margin: const EdgeInsets.all(2.0),
+              elevation: 5,
+              child: Container(
+                padding: const EdgeInsets.all(2.0),
+                decoration: BoxDecoration(
+                    shape: BoxShape.rectangle,
+                    borderRadius: BorderRadius.circular(4),
+                    image: DecorationImage(
+                        image: dataList.isEmpty ||
+                            dataList.length - 1 < index
+                            ? AssetImage(
+                          'images/placeholder.png',
+                        )
+                            : NetworkImage(dataList[index]['previewURL']),
+                        fit: BoxFit.cover)),
+              ));
         },
         // The childCount of the SliverChildBuilderDelegate
         // specifies how many children this inner list
@@ -169,7 +180,7 @@ class _ImageGridDelegateState extends State<ImageGridDelegate> {
         childCount: pageSize * currentPageIndex,
       ),
       gridDelegate:
-          SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
+      SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
     );
   }
 }
