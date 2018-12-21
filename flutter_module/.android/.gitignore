@@ -5,6 +5,7 @@
 .pub/
 
 .idea/
+.gradle/
 .vagrant/
 .sconsign.dblite
 .svn/
