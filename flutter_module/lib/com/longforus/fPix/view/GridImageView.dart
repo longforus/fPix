@@ -5,8 +5,8 @@ import 'dart:io';
 import 'package:fPix/com/longforus/fPix/Const.dart';
 import 'package:fPix/com/longforus/fPix/page/ImagePage.dart';
 import 'package:fPix/com/longforus/fPix/utils/Toast.dart';
+import 'package:fPix/com/longforus/fPix/view/PhotoViewPage.dart';
 import 'package:flutter/material.dart';
-
 /// @describe
 /// @author  XQ Yang
 /// @date 12/20/2018  3:46 PM
@@ -71,7 +71,6 @@ class _ImageGridDelegateState extends State<ImageGridDelegate> {
 
   List dataList = new List();
 
-
   _ImageGridDelegateState(String type, this.state)
       : this.imageType = type.toLowerCase();
 
@@ -81,9 +80,7 @@ class _ImageGridDelegateState extends State<ImageGridDelegate> {
     super.initState();
   }
 
-
-
-  void getImageData() async {
+  void getImageData([Completer computer]) async {
     var url = BASE_URL;
     var httpClient = new HttpClient();
     bool success = false;
@@ -108,17 +105,16 @@ class _ImageGridDelegateState extends State<ImageGridDelegate> {
     } catch (exception) {
       Toast.toast(context, 'Failed getting');
     }
+    computer?.complete();
 
     // If the widget was removed from the tree while the message was in flight,
     // we want to discard the reply rather than calling setState to update our
     // non-existent appearance.
     if (!mounted) return;
-    if (computer != null && !computer.isCompleted) {
-      computer.complete();
-    }
+
     if (success) {
       if (currentPageIndex == 1) {
-        state.onTopImageChanged(resultList[0]['webformatURL']);
+        state.onTopImageChanged(resultList[0]);
       }
       setState(() {
         dataList.addAll(currentPageIndex == 1
@@ -128,13 +124,11 @@ class _ImageGridDelegateState extends State<ImageGridDelegate> {
     }
   }
 
-  static Completer computer;
-
   Future<void> _onRefresh() {
     currentPageIndex = 1;
     dataList.clear();
-    getImageData();
-    computer = Completer.sync();
+    Completer computer = Completer<void>();
+    getImageData(computer);
     return computer.future;
   }
 
@@ -142,6 +136,15 @@ class _ImageGridDelegateState extends State<ImageGridDelegate> {
     currentPageIndex++;
     getImageData();
   }
+
+
+  void _onCardTap(Map<String,dynamic> item) {
+    Navigator.push(context, MaterialPageRoute(builder: (BuildContext context)
+    {
+      return new PhotoViewPage(item);
+    }));
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -170,26 +173,35 @@ class _ImageGridDelegateState extends State<ImageGridDelegate> {
               (BuildContext context, int index) {
                 // This builder is called for each child.
                 // In this example, we just number each list item.
-                if(index>currentPageIndex*pageSize-2){
+                if (index > currentPageIndex * pageSize - 2) {
                   _getMore();
                 }
-                return new Card(
-                    margin: const EdgeInsets.all(2.0),
-                    elevation: 5,
-                    child: Container(
-                      padding: const EdgeInsets.all(2.0),
-                      decoration: BoxDecoration(
-                          shape: BoxShape.rectangle,
-                          borderRadius: BorderRadius.circular(4),
-                          image: DecorationImage(
-                              image: dataList.isEmpty ||
-                                      dataList.length - 1 < index
-                                  ? AssetImage(
-                                      'images/placeholder.png',
-                                    )
-                                  : NetworkImage(dataList[index]['previewURL']),
-                              fit: BoxFit.cover)),
-                    ));
+                return new GestureDetector(
+                  child: new Card(
+                      margin: const EdgeInsets.all(2.0),
+                      elevation: 5,
+                      child: Container(
+                        padding: const EdgeInsets.all(2.0),
+                        decoration: BoxDecoration(
+                            shape: BoxShape.rectangle,
+                            borderRadius: BorderRadius.circular(4),
+                            image: DecorationImage(
+                                image: dataList.isEmpty ||
+                                        dataList.length - 1 < index
+                                    ? AssetImage(
+                                        'images/placeholder.png',
+                                      )
+                                    : NetworkImage(
+                                        dataList[index]['previewURL']),
+                                fit: BoxFit.cover)),
+                      )),
+                  onTap: () {
+                    if(dataList.isNotEmpty &&
+                        dataList.length - 1 > index) {
+                          _onCardTap(dataList[index]);
+                        }
+                  },
+                );
               },
               // The childCount of the SliverChildBuilderDelegate
               // specifies how many children this inner list
@@ -198,10 +210,13 @@ class _ImageGridDelegateState extends State<ImageGridDelegate> {
               childCount: pageSize * currentPageIndex,
             ),
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2, ),
+              crossAxisCount: 2,
+            ),
           ),
         ),
       ],
     );
   }
+
+
 }

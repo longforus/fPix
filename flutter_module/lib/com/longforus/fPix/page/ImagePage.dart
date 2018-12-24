@@ -1,5 +1,5 @@
-
 import 'package:fPix/com/longforus/fPix/view/GridImageView.dart';
+import 'package:fPix/com/longforus/fPix/view/PhotoViewPage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
@@ -53,7 +53,8 @@ class _ImagePageState extends State<ImagePage>
           // These are the contents of the tab views, below the tabs.
           children: typeList.map((String type) {
             return new ImageGridView(
-              imageType: type,state: imageTopBar.state,
+              imageType: type,
+              state: imageTopBar.state,
             );
           }).toList(),
         ),
@@ -64,7 +65,7 @@ class _ImagePageState extends State<ImagePage>
 
 class ImageTopBar extends StatefulWidget {
   ImageTopBar({Key key}) : super(key: key);
-  ImageTopBarState state= new ImageTopBarState();
+  ImageTopBarState state = new ImageTopBarState();
 
   @override
   State<StatefulWidget> createState() {
@@ -73,16 +74,24 @@ class ImageTopBar extends StatefulWidget {
 }
 
 class ImageTopBarState extends State<ImageTopBar> {
-  String topImgUrl = "";
+  Map<String, dynamic> topImgUrl;
 
-  void onTopImageChanged(String url) {
-    if(mounted){
+  void onTopImageChanged(Map<String, dynamic> url) {
+    if (mounted) {
       setState(() {
         topImgUrl = url;
       });
-    }else{
+    } else {
       topImgUrl = url;
     }
+  }
+
+
+  void _go2PhotoPage(){
+    Navigator.push(context, MaterialPageRoute(builder: (BuildContext context)
+    {
+      return new PhotoViewPage(topImgUrl);
+    }));
   }
 
   @override
@@ -93,18 +102,21 @@ class ImageTopBarState extends State<ImageTopBar> {
       primary: true,
       expandedHeight: 250.0,
       flexibleSpace: FlexibleSpaceBar(
-        background: topImgUrl.isEmpty
+        background: topImgUrl == null
             ? Image.asset(
                 'images/gift.jpg',
                 fit: BoxFit.cover,
               )
-            : Image.network(
-                topImgUrl,
-                fit: BoxFit.cover,
+            : GestureDetector(
+                child: Image.network(
+                  topImgUrl['webformatURL'],
+                  fit: BoxFit.cover,
+                ),
+                onTap: _go2PhotoPage,
               ),
       ),
       actions: <Widget>[
-        new IconButton(icon: new Icon(Icons.star_border), onPressed: null)
+        new IconButton(icon: new Icon(Icons.favorite), onPressed: null)
       ],
       bottom: TabBar(
         isScrollable: true,
