@@ -1,3 +1,4 @@
+import 'package:fPix/com/longforus/fPix/db/FavoriteDAO.dart';
 import 'package:flutter/material.dart';
 import 'package:photo_view/photo_view.dart';
 
@@ -16,6 +17,24 @@ class PhotoViewPage extends StatefulWidget {
 class _PhotoViewPageState extends State<PhotoViewPage> {
   bool downloaded = false;
   bool favorited = false;
+
+  @override
+  void initState() {
+    FavoriteDao.get().contains(widget.imageData['id']).then((v) {
+      if (mounted) {
+        setState(() {
+          favorited = v;
+        });
+      }
+    });
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    FavoriteDao.get().closeDb();
+    super.dispose();
+  }
 
   ///
   /// 显示有点问题,暂时不用吧
@@ -55,12 +74,15 @@ class _PhotoViewPageState extends State<PhotoViewPage> {
             ),
             margin: const EdgeInsets.symmetric(horizontal: 8.0),
           ),
-          Container(
-            child: new Icon(
-              favorited ? Icons.favorite : Icons.favorite_border,
-              color: favorited ? accentColor : Colors.grey[600],
+          GestureDetector(
+            child: Container(
+              child: new Icon(
+                favorited ? Icons.favorite : Icons.favorite_border,
+                color: favorited ? accentColor : Colors.grey[600],
+              ),
+              margin: const EdgeInsets.symmetric(horizontal: 8.0),
             ),
-            margin: const EdgeInsets.symmetric(horizontal: 8.0),
+            onTap: _onFavorite,
           )
         ],
       ),
@@ -97,6 +119,28 @@ class _PhotoViewPageState extends State<PhotoViewPage> {
         ],
       ),
     );
+  }
+
+  void _onFavorite() {
+    if (favorited) {
+      FavoriteDao.get().deleteFid(widget.imageData['id']).then((onValue) {
+        if (onValue > 0) {
+          setState(() {
+            favorited = false;
+          });
+        }
+      });
+    } else {
+      FavoriteDao.get()
+          .insert(widget.imageData['id'], widget.imageData['largeImageURL'])
+          .then((onValue) {
+        if (onValue > 0) {
+          setState(() {
+            favorited = true;
+          });
+        }
+      });
+    }
   }
 }
 
