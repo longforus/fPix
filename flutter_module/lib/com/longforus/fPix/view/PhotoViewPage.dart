@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fPix/com/longforus/fPix/db/FavoriteDAO.dart';
 import 'package:flutter/material.dart';
 import 'package:photo_view/photo_view.dart';
@@ -30,11 +31,6 @@ class _PhotoViewPageState extends State<PhotoViewPage> {
     super.initState();
   }
 
-  @override
-  void dispose() {
-    FavoriteDao.get().closeDb();
-    super.dispose();
-  }
 
   ///
   /// 显示有点问题,暂时不用吧
@@ -90,7 +86,7 @@ class _PhotoViewPageState extends State<PhotoViewPage> {
         alignment: Alignment.bottomLeft,
         children: <Widget>[
           PhotoView(
-            imageProvider: NetworkImage(widget.imageData['largeImageURL']),
+            imageProvider: CachedNetworkImageProvider(widget.imageData['largeImageURL']),
             minScale: PhotoViewComputedScale.contained * 0.8,
             heroTag: widget.imageData['largeImageURL'],
           ),

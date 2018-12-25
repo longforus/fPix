@@ -2,11 +2,13 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fPix/com/longforus/fPix/Const.dart';
 import 'package:fPix/com/longforus/fPix/page/ImagePage.dart';
 import 'package:fPix/com/longforus/fPix/utils/Toast.dart';
 import 'package:fPix/com/longforus/fPix/view/PhotoViewPage.dart';
 import 'package:flutter/material.dart';
+
 /// @describe
 /// @author  XQ Yang
 /// @date 12/20/2018  3:46 PM
@@ -16,7 +18,7 @@ class ImageGridView extends StatelessWidget {
 
   final String imageType;
 
-  final ImageTopBarState state;
+  ImageTopBarState state;
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +48,7 @@ class ImageGridView extends StatelessWidget {
 class ImageGridDelegate extends StatefulWidget {
   ImageGridDelegate({Key key, this.imageType, this.state}) : super(key: key);
   final String imageType;
-  final ImageTopBarState state;
+  ImageTopBarState state;
   Future<void> Function() onRefresh;
 
   Future<void> _onRefresh() {
@@ -63,7 +65,7 @@ class ImageGridDelegate extends StatefulWidget {
 
 class _ImageGridDelegateState extends State<ImageGridDelegate> {
   var httpClient = new HttpClient();
-  final ImageTopBarState state;
+   ImageTopBarState state;
   final String imageType;
 
   int currentPageIndex = 1;
@@ -137,14 +139,11 @@ class _ImageGridDelegateState extends State<ImageGridDelegate> {
     getImageData();
   }
 
-
-  void _onCardTap(Map<String,dynamic> item) {
-    Navigator.push(context, MaterialPageRoute(builder: (BuildContext context)
-    {
+  void _onCardTap(Map<String, dynamic> item) {
+    Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) {
       return new PhotoViewPage(item);
     }));
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -191,15 +190,14 @@ class _ImageGridDelegateState extends State<ImageGridDelegate> {
                                     ? AssetImage(
                                         'images/placeholder.png',
                                       )
-                                    : NetworkImage(
+                                    : CachedNetworkImageProvider(
                                         dataList[index]['previewURL']),
                                 fit: BoxFit.cover)),
                       )),
                   onTap: () {
-                    if(dataList.isNotEmpty &&
-                        dataList.length - 1 > index) {
-                          _onCardTap(dataList[index]);
-                        }
+                    if (dataList.isNotEmpty && dataList.length - 1 > index) {
+                      _onCardTap(dataList[index]);
+                    }
                   },
                 );
               },
@@ -217,6 +215,4 @@ class _ImageGridDelegateState extends State<ImageGridDelegate> {
       ],
     );
   }
-
-
 }

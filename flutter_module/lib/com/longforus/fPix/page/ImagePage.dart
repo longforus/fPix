@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fPix/com/longforus/fPix/view/GridImageView.dart';
 import 'package:fPix/com/longforus/fPix/view/PhotoViewPage.dart';
 import 'package:flutter/material.dart';
@@ -54,6 +55,7 @@ class _ImagePageState extends State<ImagePage>
           children: typeList.map((String type) {
             return new ImageGridView(
               imageType: type,
+              //这种传递方式应该是不对的 但是我还没有想到其他合适的方法
               state: imageTopBar.state,
             );
           }).toList(),
@@ -65,7 +67,7 @@ class _ImagePageState extends State<ImagePage>
 
 class ImageTopBar extends StatefulWidget {
   ImageTopBar({Key key}) : super(key: key);
-  ImageTopBarState state = new ImageTopBarState();
+  ImageTopBarState state= new ImageTopBarState();
 
   @override
   State<StatefulWidget> createState() {
@@ -86,10 +88,8 @@ class ImageTopBarState extends State<ImageTopBar> {
     }
   }
 
-
-  void _go2PhotoPage(){
-    Navigator.push(context, MaterialPageRoute(builder: (BuildContext context)
-    {
+  void _go2PhotoPage() {
+    Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) {
       return new PhotoViewPage(topImgUrl);
     }));
   }
@@ -104,19 +104,34 @@ class ImageTopBarState extends State<ImageTopBar> {
       flexibleSpace: FlexibleSpaceBar(
         background: topImgUrl == null
             ? Image.asset(
-                'images/gift.jpg',
+                'images/placeholder.png',
                 fit: BoxFit.cover,
               )
             : GestureDetector(
-                child: Image.network(
-                  topImgUrl['webformatURL'],
+                child: CachedNetworkImage(
+                  imageUrl: topImgUrl['webformatURL'],
                   fit: BoxFit.cover,
                 ),
                 onTap: _go2PhotoPage,
               ),
       ),
       actions: <Widget>[
-        new IconButton(icon: new Icon(Icons.favorite), onPressed: null)
+        topImgUrl != null
+            ? new Container(
+                padding: const EdgeInsets.all(8.0),
+                child: new Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    new Icon(
+                      Icons.favorite,
+                      size: 15,
+                      color: Colors.red,
+                    ),
+                    new Text(' : ${topImgUrl['likes']}')
+                  ],
+                ),
+              )
+            : new Icon(Icons.favorite)
       ],
       bottom: TabBar(
         isScrollable: true,

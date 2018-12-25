@@ -79,7 +79,7 @@ class FavoriteDao {
       return db.query('FavoriteTable',
           columns: ['id'], where: "imgId=?", whereArgs: [id]);
     });
-    print('contains : ${list.isNotEmpty}');
+//    print('contains : ${list.isNotEmpty}');
     return list.isNotEmpty;
   }
 }
