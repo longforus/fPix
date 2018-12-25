@@ -26,6 +26,7 @@ dependencies:
   photo_view: ^0.1.0
   sqflite: ^0.13.0+1
   cached_network_image: ^0.5.1
+  url_launcher: ^4.0.3
 
 dev_dependencies:
   flutter_test:

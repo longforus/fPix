@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fPix/com/longforus/fPix/db/FavoriteDAO.dart';
 import 'package:flutter/material.dart';
 import 'package:photo_view/photo_view.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 /// @describe
 /// @author  XQ Yang
@@ -30,7 +31,6 @@ class _PhotoViewPageState extends State<PhotoViewPage> {
     });
     super.initState();
   }
-
 
   ///
   /// 显示有点问题,暂时不用吧
@@ -73,6 +73,16 @@ class _PhotoViewPageState extends State<PhotoViewPage> {
           GestureDetector(
             child: Container(
               child: new Icon(
+                Icons.open_in_browser,
+                color: Colors.grey[600],
+              ),
+              margin: const EdgeInsets.symmetric(horizontal: 8.0),
+            ),
+            onTap: _onOpenInBrowser,
+          ),
+          GestureDetector(
+            child: Container(
+              child: new Icon(
                 favorited ? Icons.favorite : Icons.favorite_border,
                 color: favorited ? accentColor : Colors.grey[600],
               ),
@@ -86,7 +96,8 @@ class _PhotoViewPageState extends State<PhotoViewPage> {
         alignment: Alignment.bottomLeft,
         children: <Widget>[
           PhotoView(
-            imageProvider: CachedNetworkImageProvider(widget.imageData['largeImageURL']),
+            imageProvider:
+                CachedNetworkImageProvider(widget.imageData['largeImageURL']),
             minScale: PhotoViewComputedScale.contained * 0.8,
             heroTag: widget.imageData['largeImageURL'],
           ),
@@ -136,6 +147,15 @@ class _PhotoViewPageState extends State<PhotoViewPage> {
           });
         }
       });
+    }
+  }
+
+  void _onOpenInBrowser() async {
+    var url = widget.imageData['pageURL'];
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
     }
   }
 }
