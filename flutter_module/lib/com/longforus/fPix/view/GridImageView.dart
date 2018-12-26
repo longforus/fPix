@@ -8,7 +8,6 @@ import 'package:fPix/com/longforus/fPix/utils/Toast.dart';
 import 'package:fPix/com/longforus/fPix/page/PhotoViewPage.dart';
 import 'package:fPix/com/longforus/fPix/widget/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:fPix/com/longforus/fPix/utils/CacheUtil.dart';
 /// @describe
 /// @author  XQ Yang
 /// @date 12/20/2018  3:46 PM
@@ -78,7 +77,7 @@ class _ImageGridDelegateState extends State<ImageGridDelegate> {
     super.initState();
   }
 
-  void getImageData([Completer computer]) async {
+  void getImageData([Completer completer]) async {
     var url = BASE_URL;
     var httpClient = new HttpClient();
     bool success = false;
@@ -103,7 +102,7 @@ class _ImageGridDelegateState extends State<ImageGridDelegate> {
     } catch (exception) {
       Toast.toast(context, 'Failed getting');
     }
-    computer?.complete();
+    completer?.complete();
 
     // If the widget was removed from the tree while the message was in flight,
     // we want to discard the reply rather than calling setState to update our

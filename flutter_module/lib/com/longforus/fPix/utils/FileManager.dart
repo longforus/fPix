@@ -24,14 +24,8 @@ class FileManager {
   }
 
   void save2SdCard(File file) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    var savePath = prefs.getString(DEFAULT_IMG_SAVE_PATH_KEY);
-    if (savePath == null || savePath.isEmpty) {
-      var sDCardDir = (await getExternalStorageDirectory()).path;
-      savePath = "$sDCardDir/fPix/image";
-    }
+    String savePath = await getImgDownloadDir();
     var fileName = file.path.substring(file.path.lastIndexOf('/') + 1);
-    print('$fileName');
     var save2File = new File('$savePath/$fileName');
     save2File.exists().then((exists) {
       if (!exists) {
@@ -39,6 +33,16 @@ class FileManager {
       }
       file.copy(save2File.path);
     });
+  }
+
+  Future<String> getImgDownloadDir() async {
+     SharedPreferences prefs = await SharedPreferences.getInstance();
+    var savePath = prefs.getString(DEFAULT_IMG_SAVE_PATH_KEY);
+    if (savePath == null || savePath.isEmpty) {
+      var sDCardDir = (await getExternalStorageDirectory()).path;
+      savePath = "$sDCardDir/fPix/image";
+    }
+    return savePath;
   }
 
   void _checkPermissions(BuildContext context) {

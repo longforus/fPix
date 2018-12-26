@@ -1,4 +1,5 @@
 import 'package:fPix/com/longforus/fPix/page/ImagePage.dart';
+import 'package:fPix/com/longforus/fPix/page/SettingsPage.dart';
 import 'package:fPix/com/longforus/fPix/widget/flutter_cache_manager.dart';
 import 'package:flutter/material.dart';
 
@@ -67,7 +68,7 @@ class _MyHomePageState extends State<MyHomePage> {
       case 2:
         return new ImagePage();
       case 3:
-        return new ImagePage();
+        return new SettingsPage();
     }
   }
 
