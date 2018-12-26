@@ -36,13 +36,6 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "1.0.4"
-  cached_network_image:
-    dependency: "direct main"
-    description:
-      name: cached_network_image
-      url: "https://pub.flutter-io.cn"
-    source: hosted
-    version: "0.5.1"
   charcode:
     dependency: transitive
     description:
@@ -97,13 +90,6 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  flutter_cache_manager:
-    dependency: transitive
-    description:
-      name: flutter_cache_manager
-      url: "https://pub.flutter-io.cn"
-    source: hosted
-    version: "0.2.0+1"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -444,7 +430,7 @@ packages:
     source: hosted
     version: "0.9.0+5"
   uuid:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: uuid
       url: "https://pub.flutter-io.cn"

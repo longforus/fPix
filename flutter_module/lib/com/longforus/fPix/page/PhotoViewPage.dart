@@ -1,11 +1,12 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fPix/com/longforus/fPix/db/FavoriteDAO.dart';
 import 'package:fPix/com/longforus/fPix/utils/FileManager.dart';
 import 'package:fPix/com/longforus/fPix/utils/Toast.dart';
+import 'package:fPix/com/longforus/fPix/widget/cached_network_image.dart';
+import 'package:fPix/com/longforus/fPix/widget/flutter_cache_manager.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:fPix/com/longforus/fPix/utils/CacheUtil.dart';
 
 /// @describe
 /// @author  XQ Yang
@@ -94,7 +95,8 @@ class _PhotoViewPageState extends State<PhotoViewPage> {
         children: <Widget>[
           PhotoView(
             imageProvider:
-                CachedNetworkImageProvider(widget.imageData['largeImageURL']),
+                CachedNetworkImageProvider(widget.imageData['largeImageURL'],
+                    cacheKey: getCacheKey(widget.imageData, 'largeImageURL')),
             minScale: PhotoViewComputedScale.contained * 0.8,
             heroTag: widget.imageData['largeImageURL'],
           ),
@@ -158,7 +160,7 @@ class _PhotoViewPageState extends State<PhotoViewPage> {
 
   void _onDownload(BuildContext context) async {
     CacheManager.getInstance().then((manager) {
-      manager.getFile(widget.imageData['largeImageURL']).then((file) {
+      manager.getFile(widget.imageData['largeImageURL'],cacheKey: getCacheKey(widget.imageData, 'largeImageURL')).then((file) {
         print('${file.path}');
         file.exists().then((b) {
           if (b) {

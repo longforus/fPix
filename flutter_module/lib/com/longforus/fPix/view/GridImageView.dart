@@ -2,13 +2,13 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fPix/com/longforus/fPix/Const.dart';
 import 'package:fPix/com/longforus/fPix/event/Events.dart';
 import 'package:fPix/com/longforus/fPix/utils/Toast.dart';
 import 'package:fPix/com/longforus/fPix/page/PhotoViewPage.dart';
+import 'package:fPix/com/longforus/fPix/widget/cached_network_image.dart';
 import 'package:flutter/material.dart';
-
+import 'package:fPix/com/longforus/fPix/utils/CacheUtil.dart';
 /// @describe
 /// @author  XQ Yang
 /// @date 12/20/2018  3:46 PM
@@ -187,7 +187,8 @@ class _ImageGridDelegateState extends State<ImageGridDelegate> {
                                         'images/placeholder.png',
                                       )
                                     : CachedNetworkImageProvider(
-                                        dataList[index]['previewURL']),
+                                        dataList[index]['previewURL']
+                                    ),
                                 fit: BoxFit.cover)),
                       )),
                   onTap: () {

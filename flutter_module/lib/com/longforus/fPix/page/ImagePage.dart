@@ -1,12 +1,13 @@
 import 'dart:async';
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fPix/com/longforus/fPix/event/Events.dart';
 import 'package:fPix/com/longforus/fPix/view/GridImageView.dart';
 import 'package:fPix/com/longforus/fPix/page/PhotoViewPage.dart';
+import 'package:fPix/com/longforus/fPix/widget/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:fPix/com/longforus/fPix/Const.dart';
+import 'package:fPix/com/longforus/fPix/utils/CacheUtil.dart';
 class ImagePage extends StatefulWidget {
   const ImagePage({
     Key key,
@@ -105,6 +106,7 @@ class ImageTopBarState extends State<ImageTopBar> {
             : GestureDetector(
                 child: CachedNetworkImage(
                   imageUrl: topImgUrl['webformatURL'],
+                  cacheKey: getCacheKey(topImgUrl, 'webformatURL'),
                   fit: BoxFit.cover,
                 ),
                 onTap: _go2PhotoPage,

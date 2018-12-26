@@ -1,6 +1,6 @@
 import 'package:fPix/com/longforus/fPix/page/ImagePage.dart';
+import 'package:fPix/com/longforus/fPix/widget/flutter_cache_manager.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 
 void main() => runApp(MyApp());
 
