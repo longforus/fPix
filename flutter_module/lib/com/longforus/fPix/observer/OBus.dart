@@ -24,7 +24,6 @@ class OBus {
   }
 
   void notify(String type, Object arg) {
-
     for (var value in map[type]) {
       value(arg);
       print('  getmore $value');

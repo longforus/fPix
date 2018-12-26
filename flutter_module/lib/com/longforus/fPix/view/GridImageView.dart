@@ -4,7 +4,7 @@ import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fPix/com/longforus/fPix/Const.dart';
-import 'package:fPix/com/longforus/fPix/page/ImagePage.dart';
+import 'package:fPix/com/longforus/fPix/event/Events.dart';
 import 'package:fPix/com/longforus/fPix/utils/Toast.dart';
 import 'package:fPix/com/longforus/fPix/view/PhotoViewPage.dart';
 import 'package:flutter/material.dart';
@@ -14,17 +14,15 @@ import 'package:flutter/material.dart';
 /// @date 12/20/2018  3:46 PM
 
 class ImageGridView extends StatelessWidget {
-  ImageGridView({Key key, this.imageType, this.state}) : super(key: key);
+  ImageGridView({Key key, this.imageType}) : super(key: key);
 
   final String imageType;
 
-  ImageTopBarState state;
 
   @override
   Widget build(BuildContext context) {
     var imageGridDelegate = new ImageGridDelegate(
       imageType: imageType,
-      state: state,
     );
 
     return new RefreshIndicator(
@@ -46,9 +44,8 @@ class ImageGridView extends StatelessWidget {
 }
 
 class ImageGridDelegate extends StatefulWidget {
-  ImageGridDelegate({Key key, this.imageType, this.state}) : super(key: key);
+  ImageGridDelegate({Key key, this.imageType}) : super(key: key);
   final String imageType;
-  ImageTopBarState state;
   Future<void> Function() onRefresh;
 
   Future<void> _onRefresh() {
@@ -57,7 +54,7 @@ class ImageGridDelegate extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() {
-    var imageGridDelegateState = _ImageGridDelegateState(imageType, state);
+    var imageGridDelegateState = _ImageGridDelegateState(imageType);
     onRefresh = imageGridDelegateState._onRefresh;
     return imageGridDelegateState;
   }
@@ -65,7 +62,6 @@ class ImageGridDelegate extends StatefulWidget {
 
 class _ImageGridDelegateState extends State<ImageGridDelegate> {
   var httpClient = new HttpClient();
-   ImageTopBarState state;
   final String imageType;
 
   int currentPageIndex = 1;
@@ -73,7 +69,7 @@ class _ImageGridDelegateState extends State<ImageGridDelegate> {
 
   List dataList = new List();
 
-  _ImageGridDelegateState(String type, this.state)
+  _ImageGridDelegateState(String type)
       : this.imageType = type.toLowerCase();
 
   @override
@@ -116,7 +112,7 @@ class _ImageGridDelegateState extends State<ImageGridDelegate> {
 
     if (success) {
       if (currentPageIndex == 1) {
-        state.onTopImageChanged(resultList[0]);
+        eventBus.fire(OnTopImageChangeEvent(resultList[0]));
       }
       setState(() {
         dataList.addAll(currentPageIndex == 1
