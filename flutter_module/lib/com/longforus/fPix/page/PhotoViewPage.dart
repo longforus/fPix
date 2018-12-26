@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fPix/com/longforus/fPix/db/FavoriteDAO.dart';
 import 'package:fPix/com/longforus/fPix/utils/FileManager.dart';
+import 'package:fPix/com/longforus/fPix/utils/Toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:photo_view/photo_view.dart';
@@ -65,34 +66,27 @@ class _PhotoViewPageState extends State<PhotoViewPage> {
       appBar: new AppBar(
         backgroundColor: Colors.transparent,
         actions: <Widget>[
-          Container(
-            child: new IconButton(
-              icon: new Icon(
-                Icons.file_download,
-                color: downloaded ? accentColor : Colors.grey[600],
-              ),
-              onPressed: _onDownload,
+          new IconButton(
+            icon: new Icon(
+              Icons.file_download,
+              color: downloaded ? accentColor : Colors.grey[600],
             ),
-            margin: const EdgeInsets.symmetric(horizontal: 8.0),
+            onPressed: () {
+              _onDownload(context);
+            },
           ),
-          Container(
-            child: IconButton(
-                icon: new Icon(
-                  Icons.open_in_browser,
-                  color: Colors.grey[600],
-                ),
-                onPressed: _onOpenInBrowser),
-            margin: const EdgeInsets.symmetric(horizontal: 8.0),
-          ),
-          Container(
-            child: IconButton(
-                icon: new Icon(
-                  favorited ? Icons.favorite : Icons.favorite_border,
-                  color: favorited ? accentColor : Colors.grey[600],
-                ),
-                onPressed: _onFavorite),
-            margin: const EdgeInsets.symmetric(horizontal: 8.0),
-          )
+          IconButton(
+              icon: new Icon(
+                Icons.open_in_browser,
+                color: Colors.grey[600],
+              ),
+              onPressed: _onOpenInBrowser),
+          IconButton(
+              icon: new Icon(
+                favorited ? Icons.favorite : Icons.favorite_border,
+                color: favorited ? accentColor : Colors.grey[600],
+              ),
+              onPressed: _onFavorite)
         ],
       ),
       body: Stack(
@@ -162,7 +156,7 @@ class _PhotoViewPageState extends State<PhotoViewPage> {
     }
   }
 
-  void _onDownload() async {
+  void _onDownload(BuildContext context) async {
     CacheManager.getInstance().then((manager) {
       manager.getFile(widget.imageData['largeImageURL']).then((file) {
         print('${file.path}');
@@ -170,13 +164,12 @@ class _PhotoViewPageState extends State<PhotoViewPage> {
           if (b) {
             try {
               FileManager.get(context).save2SdCard(file);
+              Toast.toast(context, 'Save Success');
             } catch (e) {
-              Scaffold.of(context)
-                  .showSnackBar(SnackBar(content: Text('Save fail')));
+              Toast.toast(context, 'Save Fail');
             }
           } else {
-            Scaffold.of(context)
-                .showSnackBar(SnackBar(content: Text('Download fail')));
+            Toast.toast(context, 'Download Fail');
           }
         });
       });

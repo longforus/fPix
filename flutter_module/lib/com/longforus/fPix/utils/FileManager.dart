@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:fPix/com/longforus/fPix/Const.dart';
+import 'package:fPix/com/longforus/fPix/utils/Toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:path_provider/path_provider.dart';
@@ -22,7 +23,7 @@ class FileManager {
     return _manager;
   }
 
-   void save2SdCard(File file) async {
+  void save2SdCard(File file) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var savePath = prefs.getString(DEFAULT_IMG_SAVE_PATH_KEY);
     if (savePath == null || savePath.isEmpty) {
@@ -43,15 +44,14 @@ class FileManager {
   void _checkPermissions(BuildContext context) {
     SimplePermissions.checkPermission(Permission.WriteExternalStorage)
         .then((have) {
-          if(!have){
-            SimplePermissions.requestPermission(Permission
-                .WriteExternalStorage).then((status){
-                  if(status!=PermissionStatus.authorized){
-                    Scaffold.of(context)
-                        .showSnackBar(SnackBar(content: Text('不同意授权无法保存哦!')));
-                  }
-            });
+      if (!have) {
+        SimplePermissions.requestPermission(Permission.WriteExternalStorage)
+            .then((status) {
+          if (status != PermissionStatus.authorized) {
+            Toast.toast(context, '不同意授权无法保存哦!');
           }
+        });
+      }
     });
   }
 }
