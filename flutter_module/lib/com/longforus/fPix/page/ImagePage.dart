@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fPix/com/longforus/fPix/event/Events.dart';
 import 'package:fPix/com/longforus/fPix/view/GridImageView.dart';
-import 'package:fPix/com/longforus/fPix/view/PhotoViewPage.dart';
+import 'package:fPix/com/longforus/fPix/page/PhotoViewPage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:fPix/com/longforus/fPix/Const.dart';

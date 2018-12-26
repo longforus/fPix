@@ -1,6 +1,6 @@
 import 'package:fPix/com/longforus/fPix/page/ImagePage.dart';
 import 'package:flutter/material.dart';
-import 'package:fPix/com/longforus/fPix/page/ImagePage.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 
 void main() => runApp(MyApp());
 
@@ -31,6 +31,12 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int selectedPageIndex = 0;
+
+  @override
+  void initState() {
+    CacheManager.showDebugLogs = true;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -77,47 +83,59 @@ class _MyHomePageState extends State<MyHomePage> {
       case 0:
         return new BottomNavigationBarItem(
             icon: new Icon(
-              Icons.image,color: Colors.grey,
+              Icons.image,
+              color: Colors.grey,
             ),
             activeIcon: new Icon(
               Icons.image,
               color: accentColor,
             ),
-            title: new Text("Image",style:TextStyle(color:
-            selected?accentColor:Colors.grey),));
+            title: new Text(
+              "Image",
+              style: TextStyle(color: selected ? accentColor : Colors.grey),
+            ));
       case 1:
         return new BottomNavigationBarItem(
             icon: new Icon(
-              Icons.video_label,color: Colors.grey,
+              Icons.video_label,
+              color: Colors.grey,
             ),
             activeIcon: new Icon(
               Icons.video_label,
               color: accentColor,
             ),
-            title: new Text("Video",style:TextStyle(color:
-            selected?accentColor:Colors.grey),));
+            title: new Text(
+              "Video",
+              style: TextStyle(color: selected ? accentColor : Colors.grey),
+            ));
       case 2:
         return new BottomNavigationBarItem(
             icon: new Icon(
-              Icons.favorite,color: Colors.grey,
+              Icons.favorite,
+              color: Colors.grey,
             ),
             activeIcon: new Icon(
               Icons.favorite,
               color: accentColor,
             ),
-            title: new Text("Favorite",style:TextStyle(color:
-            selected?accentColor:Colors.grey),));
+            title: new Text(
+              "Favorite",
+              style: TextStyle(color: selected ? accentColor : Colors.grey),
+            ));
       case 3:
         return new BottomNavigationBarItem(
             icon: new Icon(
-              Icons.settings,color: Colors.grey,
+              Icons.settings,
+              color: Colors.grey,
             ),
             activeIcon: new Icon(
               Icons.settings,
               color: accentColor,
             ),
-            title: new Text("Settings",style:TextStyle(color:
-            selected?accentColor:Colors.grey),));
+            title: new Text(
+              "Settings",
+              style: TextStyle(color: selected ? accentColor : Colors.grey),
+            ));
     }
   }
 }

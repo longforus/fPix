@@ -1,6 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fPix/com/longforus/fPix/db/FavoriteDAO.dart';
+import 'package:fPix/com/longforus/fPix/utils/FileManager.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -64,31 +66,32 @@ class _PhotoViewPageState extends State<PhotoViewPage> {
         backgroundColor: Colors.transparent,
         actions: <Widget>[
           Container(
-            child: new Icon(
-              Icons.file_download,
-              color: downloaded ? accentColor : Colors.grey[600],
+            child: new IconButton(
+              icon: new Icon(
+                Icons.file_download,
+                color: downloaded ? accentColor : Colors.grey[600],
+              ),
+              onPressed: _onDownload,
             ),
             margin: const EdgeInsets.symmetric(horizontal: 8.0),
           ),
-          GestureDetector(
-            child: Container(
-              child: new Icon(
-                Icons.open_in_browser,
-                color: Colors.grey[600],
-              ),
-              margin: const EdgeInsets.symmetric(horizontal: 8.0),
-            ),
-            onTap: _onOpenInBrowser,
+          Container(
+            child: IconButton(
+                icon: new Icon(
+                  Icons.open_in_browser,
+                  color: Colors.grey[600],
+                ),
+                onPressed: _onOpenInBrowser),
+            margin: const EdgeInsets.symmetric(horizontal: 8.0),
           ),
-          GestureDetector(
-            child: Container(
-              child: new Icon(
-                favorited ? Icons.favorite : Icons.favorite_border,
-                color: favorited ? accentColor : Colors.grey[600],
-              ),
-              margin: const EdgeInsets.symmetric(horizontal: 8.0),
-            ),
-            onTap: _onFavorite,
+          Container(
+            child: IconButton(
+                icon: new Icon(
+                  favorited ? Icons.favorite : Icons.favorite_border,
+                  color: favorited ? accentColor : Colors.grey[600],
+                ),
+                onPressed: _onFavorite),
+            margin: const EdgeInsets.symmetric(horizontal: 8.0),
           )
         ],
       ),
@@ -157,6 +160,27 @@ class _PhotoViewPageState extends State<PhotoViewPage> {
     } else {
       throw 'Could not launch $url';
     }
+  }
+
+  void _onDownload() async {
+    CacheManager.getInstance().then((manager) {
+      manager.getFile(widget.imageData['largeImageURL']).then((file) {
+        print('${file.path}');
+        file.exists().then((b) {
+          if (b) {
+            try {
+              FileManager.get(context).save2SdCard(file);
+            } catch (e) {
+              Scaffold.of(context)
+                  .showSnackBar(SnackBar(content: Text('Save fail')));
+            }
+          } else {
+            Scaffold.of(context)
+                .showSnackBar(SnackBar(content: Text('Download fail')));
+          }
+        });
+      });
+    });
   }
 }
 

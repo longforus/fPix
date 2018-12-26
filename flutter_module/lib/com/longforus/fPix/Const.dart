@@ -28,3 +28,5 @@ const BASE_URL = "https://pixabay.com/api/?key=11042541-60a032dcf49543f53d415848
     'Buildings',
     'Business'
 ];
+
+ const DEFAULT_IMG_SAVE_PATH_KEY = "default_img_save_path_key";

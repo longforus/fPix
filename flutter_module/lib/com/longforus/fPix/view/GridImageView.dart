@@ -6,7 +6,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fPix/com/longforus/fPix/Const.dart';
 import 'package:fPix/com/longforus/fPix/event/Events.dart';
 import 'package:fPix/com/longforus/fPix/utils/Toast.dart';
-import 'package:fPix/com/longforus/fPix/view/PhotoViewPage.dart';
+import 'package:fPix/com/longforus/fPix/page/PhotoViewPage.dart';
 import 'package:flutter/material.dart';
 
 /// @describe

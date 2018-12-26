@@ -29,6 +29,9 @@ dependencies:
   url_launcher: ^4.0.3
   rxdart: ^0.20.0
   event_bus: ^1.0.1
+  shared_preferences: ^0.4.3
+  path_provider: ^0.4.1
+  simple_permissions: ^0.1.9
 
 dev_dependencies:
   flutter_test:
