@@ -165,7 +165,9 @@ class _PhotoViewPageState extends State<PhotoViewPage> {
         file.exists().then((b) {
           if (b) {
             try {
-              FileManager.get(context).save2SdCard(file);
+              FileManager.get(context).then((manager){
+                manager.save2SdCard(file);
+              });
               Toast.toast(context, 'Save Success');
             } catch (e) {
               Toast.toast(context, 'Save Fail');

@@ -15,13 +15,16 @@ import 'package:simple_permissions/simple_permissions.dart';
 class FileManager {
   static FileManager _manager;
 
-  static FileManager get(BuildContext context) {
+  static Future<FileManager> get(BuildContext context) async {
     if (_manager == null) {
       _manager = new FileManager();
-      _manager._checkPermissions(context);
+      await _manager._checkPermissions(context);
     }
     return _manager;
   }
+
+
+
 
   void save2SdCard(File file) async {
     String savePath = await getImgDownloadDir();
@@ -45,17 +48,14 @@ class FileManager {
     return savePath;
   }
 
-  void _checkPermissions(BuildContext context) {
-    SimplePermissions.checkPermission(Permission.WriteExternalStorage)
-        .then((have) {
-      if (!have) {
-        SimplePermissions.requestPermission(Permission.WriteExternalStorage)
-            .then((status) {
-          if (status != PermissionStatus.authorized) {
-            Toast.toast(context, '不同意授权无法保存哦!');
-          }
-        });
-      }
-    });
+  Future<void> _checkPermissions(BuildContext context) async {
+    bool permission1 = await SimplePermissions.checkPermission(Permission.ReadExternalStorage);
+    bool permission2 = await SimplePermissions.checkPermission(Permission.WriteExternalStorage);
+    if (!permission1) {
+      await SimplePermissions.requestPermission(Permission.ReadExternalStorage);
+    }
+    if (!permission2) {
+      await SimplePermissions.requestPermission(Permission.WriteExternalStorage);
+    }
   }
 }

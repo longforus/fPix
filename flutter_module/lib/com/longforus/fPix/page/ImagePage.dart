@@ -120,15 +120,15 @@ class ImageTopBarState extends State<ImageTopBar> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     new Icon(
-                      Icons.favorite,
+                      Icons.thumb_up,
                       size: 15,
                       color: Colors.red,
                     ),
-                    new Text(' : ${topImgUrl['likes']}')
+                    new Text(' ${topImgUrl['likes']}')
                   ],
                 ),
               )
-            : new Icon(Icons.favorite)
+            : new Icon(Icons.thumb_up)
       ],
       bottom: TabBar(
         isScrollable: true,

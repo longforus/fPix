@@ -17,13 +17,13 @@ class SettingsPage extends StatefulWidget {
 class _SettingsPageState extends State<SettingsPage> {
   String currentImgDownloadDir = "";
 
-  void _getImgDownloadDir() {
-    FileManager.get(context).getImgDownloadDir().then((dir){
+  void _getImgDownloadDir() async {
+    var manager = await FileManager.get(context);
+    manager.getImgDownloadDir().then((dir){
       setState(() {
         currentImgDownloadDir = dir;
       });
     });
-
   }
 
   @override
