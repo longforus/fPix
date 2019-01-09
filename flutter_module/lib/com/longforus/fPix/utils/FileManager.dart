@@ -48,6 +48,11 @@ class FileManager {
     return savePath;
   }
 
+  void setImgDownloadDir(String path)async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString(DEFAULT_IMG_SAVE_PATH_KEY, path);
+  }
+
   Future<void> _checkPermissions(BuildContext context) async {
     bool permission1 = await SimplePermissions.checkPermission(Permission.ReadExternalStorage);
     bool permission2 = await SimplePermissions.checkPermission(Permission.WriteExternalStorage);

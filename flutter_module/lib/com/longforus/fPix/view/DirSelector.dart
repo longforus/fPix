@@ -1,7 +1,7 @@
+import 'package:fPix/com/longforus/fPix/utils/FileManager.dart';
 import 'package:fPix/com/longforus/fPix/view/click_effect.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';
-import 'package:flutter/services.dart';
 
 import 'package:path_provider/path_provider.dart';
 import 'package:simple_permissions/simple_permissions.dart';
@@ -15,12 +15,12 @@ class DirSelector extends StatefulWidget {
 
 class _DirSelectorState extends State<DirSelector> {
   List<FileSystemEntity> files = [];
-  MethodChannel _channel = MethodChannel('openFileChannel');
   Directory parentDir;
   ScrollController controller = ScrollController();
   int count = 0; // 记录当前文件夹中以 . 开头的文件和文件夹
   String sDCardDir;
   List<double> position = [];
+
   @override
   void initState() {
     super.initState();
@@ -57,14 +57,9 @@ class _DirSelectorState extends State<DirSelector> {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: () {
-        if (parentDir.path != sDCardDir) {
-          initDirectory(parentDir.parent.path);
-          jumpToPosition(false);
-        } else {
-          Navigator.pop(context);
-        }
-      },
+      onWillPop: (){
+        _onBackPressed(context);
+      } ,
       child: Scaffold(
           appBar: AppBar(
             title: Text(
@@ -80,14 +75,14 @@ class _DirSelectorState extends State<DirSelector> {
                   Icons.chevron_left,
                   color: Colors.white,
                 ),
-                onPressed: () {
-                  if (parentDir.path != sDCardDir) {
-                    initDirectory(parentDir.parent.path);
-                    jumpToPosition(false);
-                  } else {
-                    Navigator.pop(context);
-                  }
-                }),
+                onPressed:(){
+                  _onBackPressed(context);
+                } ),
+            actions: <Widget>[
+              new IconButton(icon: new Icon(Icons.library_add), onPressed:
+              _onNewDir),
+              new IconButton(icon: new Icon(Icons.save), onPressed: _onSave)
+            ],
           ),
           backgroundColor: Color(0xfff3f3f3),
           body: Scrollbar(
@@ -111,6 +106,15 @@ class _DirSelectorState extends State<DirSelector> {
             ),
           )),
     );
+  }
+
+  void _onBackPressed(BuildContext context) {
+    if (parentDir.path != sDCardDir) {
+      initDirectory(parentDir.parent.path);
+      jumpToPosition(false);
+    } else {
+      Navigator.pop(context);
+    }
   }
 
   // 计算文件夹内 文件、文件夹的数量，以 . 开头的除外
@@ -188,12 +192,9 @@ class _DirSelectorState extends State<DirSelector> {
         ],
       ),
       onTap: () {
-        if (!isFile) {
-          position.insert(position.length, controller.offset);
-          initDirectory(file.path);
-          jumpToPosition(true);
-        } else
-          openFile(file.path);
+        position.insert(position.length, controller.offset);
+        initDirectory(file.path);
+        jumpToPosition(true);
       },
     );
   }
@@ -247,8 +248,34 @@ class _DirSelectorState extends State<DirSelector> {
     return time;
   }
 
-  openFile(String path) {
-    final Map<String, dynamic> args = <String, dynamic>{'path': path};
-    _channel.invokeMethod('openFile', args);
+
+  void _onNewDir() {
+    final TextEditingController _controller = new TextEditingController();
+    showDialog(
+        context: context,
+        builder: (_) => new AlertDialog(
+            title: new Text("Create a new dir"),
+            content: new TextField(controller: _controller,  decoration: new InputDecoration(
+              hintText: 'Type Name',
+            ),),
+            actions:<Widget>[
+              new FlatButton(child:new Text("CANCEL"), onPressed: (){
+                Navigator.of(context).pop();
+
+              },),
+              new FlatButton(child:new Text("OK"), onPressed: (){
+                var directory = new Directory("${parentDir.path}/${_controller.text}");
+                directory.create();
+                initDirectory(directory.path);
+                jumpToPosition(true);
+                Navigator.of(context).pop();
+              },)
+            ]
+        ));
+  }
+
+  void _onSave() async {
+    var manager = await FileManager.get(context);
+    manager.setImgDownloadDir(parentDir.path);
   }
 }
