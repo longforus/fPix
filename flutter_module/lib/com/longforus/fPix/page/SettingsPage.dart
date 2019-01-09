@@ -1,4 +1,5 @@
 import 'package:fPix/com/longforus/fPix/utils/FileManager.dart';
+import 'package:fPix/com/longforus/fPix/view/DirSelector.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -87,6 +88,9 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 
   void _onChangeImageDownloadDir() {
-    //todo change dir
+    Navigator.push(context, MaterialPageRoute(builder: (BuildContext context)
+    {
+        return new DirSelector();
+    }));
   }
 }
