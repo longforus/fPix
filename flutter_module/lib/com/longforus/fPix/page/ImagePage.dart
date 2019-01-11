@@ -86,7 +86,7 @@ class ImageTopBarState extends State<ImageTopBar> {
 
   void _go2PhotoPage() {
     Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) {
-      return new PhotoViewPage(topImgUrl);
+      return new PhotoViewPage( topImgUrl,);
     }));
   }
 

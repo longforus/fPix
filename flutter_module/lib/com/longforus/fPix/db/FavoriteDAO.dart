@@ -25,7 +25,7 @@ class FavoriteDao {
           onCreate: (Database db, int version) async {
         // When creating the db, create the table
         await db.execute(
-            'CREATE TABLE FavoriteTable (id INTEGER PRIMARY KEY,imgId INTEGER,largeImageURL TEXT)');
+            'CREATE TABLE FavoriteTable (id INTEGER PRIMARY KEY,imgId INTEGER,tags TEXT,pageURL TEXT,largeImageURL TEXT)');
       });
     }
     return mDb;
@@ -35,13 +35,29 @@ class FavoriteDao {
     await mDb.close();
   }
 
-  Future<int> insert(int id, String largeImageURL) {
+
+  Future<List<Map<String, dynamic>>> getAllImgUrl() async {
+    var database = await getDb();
+     var list = await database.query('FavoriteTable');
+    List<Map<String, dynamic>> result = new List();
+     list.forEach((item){
+       Map<String, dynamic> map = new Map();
+       item.forEach((k,v){
+         map[k] = v;
+       });
+       map['id']=item['imgId'];
+       result.add(map);
+     });
+     return result;
+  }
+
+  Future<int> insert(int id,String tags,String pageURL, String largeImageURL) {
     return getDb().then((db) {
       return db.transaction((txn) async {
         int resultId = await txn.rawInsert(
-            'INSERT INTO FavoriteTable (imgId, largeImageURL) '
-            'VALUES (?,?)',
-            [id, largeImageURL]);
+            'INSERT INTO FavoriteTable (imgId,tags,pageURL, largeImageURL) '
+            'VALUES (?,?,?,?)',
+            [id,tags,pageURL, largeImageURL]);
         print('inserted: $resultId');
         return resultId;
       });

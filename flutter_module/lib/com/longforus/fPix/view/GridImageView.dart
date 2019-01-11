@@ -136,7 +136,7 @@ class _ImageGridDelegateState extends State<ImageGridDelegate> {
 
   void _onCardTap(Map<String, dynamic> item) {
     Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) {
-      return new PhotoViewPage(item);
+      return new PhotoViewPage( item,);
     }));
   }
 
@@ -191,7 +191,7 @@ class _ImageGridDelegateState extends State<ImageGridDelegate> {
                                 fit: BoxFit.cover)),
                       )),
                   onTap: () {
-                    if (dataList.isNotEmpty && dataList.length - 1 > index) {
+                    if (dataList.isNotEmpty && dataList.length - 1 >= index) {
                       _onCardTap(dataList[index]);
                     }
                   },

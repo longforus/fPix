@@ -12,8 +12,7 @@ import 'package:fPix/com/longforus/fPix/utils/CacheUtil.dart';
 /// @author  XQ Yang
 /// @date 12/24/2018  2:09 PM
 class PhotoViewPage extends StatefulWidget {
-  final Map<String, dynamic> imageData;
-
+  Map<String, dynamic> imageData;
   PhotoViewPage(this.imageData);
 
   @override
@@ -26,13 +25,19 @@ class _PhotoViewPageState extends State<PhotoViewPage> {
 
   @override
   void initState() {
-    FavoriteDao.get().contains(widget.imageData['id']).then((v) {
-      if (mounted) {
-        setState(() {
-          favorited = v;
-        });
-      }
-    });
+    if (widget.imageData!=null) {
+      FavoriteDao.get().contains(widget.imageData['id']).then((v) {
+            if (mounted) {
+              setState(() {
+                favorited = v;
+              });
+            }
+          });
+    } else {
+      setState(() {
+        favorited = true;
+      });
+    }
     super.initState();
   }
 
@@ -87,7 +92,7 @@ class _PhotoViewPageState extends State<PhotoViewPage> {
                 favorited ? Icons.favorite : Icons.favorite_border,
                 color: favorited ? accentColor : Colors.grey[600],
               ),
-              onPressed: _onFavorite)
+              onPressed: widget.imageData!=null?_onFavorite:null)
         ],
       ),
       body: Stack(
@@ -105,7 +110,7 @@ class _PhotoViewPageState extends State<PhotoViewPage> {
             width: double.infinity,
             decoration: BoxDecoration(color: Colors.black26),
             child: Text(
-              widget.imageData['tags'],
+              widget.imageData['tags']==null?"":widget.imageData['tags'],
               style: TextStyle(
                 color: accentColor,
                 fontWeight: FontWeight.bold,
@@ -138,7 +143,7 @@ class _PhotoViewPageState extends State<PhotoViewPage> {
       });
     } else {
       FavoriteDao.get()
-          .insert(widget.imageData['id'], widget.imageData['largeImageURL'])
+          .insert(widget.imageData['id'],widget.imageData['tags'],widget.imageData['pageURL'], widget.imageData['largeImageURL'])
           .then((onValue) {
         if (onValue > 0) {
           setState(() {

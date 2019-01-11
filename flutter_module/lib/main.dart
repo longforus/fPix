@@ -1,3 +1,4 @@
+import 'package:fPix/com/longforus/fPix/page/FavoritePage.dart';
 import 'package:fPix/com/longforus/fPix/page/ImagePage.dart';
 import 'package:fPix/com/longforus/fPix/page/SettingsPage.dart';
 import 'package:fPix/com/longforus/fPix/widget/flutter_cache_manager.dart';
@@ -66,7 +67,7 @@ class _MyHomePageState extends State<MyHomePage> {
       case 1:
         return new ImagePage();
       case 2:
-        return new ImagePage();
+        return new FavoritePage();
       case 3:
         return new SettingsPage();
     }
