@@ -277,5 +277,6 @@ class _DirSelectorState extends State<DirSelector> {
   void _onSave() async {
     var manager = await FileManager.get(context);
     manager.setImgDownloadDir(parentDir.path);
+    Navigator.of(context).pop(parentDir.path);
   }
 }

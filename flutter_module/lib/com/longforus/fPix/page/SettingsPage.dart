@@ -2,7 +2,7 @@ import 'package:fPix/com/longforus/fPix/utils/FileManager.dart';
 import 'package:fPix/com/longforus/fPix/view/DirSelector.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({
@@ -17,10 +17,11 @@ class SettingsPage extends StatefulWidget {
 
 class _SettingsPageState extends State<SettingsPage> {
   String currentImgDownloadDir = "";
+  static const  githubUrl = 'https://github.com/longforus';
 
   void _getImgDownloadDir() async {
     var manager = await FileManager.get(context);
-    manager.getImgDownloadDir().then((dir){
+    manager.getImgDownloadDir().then((dir) {
       setState(() {
         currentImgDownloadDir = dir;
       });
@@ -72,25 +73,55 @@ class _SettingsPageState extends State<SettingsPage> {
                     child: Text(
                       "change",
                       textAlign: TextAlign.end,
-                      style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.blue
-                      ),
+                      style: TextStyle(fontSize: 14, color: Colors.blue),
                     ),
                   ),
                 ],
               ),
             )
           ],
+        ),
+        Container(
+          padding: const EdgeInsets.only(top: 400),
+          child: new Center(
+            child: new Column(
+              children: <Widget>[
+                new Text('Author:longforus',textAlign: TextAlign.center,),
+                new Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    new Text('github:'),
+                    new GestureDetector(child: new Text(githubUrl,style: new TextStyle(color: Colors
+                        .blue,decoration:TextDecoration.underline ),),
+                      onTap:onGo2Github ,)
+                  ],
+                )
+              ],
+            ),
+          ),
         )
       ],
     );
   }
 
-  void _onChangeImageDownloadDir() {
-    Navigator.push(context, MaterialPageRoute(builder: (BuildContext context)
-    {
-        return new DirSelector();
+  void _onChangeImageDownloadDir() async {
+    String path = await Navigator.push(context,
+        MaterialPageRoute(builder: (BuildContext context) {
+      return new DirSelector();
     }));
+    if (path != null && path.isNotEmpty) {
+      setState(() {
+        currentImgDownloadDir = path;
+      });
+    }
+  }
+
+  void onGo2Github() async {
+    if (await canLaunch(githubUrl)) {
+    await launch(githubUrl);
+    } else {
+    throw 'Could not launch $githubUrl';
+    }
   }
 }
