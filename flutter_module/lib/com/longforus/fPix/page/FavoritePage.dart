@@ -16,63 +16,76 @@ class FavoritePage extends StatefulWidget {
 }
 
 class _FavoritePageState extends State<FavoritePage> {
-
   List<Map<String, dynamic>> imgUrlList;
 
   @override
   void initState() {
     super.initState();
-      FavoriteDao.get().getAllImgUrl().then((list){
-        setState(() {
-          imgUrlList =list;
-        });
-        print(list);
+    FavoriteDao.get().getAllImgUrl().then((list) {
+      setState(() {
+        imgUrlList = list;
       });
+      print(list);
+    });
   }
 
-  List<Widget> _getFavoriteImageList(){
-    return List.generate(imgUrlList==null?0:imgUrlList.length, (index){
-      return new GestureDetector(
-        child: new Card(
-            margin: const EdgeInsets.all(2.0),
-            elevation: 5,
-            child: Container(
-              padding: const EdgeInsets.all(2.0),
-              decoration: BoxDecoration(
-                  shape: BoxShape.rectangle,
-                  borderRadius: BorderRadius.circular(4),
-                  image: DecorationImage(
-                      image: imgUrlList.isEmpty ||
-                          imgUrlList.length - 1 < index
-                          ? AssetImage(
-                        'images/placeholder.png',
-                      )
-                          : CachedNetworkImageProvider(
-                          imgUrlList[index]['largeImageURL']
-                      ),
-                      fit: BoxFit.cover)),
-            )),
-        onTap: () {
-          if (imgUrlList.isNotEmpty && imgUrlList.length - 1 >= index) {
-            Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) {
-              return new PhotoViewPage(imgUrlList[index],);
-            }));
-          }
+  List<Widget> _getFavoriteImageList() {
+    return List.generate(imgUrlList.length, (index) {
+            return new GestureDetector(
+              child: new Card(
+                  margin: const EdgeInsets.all(2.0),
+                  elevation: 5,
+                  child: Container(
+                    padding: const EdgeInsets.all(2.0),
+                    decoration: BoxDecoration(
+                        shape: BoxShape.rectangle,
+                        borderRadius: BorderRadius.circular(4),
+                        image: DecorationImage(
+                            image: imgUrlList.isEmpty ||
+                                    imgUrlList.length - 1 < index
+                                ? AssetImage(
+                                    'images/placeholder.png',
+                                  )
+                                : CachedNetworkImageProvider(
+                                    imgUrlList[index]['largeImageURL']),
+                            fit: BoxFit.cover)),
+                  )),
+              onTap: () {
+                onImageClick(index);
+              },
+            );
+          });
+  }
+
+  void onImageClick(int index){
+    if (imgUrlList.isNotEmpty && imgUrlList.length - 1 >= index) {
+      Navigator.push(context,
+          MaterialPageRoute(builder: (BuildContext context) {
+        return new PhotoViewPage(
+          imgUrlList[index],onFavoriteChanged: (changed){
+          setState(() {
+            imgUrlList.removeAt(index);
+          });
         },
-      );
-    });
+        );
+      }));
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-      appBar: AppBar(title: new Text('Favorite'),),
-      body: GridView.count(
+      appBar: AppBar(
+        title: new Text('Favorite'),
+      ),
+      body: imgUrlList == null || imgUrlList.length == 0
+          ? new Center(
+        child: new Text('Favorite List is Empty!'),
+      )
+          : GridView.count(
         crossAxisCount: 2,
         children: _getFavoriteImageList(),
       ),
     );
   }
-
-
 }

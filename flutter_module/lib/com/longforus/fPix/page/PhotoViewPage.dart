@@ -13,8 +13,8 @@ import 'package:fPix/com/longforus/fPix/utils/CacheUtil.dart';
 /// @date 12/24/2018  2:09 PM
 class PhotoViewPage extends StatefulWidget {
   Map<String, dynamic> imageData;
-  PhotoViewPage(this.imageData);
-
+  PhotoViewPage(this.imageData,{this.onFavoriteChanged});
+  ValueChanged<bool> onFavoriteChanged;
   @override
   State<StatefulWidget> createState() => _PhotoViewPageState();
 }
@@ -22,7 +22,6 @@ class PhotoViewPage extends StatefulWidget {
 class _PhotoViewPageState extends State<PhotoViewPage> {
   bool downloaded = false;
   bool favorited = false;
-
   @override
   void initState() {
     if (widget.imageData!=null) {
@@ -151,6 +150,9 @@ class _PhotoViewPageState extends State<PhotoViewPage> {
           });
         }
       });
+    }
+    if(widget.onFavoriteChanged!=null) {
+      widget.onFavoriteChanged(true);
     }
   }
 
