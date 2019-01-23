@@ -4,24 +4,27 @@ import 'dart:io';
 
 import 'package:fPix/com/longforus/fPix/Const.dart';
 import 'package:fPix/com/longforus/fPix/event/Events.dart';
+import 'package:fPix/com/longforus/fPix/utils/CacheUtil.dart';
 import 'package:fPix/com/longforus/fPix/utils/Toast.dart';
 import 'package:fPix/com/longforus/fPix/page/PhotoViewPage.dart';
 import 'package:fPix/com/longforus/fPix/widget/cached_network_image.dart';
 import 'package:flutter/material.dart';
+
 /// @describe
 /// @author  XQ Yang
 /// @date 12/20/2018  3:46 PM
 
 class ImageGridView extends StatelessWidget {
-  ImageGridView({Key key, this.imageType}) : super(key: key);
+  ImageGridView({Key key, this.imageType, this.isVideo = false}) : super(key: key);
 
   final String imageType;
-
+  final bool isVideo;
 
   @override
   Widget build(BuildContext context) {
     var imageGridDelegate = new ImageGridDelegate(
       imageType: imageType,
+      isVideo: this.isVideo,
     );
 
     return new RefreshIndicator(
@@ -43,9 +46,11 @@ class ImageGridView extends StatelessWidget {
 }
 
 class ImageGridDelegate extends StatefulWidget {
-  ImageGridDelegate({Key key, this.imageType}) : super(key: key);
+  ImageGridDelegate({Key key, this.imageType, this.isVideo = false}) : super(key:
+  key);
   final String imageType;
   Future<void> Function() onRefresh;
+  final bool isVideo;
 
   Future<void> _onRefresh() {
     return onRefresh();
@@ -68,8 +73,7 @@ class _ImageGridDelegateState extends State<ImageGridDelegate> {
 
   List dataList = new List();
 
-  _ImageGridDelegateState(String type)
-      : this.imageType = type.toLowerCase();
+  _ImageGridDelegateState(String type) : this.imageType = type.toLowerCase();
 
   @override
   void initState() {
@@ -78,7 +82,7 @@ class _ImageGridDelegateState extends State<ImageGridDelegate> {
   }
 
   void getImageData([Completer completer]) async {
-    var url = BASE_URL;
+    var url = widget.isVideo ? BASE_URL_VIDEO : BASE_URL;
     var httpClient = new HttpClient();
     bool success = false;
     url += "&category=$imageType";
@@ -92,10 +96,7 @@ class _ImageGridDelegateState extends State<ImageGridDelegate> {
         var jsonStr = await response.transform(utf8.decoder).join();
         var data = json.decode(jsonStr);
         resultList = data['hits'];
-        for (var value in resultList) {
-          print(value['previewURL']);
-          success = true;
-        }
+        success = resultList.isNotEmpty;
       } else {
         Toast.toast(context, 'Error getting status=${response.statusCode}');
       }
@@ -136,7 +137,9 @@ class _ImageGridDelegateState extends State<ImageGridDelegate> {
 
   void _onCardTap(Map<String, dynamic> item) {
     Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) {
-      return new PhotoViewPage( item,);
+      return new PhotoViewPage(
+        item,
+      );
     }));
   }
 
@@ -185,9 +188,9 @@ class _ImageGridDelegateState extends State<ImageGridDelegate> {
                                     ? AssetImage(
                                         'images/placeholder.png',
                                       )
-                                    : CachedNetworkImageProvider(
-                                        dataList[index]['previewURL']
-                                    ),
+                                    : CachedNetworkImageProvider(widget
+                                    .isVideo?getVideoImageUrl(dataList[index]):
+                                        dataList[index]['previewURL']),
                                 fit: BoxFit.cover)),
                       )),
                   onTap: () {
