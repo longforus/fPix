@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:fPix/com/longforus/fPix/Const.dart';
 import 'package:fPix/com/longforus/fPix/event/Events.dart';
+import 'package:fPix/com/longforus/fPix/page/VideoPlayerPage.dart';
 import 'package:fPix/com/longforus/fPix/utils/CacheUtil.dart';
 import 'package:fPix/com/longforus/fPix/utils/Toast.dart';
 import 'package:fPix/com/longforus/fPix/page/PhotoViewPage.dart';
@@ -137,7 +138,8 @@ class _ImageGridDelegateState extends State<ImageGridDelegate> {
 
   void _onCardTap(Map<String, dynamic> item) {
     Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) {
-      return new PhotoViewPage(
+      return widget.isVideo?new VideoPlayerPage(item)
+          :  new PhotoViewPage(
         item,
       );
     }));

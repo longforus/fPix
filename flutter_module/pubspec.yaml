@@ -33,6 +33,7 @@ dependencies:
   path_provider: ^0.4.1
   simple_permissions: ^0.1.9
   uuid: ^1.0.3
+  custom_chewie: ^0.7.0
 
 dev_dependencies:
   flutter_test:

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:fPix/com/longforus/fPix/Const.dart';
 import 'package:fPix/com/longforus/fPix/event/Events.dart';
 import 'package:fPix/com/longforus/fPix/page/PhotoViewPage.dart';
+import 'package:fPix/com/longforus/fPix/page/VideoPlayerPage.dart';
 import 'package:fPix/com/longforus/fPix/utils/CacheUtil.dart';
 import 'package:fPix/com/longforus/fPix/widget/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -47,7 +48,9 @@ class ImageTopBarState extends State<ImageTopBar> {
 
   void _go2PhotoPage() {
     Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) {
-      return new PhotoViewPage(
+      return widget.isVideo?new VideoPlayerPage(topData)
+          : new
+      PhotoViewPage(
         topData,
       );
     }));
