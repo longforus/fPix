@@ -186,7 +186,9 @@ class _ImageProviderResolver {
   _ImageProviderResolver({
     @required this.state,
     @required this.listener,
-  });
+  }){
+    _isl = ImageStreamListener(_handleImageChanged);
+  }
 
   final _CachedNetworkImageState state;
   final _ImageProviderResolverListener listener;
@@ -195,6 +197,7 @@ class _ImageProviderResolver {
 
   ImageStream _imageStream;
   ImageInfo _imageInfo;
+  ImageStreamListener _isl;
 
   void resolve(CachedNetworkImageProvider provider) {
     final ImageStream oldImageStream = _imageStream;
@@ -204,8 +207,8 @@ class _ImageProviderResolver {
             : null));
 
     if (_imageStream.key != oldImageStream?.key) {
-      oldImageStream?.removeListener(_handleImageChanged);
-      _imageStream.addListener(_handleImageChanged);
+      oldImageStream?.removeListener(_isl);
+      _imageStream.addListener(_isl);
     }
   }
 
@@ -214,8 +217,10 @@ class _ImageProviderResolver {
     listener();
   }
 
+
+
   void stopListening() {
-    _imageStream?.removeListener(_handleImageChanged);
+    _imageStream?.removeListener(_isl);
   }
 }
 
@@ -478,11 +483,11 @@ class CachedNetworkImageProvider
   ImageStreamCompleter load(CachedNetworkImageProvider key) {
     return new MultiFrameImageStreamCompleter(
         codec: _loadAsync(key),
-        scale: key.scale,
+        scale: key.scale/*,
         informationCollector: (StringBuffer information) {
           information.writeln('Image provider: $this');
           information.write('Image key: $key');
-        });
+        }*/);
   }
 
   Future<ui.Codec> _loadAsync(CachedNetworkImageProvider key) async {

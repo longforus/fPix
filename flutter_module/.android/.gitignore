@@ -3,6 +3,7 @@
 
 .packages
 .pub/
+.gradle
 
 .idea/
 .vagrant/
@@ -38,3 +39,4 @@ Icon?
 *.log
 build/
 .flutter-plugins
+local.properties
