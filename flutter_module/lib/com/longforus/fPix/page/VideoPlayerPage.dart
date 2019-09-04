@@ -54,8 +54,10 @@ class _VideoPlayerPageState extends State<VideoPlayerPage> {
         backgroundColor: Colors.grey,
         bufferedColor: Theme.of(context).accentColor,
       ),
-//       placeholder: Container(
-//         color: Colors.grey,
+//       placeholder: Center(
+//          child: Image(image: AssetImage(
+//            'images/placeholder.png',
+//          )),
 //       ),
       // autoInitialize: true,
     );

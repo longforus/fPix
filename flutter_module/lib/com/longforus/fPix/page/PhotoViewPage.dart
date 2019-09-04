@@ -76,7 +76,7 @@ class _PhotoViewPageState extends State<PhotoViewPage> {
       backgroundColor: Colors.black87,
       appBar: new AppBar(
         backgroundColor: Colors.transparent,
-        brightness: Brightness.light,
+        brightness: Brightness.dark,
         actions: <Widget>[
           new IconButton(
             icon: new Icon(

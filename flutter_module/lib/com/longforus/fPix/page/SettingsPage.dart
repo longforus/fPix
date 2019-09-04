@@ -36,72 +36,74 @@ class _SettingsPageState extends State<SettingsPage> {
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      children: <Widget>[
-        AppBar(
-          leading: new Icon(Icons.settings),
-          title: new Text('Settings'),
-        ),
-        new Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            new Container(
-              padding: EdgeInsets.all(8.0),
-              child: Text(
-                'Image download dir:',
-                textAlign: TextAlign.start,
-                style: TextStyle(
-                  fontSize: 15,
+    return Scaffold(
+      appBar:  AppBar(
+        leading: new Icon(Icons.settings),
+        title: new Text('Settings'),
+      ),
+      body: ListView(
+        children: <Widget>[
+          new Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              new Container(
+                padding: EdgeInsets.all(8.0),
+                child: Text(
+                  'Image download dir:',
+                  textAlign: TextAlign.start,
+                  style: TextStyle(
+                    fontSize: 15,
+                  ),
                 ),
               ),
-            ),
-            new Container(
-              padding: EdgeInsets.fromLTRB(12, 4, 12, 8),
-              child: new Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              new Container(
+                padding: EdgeInsets.fromLTRB(12, 4, 12, 8),
+                child: new Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Text(
+                      currentImgDownloadDir,
+                      textAlign: TextAlign.start,
+                      style: TextStyle(
+                        fontSize: 14,
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: _onChangeImageDownloadDir,
+                      child: Text(
+                        "change",
+                        textAlign: TextAlign.end,
+                        style: TextStyle(fontSize: 14, color: Colors.blue),
+                      ),
+                    ),
+                  ],
+                ),
+              )
+            ],
+          ),
+          Container(
+            padding: const EdgeInsets.only(top: 400),
+            child: new Center(
+              child: new Column(
                 children: <Widget>[
-                  Text(
-                    currentImgDownloadDir,
-                    textAlign: TextAlign.start,
-                    style: TextStyle(
-                      fontSize: 14,
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: _onChangeImageDownloadDir,
-                    child: Text(
-                      "change",
-                      textAlign: TextAlign.end,
-                      style: TextStyle(fontSize: 14, color: Colors.blue),
-                    ),
-                  ),
+                  new Text('Author:longforus',textAlign: TextAlign.center,),
+                  new Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      new Text('github:'),
+                      new GestureDetector(child: new Text(githubUrl,style: new TextStyle(color: Colors
+                          .blue,decoration:TextDecoration.underline ),),
+                        onTap:onGo2Github ,)
+                    ],
+                  )
                 ],
               ),
-            )
-          ],
-        ),
-        Container(
-          padding: const EdgeInsets.only(top: 400),
-          child: new Center(
-            child: new Column(
-              children: <Widget>[
-                new Text('Author:longforus',textAlign: TextAlign.center,),
-                new Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    new Text('github:'),
-                    new GestureDetector(child: new Text(githubUrl,style: new TextStyle(color: Colors
-                        .blue,decoration:TextDecoration.underline ),),
-                      onTap:onGo2Github ,)
-                  ],
-                )
-              ],
             ),
-          ),
-        )
-      ],
+          )
+        ],
+      ),
     );
   }
 
