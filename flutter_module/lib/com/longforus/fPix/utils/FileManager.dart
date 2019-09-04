@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:fPix/com/longforus/fPix/Const.dart';
@@ -18,28 +19,29 @@ class FileManager {
   static Future<FileManager> get(BuildContext context) async {
     if (_manager == null) {
       _manager = new FileManager();
-      await _manager._checkPermissions(context);
+      bool result = await _manager._checkPermissions(context);
+      if (!result) {
+        return null;
+      }
     }
     return _manager;
   }
 
-
-
-
-  void save2SdCard(File file) async {
+  Future<File> save2SdCard(File file) async {
     String savePath = await getImgDownloadDir();
     var fileName = file.path.substring(file.path.lastIndexOf('/') + 1);
     var save2File = new File('$savePath/$fileName');
-    save2File.exists().then((exists) {
+    save2File.exists().then((exists) async {
       if (!exists) {
         save2File.createSync(recursive: true);
       }
-      file.copy(save2File.path);
+      return await file.copy(save2File.path);
     });
+    return save2File;
   }
 
   Future<String> getImgDownloadDir() async {
-     SharedPreferences prefs = await SharedPreferences.getInstance();
+    SharedPreferences prefs = await SharedPreferences.getInstance();
     var savePath = prefs.getString(DEFAULT_IMG_SAVE_PATH_KEY);
     if (savePath == null || savePath.isEmpty) {
       var sDCardDir = (await getExternalStorageDirectory()).path;
@@ -48,19 +50,40 @@ class FileManager {
     return savePath;
   }
 
-  void setImgDownloadDir(String path)async {
+  void setImgDownloadDir(String path) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString(DEFAULT_IMG_SAVE_PATH_KEY, path);
   }
 
-  Future<void> _checkPermissions(BuildContext context) async {
+  Future<bool> _checkPermissions(BuildContext context) async {
     bool permission1 = await SimplePermissions.checkPermission(Permission.ReadExternalStorage);
     bool permission2 = await SimplePermissions.checkPermission(Permission.WriteExternalStorage);
     if (!permission1) {
-      await SimplePermissions.requestPermission(Permission.ReadExternalStorage);
+      PermissionStatus status = await SimplePermissions.requestPermission(Permission.ReadExternalStorage);
+      switch (status) {
+        case PermissionStatus.deniedNeverAsk:
+        case PermissionStatus.notDetermined:
+        case PermissionStatus.restricted:
+        case PermissionStatus.denied:
+          Toast.toast(context, "权限被拒绝");
+          break;
+        case PermissionStatus.authorized:
+          permission1 = true;
+      }
     }
     if (!permission2) {
-      await SimplePermissions.requestPermission(Permission.WriteExternalStorage);
+      PermissionStatus status = await SimplePermissions.requestPermission(Permission.WriteExternalStorage);
+      switch (status) {
+        case PermissionStatus.deniedNeverAsk:
+        case PermissionStatus.notDetermined:
+        case PermissionStatus.restricted:
+        case PermissionStatus.denied:
+          Toast.toast(context, "权限被拒绝");
+          break;
+        case PermissionStatus.authorized:
+          permission2 = true;
+      }
     }
+    return permission1 && permission2;
   }
 }

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:fPix/com/longforus/fPix/db/FavoriteDAO.dart';
 import 'package:fPix/com/longforus/fPix/utils/FileManager.dart';
 import 'package:fPix/com/longforus/fPix/utils/Toast.dart';
@@ -13,8 +15,11 @@ import 'package:fPix/com/longforus/fPix/utils/CacheUtil.dart';
 /// @date 12/24/2018  2:09 PM
 class PhotoViewPage extends StatefulWidget {
   Map<String, dynamic> imageData;
-  PhotoViewPage(this.imageData,{this.onFavoriteChanged});
+
+  PhotoViewPage(this.imageData, {this.onFavoriteChanged});
+
   ValueChanged<bool> onFavoriteChanged;
+
   @override
   State<StatefulWidget> createState() => _PhotoViewPageState();
 }
@@ -22,16 +27,17 @@ class PhotoViewPage extends StatefulWidget {
 class _PhotoViewPageState extends State<PhotoViewPage> {
   bool downloaded = false;
   bool favorited = false;
+
   @override
   void initState() {
-    if (widget.imageData!=null) {
+    if (widget.imageData != null) {
       FavoriteDao.get().contains(widget.imageData['id']).then((v) {
-            if (mounted) {
-              setState(() {
-                favorited = v;
-              });
-            }
+        if (mounted) {
+          setState(() {
+            favorited = v;
           });
+        }
+      });
     } else {
       setState(() {
         favorited = true;
@@ -91,16 +97,15 @@ class _PhotoViewPageState extends State<PhotoViewPage> {
                 favorited ? Icons.favorite : Icons.favorite_border,
                 color: favorited ? accentColor : Colors.grey[600],
               ),
-              onPressed: widget.imageData!=null?_onFavorite:null)
+              onPressed: widget.imageData != null ? _onFavorite : null)
         ],
       ),
       body: Stack(
         alignment: Alignment.bottomLeft,
         children: <Widget>[
           PhotoView(
-            imageProvider:
-                CachedNetworkImageProvider(widget.imageData['largeImageURL'],
-                    cacheKey: getCacheKey(widget.imageData, 'largeImageURL')),
+            imageProvider: CachedNetworkImageProvider(widget.imageData['largeImageURL'],
+                cacheKey: getCacheKey(widget.imageData, 'largeImageURL')),
             minScale: PhotoViewComputedScale.contained * 0.8,
             heroTag: widget.imageData['largeImageURL'],
           ),
@@ -109,7 +114,7 @@ class _PhotoViewPageState extends State<PhotoViewPage> {
             width: double.infinity,
             decoration: BoxDecoration(color: Colors.black26),
             child: Text(
-              widget.imageData['tags']==null?"":widget.imageData['tags'],
+              widget.imageData['tags'] == null ? "" : widget.imageData['tags'],
               style: TextStyle(
                 color: accentColor,
                 fontWeight: FontWeight.bold,
@@ -142,7 +147,8 @@ class _PhotoViewPageState extends State<PhotoViewPage> {
       });
     } else {
       FavoriteDao.get()
-          .insert(widget.imageData['id'],widget.imageData['tags'],widget.imageData['pageURL'], widget.imageData['largeImageURL'])
+          .insert(widget.imageData['id'], widget.imageData['tags'], widget.imageData['pageURL'],
+              widget.imageData['largeImageURL'])
           .then((onValue) {
         if (onValue > 0) {
           setState(() {
@@ -151,7 +157,7 @@ class _PhotoViewPageState extends State<PhotoViewPage> {
         }
       });
     }
-    if(widget.onFavoriteChanged!=null) {
+    if (widget.onFavoriteChanged != null) {
       widget.onFavoriteChanged(true);
     }
   }
@@ -167,15 +173,21 @@ class _PhotoViewPageState extends State<PhotoViewPage> {
 
   void _onDownload(BuildContext context) async {
     CacheManager.getInstance().then((manager) {
-      manager.getFile(widget.imageData['largeImageURL'],cacheKey: getCacheKey(widget.imageData, 'largeImageURL')).then((file) {
+      manager
+          .getFile(widget.imageData['largeImageURL'], cacheKey: getCacheKey(widget.imageData, 'largeImageURL'))
+          .then((file) {
         print('${file.path}');
         file.exists().then((b) {
           if (b) {
             try {
-              FileManager.get(context).then((manager){
-                manager.save2SdCard(file);
+              FileManager.get(context).then((manager) async {
+                if (manager != null) {
+                  File result = await manager.save2SdCard(file);
+                  Toast.toast(context, 'save to ${result.path}');
+                } else {
+                  Toast.toast(context, '存储权限未获取');
+                }
               });
-              Toast.toast(context, 'Save Success');
             } catch (e) {
               Toast.toast(context, 'Save Fail');
             }
@@ -200,14 +212,12 @@ class TagFlowDelegate extends FlowDelegate {
     for (int i = 0; i < context.childCount; i++) {
       var w = context.getChildSize(i).width + x + margin.right;
       if (w < context.size.width) {
-        context.paintChild(i,
-            transform: new Matrix4.translationValues(x, y, 0.0));
+        context.paintChild(i, transform: new Matrix4.translationValues(x, y, 0.0));
         x = w + margin.left;
       } else {
         x = margin.left;
         y += context.getChildSize(i).height + margin.top + margin.bottom;
-        context.paintChild(i,
-            transform: new Matrix4.translationValues(x, y, 0.0));
+        context.paintChild(i, transform: new Matrix4.translationValues(x, y, 0.0));
         x += context.getChildSize(i).width + margin.left + margin.right;
       }
     }
