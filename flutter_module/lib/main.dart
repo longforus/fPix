@@ -1,11 +1,31 @@
+import 'dart:async';
+
 import 'package:fPix/com/longforus/fPix/page/FavoritePage.dart';
 import 'package:fPix/com/longforus/fPix/page/ImagePage.dart';
 import 'package:fPix/com/longforus/fPix/page/SettingsPage.dart';
 import 'package:fPix/com/longforus/fPix/page/VideoPage.dart';
 import 'package:fPix/com/longforus/fPix/widget/flutter_cache_manager.dart';
+import 'package:fPix/com/longforus/fPix/SentryConfig.dart' as sentryConfig;
 import 'package:flutter/material.dart';
 
-void main() => runApp(MyApp());
+void main() {
+  runZoned<Future<void>>(() async {
+    runApp(MyApp());
+    // This captures errors reported by the Flutter framework.
+    FlutterError.onError = (FlutterErrorDetails details) {
+      if (sentryConfig.isInDebugMode) {
+        // In development mode, simply print to console.
+        FlutterError.dumpErrorToConsole(details);
+      } else {
+        // In production mode, report to the application zone to report to
+        // Sentry.
+        Zone.current.handleUncaughtError(details.exception, details.stack);
+      }
+    };
+  }, onError: (error, stacktrace) {
+    sentryConfig.reportError(error, stacktrace);
+  });
+}
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
@@ -14,14 +34,14 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'fPix',
       theme: ThemeData(
-          primaryColorBrightness:Brightness.dark,
-          primaryColor:  Color(0xff03A9F4),
-          primaryColorDark: Color(0xff0288D1),
-          primaryColorLight: Color(0xffB3E5FC),
-          accentColor: Color(0xff8BC34A),
-          dividerColor: Color(0xffBDBDBD),
-          dialogBackgroundColor: Color.fromARGB(80, 255, 255, 255),
-          ),
+        primaryColorBrightness: Brightness.dark,
+        primaryColor: Color(0xff03A9F4),
+        primaryColorDark: Color(0xff0288D1),
+        primaryColorLight: Color(0xffB3E5FC),
+        accentColor: Color(0xff8BC34A),
+        dividerColor: Color(0xffBDBDBD),
+        dialogBackgroundColor: Color.fromARGB(80, 255, 255, 255),
+      ),
       home: MyHomePage(title: 'fPix'),
     );
   }
@@ -58,8 +78,7 @@ class _MyHomePageState extends State<MyHomePage> {
             });
           },
         ),
-        body: _getPage(
-            selectedPageIndex) // This trailing comma makes auto-formatting nicer
+        body: _getPage(selectedPageIndex) // This trailing comma makes auto-formatting nicer
         // for build methods.
         );
   }

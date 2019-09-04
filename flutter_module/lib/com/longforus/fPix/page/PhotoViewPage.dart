@@ -14,7 +14,7 @@ import 'package:fPix/com/longforus/fPix/utils/CacheUtil.dart';
 /// @author  XQ Yang
 /// @date 12/24/2018  2:09 PM
 class PhotoViewPage extends StatefulWidget {
-  Map<String, dynamic> imageData;
+   Map<String, dynamic> imageData;
 
   PhotoViewPage(this.imageData, {this.onFavoriteChanged});
 
