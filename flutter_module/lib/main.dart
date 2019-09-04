@@ -14,11 +14,14 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'fPix',
       theme: ThemeData(
-          primarySwatch: Colors.blue,
-          primaryColorDark: Colors.blue[800],
-          primaryColorLight: Colors.blue[200],
-          primaryColor: Colors.blue,
-          accentColor: Colors.lightGreen),
+          primaryColorBrightness:Brightness.dark,
+          primaryColor:  Color(0xff03A9F4),
+          primaryColorDark: Color(0xff0288D1),
+          primaryColorLight: Color(0xffB3E5FC),
+          accentColor: Color(0xff8BC34A),
+          dividerColor: Color(0xffBDBDBD),
+          dialogBackgroundColor: Color.fromARGB(80, 255, 255, 255),
+          ),
       home: MyHomePage(title: 'fPix'),
     );
   }

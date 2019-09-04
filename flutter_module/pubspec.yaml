@@ -33,7 +33,8 @@ dependencies:
   path_provider: ^0.4.1
   simple_permissions: ^0.1.9
   uuid: ^1.0.3
-  custom_chewie: ^0.7.0
+#  custom_chewie: ^0.7.0
+  chewie: ^0.9.7
   http: ^0.12.0+2
 
 dev_dependencies:

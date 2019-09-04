@@ -17,8 +17,8 @@ Depends on all your plugins, and provides a function to register them.
   s.source           = { :path => '.' }
   s.public_header_files = './Classes/**/*.h'
   s.dependency 'Flutter'
-  s.dependency 'flutter_android_pip'
   s.dependency 'path_provider'
+  s.dependency 'screen'
   s.dependency 'shared_preferences'
   s.dependency 'simple_permissions'
   s.dependency 'sqflite'

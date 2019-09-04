@@ -29,6 +29,13 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "1.1.2"
+  chewie:
+    dependency: "direct main"
+    description:
+      name: chewie
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "0.9.7"
   collection:
     dependency: transitive
     description:
@@ -57,13 +64,6 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "0.1.2"
-  custom_chewie:
-    dependency: "direct main"
-    description:
-      name: custom_chewie
-      url: "https://pub.flutter-io.cn"
-    source: hosted
-    version: "0.7.0"
   event_bus:
     dependency: "direct main"
     description:
@@ -76,13 +76,6 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  flutter_android_pip:
-    dependency: transitive
-    description:
-      name: flutter_android_pip
-      url: "https://pub.flutter-io.cn"
-    source: hosted
-    version: "0.0.2"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -165,6 +158,13 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "0.20.0"
+  screen:
+    dependency: transitive
+    description:
+      name: screen
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "0.0.5"
   shared_preferences:
     dependency: "direct main"
     description:
@@ -274,7 +274,7 @@ packages:
       name: video_player
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "0.6.5"
+    version: "0.10.2+1"
 sdks:
   dart: ">=2.2.2 <3.0.0"
   flutter: ">=1.5.9-pre.94 <2.0.0"
