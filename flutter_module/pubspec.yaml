@@ -54,9 +54,7 @@ flutter:
   # To add Flutter specific assets to your application, add an assets section, 
   # like this:
   assets:
-    - images/gift.jpg
-    - images/placeholder.png
-    - images/folder.png
+    - images/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.io/assets-and-images/#resolution-aware.

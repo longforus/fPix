@@ -35,21 +35,21 @@ class _FavoritePageState extends State<FavoritePage> {
               child: new Card(
                   margin: const EdgeInsets.all(2.0),
                   elevation: 5,
-                  child: Container(
+                  child: Hero(tag: imgUrlList[index]['largeImageURL'], child: Container(
                     padding: const EdgeInsets.all(2.0),
                     decoration: BoxDecoration(
                         shape: BoxShape.rectangle,
                         borderRadius: BorderRadius.circular(4),
                         image: DecorationImage(
                             image: imgUrlList.isEmpty ||
-                                    imgUrlList.length - 1 < index
+                                imgUrlList.length - 1 < index
                                 ? AssetImage(
-                                    'images/placeholder.png',
-                                  )
+                              'images/placeholder.png',
+                            )
                                 : CachedNetworkImageProvider(
-                                    imgUrlList[index]['largeImageURL']),
+                                imgUrlList[index]['largeImageURL']),
                             fit: BoxFit.cover)),
-                  )),
+                  ))),
               onTap: () {
                 onImageClick(index);
               },
