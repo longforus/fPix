@@ -48,11 +48,11 @@ class ImageTopBarState extends State<ImageTopBar> {
 
   void _go2PhotoPage() {
     Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) {
-      return widget.isVideo?new VideoPlayerPage(topData)
-          : new
-      PhotoViewPage(
-        topData,
-      );
+      return widget.isVideo
+          ? new VideoPlayerPage(topData)
+          : new PhotoViewPage(
+              topData,
+            );
     }));
   }
 
@@ -71,34 +71,33 @@ class ImageTopBarState extends State<ImageTopBar> {
               )
             : GestureDetector(
                 child: CachedNetworkImage(
-                  imageUrl: widget.isVideo
-                      ? getVideoImageUrl(topData)
-                      : topData['webformatURL'],
-                  cacheKey: widget.isVideo
-                      ? getVideoImageUrl(topData)
-                      : getCacheKey(topData, 'webformatURL'),
+                  imageUrl: widget.isVideo ? getVideoImageUrl(topData) : topData['webformatURL'],
+                  cacheKey: widget.isVideo ? getVideoImageUrl(topData) : getCacheKey(topData, 'webformatURL'),
                   fit: BoxFit.cover,
                 ),
                 onTap: _go2PhotoPage,
               ),
       ),
       actions: <Widget>[
-        topData != null
-            ? new Container(
-                padding: const EdgeInsets.all(8.0),
-                child: new Row(
+        new Container(
+          padding: const EdgeInsets.all(8.0),
+          child: topData != null
+              ? new Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     new Icon(
                       Icons.thumb_up,
                       size: 15,
-                      color: Colors.red,
+                      color: Theme.of(context).accentColor,
                     ),
                     new Text(' ${topData['likes']}')
                   ],
+                )
+              : new Icon(
+                  Icons.thumb_up,
+                  size: 15,
                 ),
-              )
-            : new Icon(Icons.thumb_up)
+        )
       ],
       bottom: TabBar(
         isScrollable: true,

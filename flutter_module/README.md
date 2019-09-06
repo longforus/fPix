@@ -1,6 +1,6 @@
 # flutter_module
 
-A new flutter module project.
+A free image video viewing flutter module project.
 
 ## Getting Started
 

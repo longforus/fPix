@@ -17,18 +17,19 @@ import 'dart:developer';
 /// @date 12/20/2018  3:46 PM
 
 class ImageGridView extends StatelessWidget {
-  ImageGridView({Key key, this.imageType, this.isVideo = false}) : super(key: key);
-
-  final String imageType;
-  final bool isVideo;
-
-  @override
-  Widget build(BuildContext context) {
-    var imageGridDelegate = new ImageGridDelegate(
+  ImageGridView({Key key, this.imageType, this.isVideo = false}) : super(key: key) {
+    imageGridDelegate = new ImageGridDelegate(
       imageType: imageType,
       isVideo: this.isVideo,
     );
+  }
 
+  final String imageType;
+  final bool isVideo;
+  ImageGridDelegate imageGridDelegate;
+
+  @override
+  Widget build(BuildContext context) {
     return new RefreshIndicator(
       child: SafeArea(
         top: true,
@@ -45,16 +46,25 @@ class ImageGridView extends StatelessWidget {
       onRefresh: imageGridDelegate._onRefresh,
     );
   }
+
+  void showSearchDialog(BuildContext context, void Function(String searchContent) callback) {
+    imageGridDelegate.showSearchDialog(context, callback);
+  }
+
+  void clearSearchStatus() {
+    imageGridDelegate._onRefresh();
+  }
+
 }
 
 class ImageGridDelegate extends StatefulWidget {
   ImageGridDelegate({Key key, this.imageType, this.isVideo = false}) : super(key: key);
   final String imageType;
-  Future<void> Function() onRefresh;
+  Future<void> Function(String keyword) onRefresh;
   final bool isVideo;
 
   Future<void> _onRefresh() {
-    return onRefresh();
+    return onRefresh(null);
   }
 
   @override
@@ -63,6 +73,47 @@ class ImageGridDelegate extends StatefulWidget {
     onRefresh = imageGridDelegateState._onRefresh;
     return imageGridDelegateState;
   }
+
+  Future<void> showSearchDialog(BuildContext context, void Function(String searchContent) callback) async {
+    String content;
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Search in $imageType"),
+          backgroundColor: Colors.white70,
+          content: TextField(
+            decoration: InputDecoration(
+              labelText: 'KeyWord',
+            ),
+            onChanged: (str) {
+              content = str;
+            },
+          ),
+          actions: <Widget>[
+            FlatButton(
+              child: Text('cancle'),
+              onPressed: () {
+                Navigator.of(context).pop();
+                callback(null);
+              },
+            ),
+            FlatButton(
+              child: Text('go'),
+              onPressed: () {
+//                          debugger();
+                onRefresh(content);
+                Navigator.of(context).pop();
+                callback(content);
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
 }
 
 class _ImageGridDelegateState extends State<ImageGridDelegate> {
@@ -71,7 +122,7 @@ class _ImageGridDelegateState extends State<ImageGridDelegate> {
 
   int currentPageIndex = 1;
   final pageSize = 10;
-
+  String keyword;
   List dataList = new List();
 
   _ImageGridDelegateState(String type) : this.imageType = type.toLowerCase();
@@ -89,6 +140,9 @@ class _ImageGridDelegateState extends State<ImageGridDelegate> {
     url += "&category=$imageType";
     url += "&page=$currentPageIndex";
     url += "&per_page=$pageSize";
+    if (keyword != null && keyword.isNotEmpty) {
+      url += "&q=$keyword";
+    }
     List resultList;
     try {
       var request = await httpClient.getUrl(Uri.parse(url));
@@ -121,8 +175,9 @@ class _ImageGridDelegateState extends State<ImageGridDelegate> {
     }
   }
 
-  Future<void> _onRefresh() {
+  Future<void> _onRefresh(String keyword) {
     currentPageIndex = 1;
+    this.keyword = keyword;
     dataList.clear();
     Completer computer = Completer<void>();
     getImageData(computer);
