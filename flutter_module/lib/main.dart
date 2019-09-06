@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:fPix/com/longforus/fPix/page/FavoritePage.dart';
 import 'package:fPix/com/longforus/fPix/page/ImagePage.dart';
 import 'package:fPix/com/longforus/fPix/page/SettingsPage.dart';
-import 'package:fPix/com/longforus/fPix/page/VideoPage.dart';
 import 'package:fPix/com/longforus/fPix/widget/flutter_cache_manager.dart';
 import 'package:fPix/com/longforus/fPix/SentryConfig.dart' as sentryConfig;
 import 'package:flutter/material.dart';
@@ -86,9 +85,9 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget _getPage(int selectedPageIndex) {
     switch (selectedPageIndex) {
       case 0:
-        return new ImagePage();
+        return new ImageAndVideoPage(key: Key("image") ,);
       case 1:
-        return new VideoPage();
+        return new ImageAndVideoPage(key: Key("video"),isVideo: true,);
       case 2:
         return new FavoritePage();
       case 3:

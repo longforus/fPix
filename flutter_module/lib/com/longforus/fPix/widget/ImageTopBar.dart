@@ -9,9 +9,9 @@ import 'package:fPix/com/longforus/fPix/widget/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 class ImageTopBar extends StatefulWidget {
-  ImageTopBar({Key key, this.isVideo}) : super(key: key);
+  ImageTopBar({Key key, this.isVideo,this.tabController}) : super(key: key);
   final bool isVideo;
-
+  final TabController tabController;
   @override
   State<StatefulWidget> createState() {
     return new ImageTopBarState();
@@ -100,6 +100,7 @@ class ImageTopBarState extends State<ImageTopBar> {
         )
       ],
       bottom: TabBar(
+        controller: widget.tabController,
         isScrollable: true,
         tabs: typeList.map((String str) {
           return new Tab(

@@ -3,6 +3,9 @@ import 'package:fPix/com/longforus/fPix/view/GridImageView.dart';
 import 'package:fPix/com/longforus/fPix/widget/ImageTopBar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+///
+///and image using one page
+@deprecated
 class VideoPage extends StatefulWidget {
   const VideoPage({
     Key key,

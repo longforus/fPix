@@ -6,41 +6,59 @@ import 'package:fPix/com/longforus/fPix/widget/ImageTopBar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
-class ImagePage extends StatefulWidget {
-  const ImagePage({
-    Key key,
-  }) : super(key: key);
+class ImageAndVideoPage extends StatefulWidget {
+  const ImageAndVideoPage({Key key, this.isVideo = false}) : super(key: key);
+  final bool isVideo;
 
   @override
   State<StatefulWidget> createState() {
-    return new _ImagePageState();
+    return new _ImageAndVideoPageState(isVideo);
   }
 }
 
-class _ImagePageState extends State<ImagePage> with TickerProviderStateMixin {
+class _ImageAndVideoPageState extends State<ImageAndVideoPage> with SingleTickerProviderStateMixin {
   String searchContent;
-
+  final bool isVideo;
   TabController _tabController;
   TabBarView tabBarView;
   ImageTopBar imageTopBar;
 
-
-
+  void _onTabChange() {
+    debugPrint("onchangge  $searchContent");
+    if (searchContent != null) {
+      ImageGridView currentImageGridView = tabBarView.children[_tabController.index];
+      currentImageGridView.clearSearchStatus();
+      setState(() {
+        searchContent = null;
+      });
+    }
+  }
 
   @override
   void initState() {
     _tabController = TabController(length: typeList.length, vsync: this);
+    _tabController.addListener(_onTabChange);
     tabBarView = TabBarView(
       // These are the contents of the tab views, below the tabs.
       children: typeList.map((String type) {
-        return new ImageGridView(imageType: type);
+        return new ImageGridView(
+          imageType: type,
+          isVideo: isVideo,
+        );
       }).toList(),
       controller: _tabController,
     );
     imageTopBar = new ImageTopBar(
-      isVideo: false,
+      isVideo: isVideo,
+      tabController: _tabController,
     );
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _tabController.removeListener(_onTabChange);
+    super.dispose();
   }
 
   @override
@@ -101,4 +119,6 @@ class _ImagePageState extends State<ImagePage> with TickerProviderStateMixin {
             ),
     );
   }
+
+  _ImageAndVideoPageState(this.isVideo);
 }
