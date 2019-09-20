@@ -17,7 +17,7 @@ class SettingsPage extends StatefulWidget {
 
 class _SettingsPageState extends State<SettingsPage> {
   String currentImgDownloadDir = "";
-  static const  githubUrl = 'https://github.com/longforus';
+  static const githubUrl = 'https://github.com/longforus';
 
   void _getImgDownloadDir() async {
     var manager = await FileManager.get(context);
@@ -37,11 +37,11 @@ class _SettingsPageState extends State<SettingsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar:  AppBar(
+      appBar: AppBar(
         leading: new Icon(Icons.settings),
         title: new Text('Settings'),
       ),
-      body: ListView(
+      body: Column(
         children: <Widget>[
           new Column(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -83,33 +83,39 @@ class _SettingsPageState extends State<SettingsPage> {
             ],
           ),
           Container(
-            padding: const EdgeInsets.only(top: 400),
-            child: new Center(
-              child: new Column(
-                children: <Widget>[
-                  new Text('Author:longforus',textAlign: TextAlign.center,),
-                  new Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      new Text('github:'),
-                      new GestureDetector(child: new Text(githubUrl,style: new TextStyle(color: Colors
-                          .blue,decoration:TextDecoration.underline ),),
-                        onTap:onGo2Github ,)
-                    ],
-                  )
-                ],
-              ),
+            child: new Column(
+              children: <Widget>[
+                new Text(
+                  'Author:longforus',
+                  textAlign: TextAlign.center,
+                ),
+                new Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    new Text('github:'),
+                    new GestureDetector(
+                      child: new Text(
+                        githubUrl,
+                        style: new TextStyle(color: Colors.blue, decoration: TextDecoration.underline),
+                      ),
+                      onTap: onGo2Github,
+                    )
+                  ],
+                )
+              ],
+              mainAxisAlignment: MainAxisAlignment.end,
             ),
+            margin: EdgeInsets.only(bottom: 30),
           )
         ],
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
       ),
     );
   }
 
   void _onChangeImageDownloadDir() async {
-    String path = await Navigator.push(context,
-        MaterialPageRoute(builder: (BuildContext context) {
+    String path = await Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) {
       return new DirSelector();
     }));
     if (path != null && path.isNotEmpty) {
@@ -121,9 +127,9 @@ class _SettingsPageState extends State<SettingsPage> {
 
   void onGo2Github() async {
     if (await canLaunch(githubUrl)) {
-    await launch(githubUrl);
+      await launch(githubUrl);
     } else {
-    throw 'Could not launch $githubUrl';
+      throw 'Could not launch $githubUrl';
     }
   }
 }

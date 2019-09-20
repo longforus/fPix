@@ -85,9 +85,14 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget _getPage(int selectedPageIndex) {
     switch (selectedPageIndex) {
       case 0:
-        return new ImageAndVideoPage(key: Key("image") ,);
+        return new ImageAndVideoPage(
+          key: Key("image"),
+        );
       case 1:
-        return new ImageAndVideoPage(key: Key("video"),isVideo: true,);
+        return new ImageAndVideoPage(
+          key: Key("video"),
+          isVideo: true,
+        );
       case 2:
         return new FavoritePage();
       case 3:
