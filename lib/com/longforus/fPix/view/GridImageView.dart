@@ -54,7 +54,6 @@ class ImageGridView extends StatelessWidget {
   void clearSearchStatus() {
     imageGridDelegate._onRefresh();
   }
-
 }
 
 class ImageGridDelegate extends StatefulWidget {
@@ -113,7 +112,6 @@ class ImageGridDelegate extends StatefulWidget {
       },
     );
   }
-
 }
 
 class _ImageGridDelegateState extends State<ImageGridDelegate> {
@@ -273,8 +271,13 @@ class _ImageGridDelegateState extends State<ImageGridDelegate> {
                   ? AssetImage(
                       'images/placeholder.png',
                     )
-                  : CachedNetworkImageProvider(
-                      widget.isVideo ? getVideoImageUrl(dataList[index]) : dataList[index]['previewURL']),
+                  : FadeInImage(
+                          placeholder: AssetImage(
+                            'images/placeholder.png',
+                          ),
+                          image: CachedNetworkImageProvider(
+                              widget.isVideo ? getVideoImageUrl(dataList[index]) : dataList[index]['previewURL']))
+                      .image,
               fit: BoxFit.cover)),
     );
   }

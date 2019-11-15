@@ -38,6 +38,7 @@ class _SettingsPageState extends State<SettingsPage> {
 
   @override
   Widget build(BuildContext context) {
+    const bulueTestStyle = TextStyle(color: Colors.lightBlue);
     return Scaffold(
       appBar: AppBar(
         leading: new Icon(Icons.settings),
@@ -64,7 +65,8 @@ class _SettingsPageState extends State<SettingsPage> {
                 child: new Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
-                    Expanded(child:  Text(
+                    Expanded(
+                        child: Text(
                       currentImgDownloadDir,
                       textAlign: TextAlign.start,
                       style: TextStyle(
@@ -72,11 +74,13 @@ class _SettingsPageState extends State<SettingsPage> {
                       ),
                       softWrap: true,
                     )),
-                    CupertinoButton(
+                    FlatButton.icon(
                       onPressed: _onChangeImageDownloadDir,
-                      child: Text(
+                      icon: Icon(Icons.image,color: Colors.lightBlue,),
+                      label: Text(
                         "change",
                         textAlign: TextAlign.end,
+                        style: bulueTestStyle,
                       ),
                     ),
                   ],
@@ -93,16 +97,16 @@ class _SettingsPageState extends State<SettingsPage> {
                 ),
               ),
               new Container(
-                padding: EdgeInsets.fromLTRB(12, 4, 12, 8),
-                alignment: Alignment.bottomRight,
-                child: CupertinoButton(onPressed: (){
-                  FlutterBoost.singleton
-                      .open("sample://nativePage", urlParams: {
-                    "query": {"aaa": "bbb"}
-                  });
-                }
-                , child: new Text("go 2 native page"))
-              ),
+                  padding: EdgeInsets.fromLTRB(12, 4, 12, 8),
+                  alignment: Alignment.bottomRight,
+                  child: FlatButton.icon(
+                      onPressed: () {
+                        FlutterBoost.singleton.open("sample://nativePage", urlParams: {
+                          "query": {"aaa": "bbb"}
+                        });
+                      },
+                      icon: Icon(Icons.subdirectory_arrow_right,color: Colors.lightBlue,),
+                      label: new Text("go 2 native page",style: bulueTestStyle,))),
             ],
           ),
           Container(
