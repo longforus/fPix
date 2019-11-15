@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@android:color/white"
+    android:gravity="left"
+    android:orientation="vertical"
+    tools:context=".MainActivity"
+    >
+
+    <TextView
+        android:id="@+id/info"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="80dp"
+        android:text="native_info"
+        android:textColor="@android:color/holo_blue_dark"
+        android:textSize="28sp"
+        />
+
+    <View
+        android:layout_width="1dp"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        />
+
+    <TextView
+        android:id="@+id/open_native"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="8.0dp"
+        android:background="@android:color/holo_orange_dark"
+        android:padding="8.0dp"
+        android:text="open_native"
+        android:textAllCaps="false"
+        android:textColor="@android:color/black"
+        android:textSize="16sp"
+        />
+
+    <TextView
+        android:id="@+id/open_flutter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="8.0dp"
+        android:background="@android:color/holo_orange_dark"
+        android:padding="8.0dp"
+        android:text="open_flutter"
+        android:textAllCaps="false"
+        android:textColor="@android:color/black"
+        android:textSize="16sp"
+        />
+
+    <TextView
+        android:id="@+id/open_flutter_fragment"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8.0dp"
+        android:layout_marginTop="8.0dp"
+        android:layout_marginRight="8.0dp"
+        android:layout_marginBottom="80.0dp"
+        android:background="@android:color/holo_orange_dark"
+        android:padding="8.0dp"
+        android:text="open_flutter_fragment"
+        android:textAllCaps="false"
+        android:textColor="@android:color/black"
+        android:textSize="16sp"
+        />
+
+</LinearLayout>

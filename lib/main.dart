@@ -7,7 +7,7 @@ import 'package:fPix/com/longforus/fPix/widget/flutter_cache_manager.dart';
 import 'package:fPix/com/longforus/fPix/SentryConfig.dart' as sentryConfig;
 import 'package:flutter/material.dart';
 import 'package:flutter_boost/flutter_boost.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_boost/support/logger.dart';
 
 void main() {
   runZoned<Future<void>>(() async {
@@ -27,6 +27,7 @@ void main() {
     sentryConfig.reportError(error, stacktrace);
   });
 }
+/*
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
@@ -50,8 +51,8 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+*/
 
-/*
 class MyApp extends StatefulWidget {
   // This widget is the root of your application.
   @override
@@ -66,7 +67,7 @@ class MyAppState extends State<MyApp>{
   void initState() {
     super.initState();
     FlutterBoost.singleton.registerPageBuilders({
-        'homePage': (pageName, params, _) => MyHomePage(title: "fPix",),
+        'homePage': (pageName, params, _) => MyHomePage(title: params["pageTitle"],),
     });
   }
 
@@ -83,16 +84,17 @@ class MyAppState extends State<MyApp>{
             dividerColor: Color(0xffBDBDBD),
             dialogBackgroundColor: Color.fromARGB(80, 255, 255, 255),
         ),
+        home: Container(),
         builder: FlutterBoost.init(postPush: _onRoutePushed),
     );
   }
 
     void _onRoutePushed(
         String pageName, String uniqueId, Map params, Route route, Future _) {
+        Logger.log("_onRoutePushed, name $pageName");
     }
 
 }
-*/
 
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key, this.title}) : super(key: key);

@@ -1,7 +1,9 @@
 import 'package:fPix/com/longforus/fPix/utils/FileManager.dart';
 import 'package:fPix/com/longforus/fPix/view/DirSelector.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_boost/flutter_boost.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -70,17 +72,37 @@ class _SettingsPageState extends State<SettingsPage> {
                       ),
                       softWrap: true,
                     )),
-                    GestureDetector(
-                      onTap: _onChangeImageDownloadDir,
+                    CupertinoButton(
+                      onPressed: _onChangeImageDownloadDir,
                       child: Text(
                         "change",
                         textAlign: TextAlign.end,
-                        style: TextStyle(fontSize: 14, color: Colors.blue),
                       ),
                     ),
                   ],
                 ),
-              )
+              ),
+              new Container(
+                padding: EdgeInsets.all(8.0),
+                child: Text(
+                  'Test Open native Page :',
+                  textAlign: TextAlign.start,
+                  style: TextStyle(
+                    fontSize: 15,
+                  ),
+                ),
+              ),
+              new Container(
+                padding: EdgeInsets.fromLTRB(12, 4, 12, 8),
+                alignment: Alignment.bottomRight,
+                child: CupertinoButton(onPressed: (){
+                  FlutterBoost.singleton
+                      .open("sample://nativePage", urlParams: {
+                    "query": {"aaa": "bbb"}
+                  });
+                }
+                , child: new Text("go 2 native page"))
+              ),
             ],
           ),
           Container(
