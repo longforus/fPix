@@ -62,13 +62,14 @@ class _SettingsPageState extends State<SettingsPage> {
                 child: new Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
-                    Text(
+                    Expanded(child:  Text(
                       currentImgDownloadDir,
                       textAlign: TextAlign.start,
                       style: TextStyle(
                         fontSize: 14,
                       ),
-                    ),
+                      softWrap: true,
+                    )),
                     GestureDetector(
                       onTap: _onChangeImageDownloadDir,
                       child: Text(

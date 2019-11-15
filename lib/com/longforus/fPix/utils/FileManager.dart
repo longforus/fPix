@@ -62,6 +62,19 @@ class FileManager {
             case PermissionStatus.denied:
             case PermissionStatus.disabled:
             case PermissionStatus.unknown:
+                return _requestPermissions(context);
+            default:
+               return true;
+        }
+    }
+
+    Future<bool> _requestPermissions(BuildContext context) async {
+        Map<PermissionGroup, PermissionStatus> map = await PermissionHandler().requestPermissions([PermissionGroup.storage]);
+        switch(map[PermissionGroup.storage]) {
+            case PermissionStatus.restricted:
+            case PermissionStatus.denied:
+            case PermissionStatus.disabled:
+            case PermissionStatus.unknown:
                 Toast.toast(context, "权限被拒绝");
                 break;
             default:

@@ -88,6 +88,7 @@ flutter:
   # see https://flutter.io/custom-fonts/#from-packages
 
 
+  #在独立的app模式下,如果开启的话,会提示plugin找不到实现
   # This section identifies your Flutter project as a module meant for
   # embedding in a native host app.  These identifiers should _not_ ordinarily
   # be changed after generation - they are used to ensure that the tooling can

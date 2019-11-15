@@ -17,7 +17,7 @@ class _DirSelectorState extends State<DirSelector> {
   Directory parentDir;
   ScrollController controller = ScrollController();
   int count = 0; // 记录当前文件夹中以 . 开头的文件和文件夹
-  String sDCardDir;
+  String currentDirPath;
   List<double> position = [];
 
   @override
@@ -46,9 +46,10 @@ class _DirSelectorState extends State<DirSelector> {
   }
 
   Future<void> getSDCardDir() async {
-    sDCardDir = (await getExternalStorageDirectory()).path;
-    parentDir = Directory(sDCardDir);
-    initDirectory(sDCardDir);
+    var directory = await getExternalStorageDirectory();
+    currentDirPath = directory.path;
+    parentDir = directory.parent;
+    initDirectory(directory);
   }
 
   @override
@@ -60,7 +61,7 @@ class _DirSelectorState extends State<DirSelector> {
       child: Scaffold(
           appBar: AppBar(
             title: Text(
-              parentDir?.path == sDCardDir ? 'SD Card' : parentDir.path.substring(parentDir.parent.path.length + 1),
+              currentDirPath == null ? "SDcard" : currentDirPath.substring(currentDirPath.lastIndexOf('/') + 1),
               style: TextStyle(color: Colors.white),
             ),
             elevation: 0.4,
@@ -71,7 +72,7 @@ class _DirSelectorState extends State<DirSelector> {
                   color: Colors.white,
                 ),
                 onPressed: () {
-                  _onBackPressed(context);
+                  Navigator.pop(context);
                 }),
             actions: <Widget>[
               new IconButton(icon: new Icon(Icons.library_add), onPressed: _onNewDir),
@@ -101,8 +102,10 @@ class _DirSelectorState extends State<DirSelector> {
   }
 
   void _onBackPressed(BuildContext context) {
-    if (parentDir.path != sDCardDir) {
-      initDirectory(parentDir.parent.path);
+    if (parentDir.path != "/") {
+      currentDirPath = parentDir.path;
+      initDirectory(parentDir);
+      parentDir = parentDir.parent;
       jumpToPosition(false);
     } else {
       Navigator.pop(context);
@@ -111,13 +114,18 @@ class _DirSelectorState extends State<DirSelector> {
 
   // 计算文件夹内 文件、文件夹的数量，以 . 开头的除外
   removePointBegin(Directory path) {
-    var dir = Directory(path.path).listSync();
-    int num = dir.length;
+    try {
+      var dir = Directory(path.path).listSync();
+      int num = dir.length;
 
-    for (int i = 0; i < dir.length; i++) {
-      if (dir[i].path.substring(dir[i].parent.path.length + 1).substring(0, 1) == '.') num--;
+      for (int i = 0; i < dir.length; i++) {
+        if (dir[i].path.substring(dir[i].parent.path.length + 1).substring(0, 1) == '.') num--;
+      }
+      return num;
+    } catch (e) {
+      print(e);
+      return 0;
     }
-    return num;
   }
 
   buildListViewItem(FileSystemEntity file) {
@@ -176,7 +184,9 @@ class _DirSelectorState extends State<DirSelector> {
       ),
       onTap: () {
         position.insert(position.length, controller.offset);
-        initDirectory(file.path);
+        parentDir = Directory(currentDirPath);
+        currentDirPath = file.path;
+        initDirectory(file);
         jumpToPosition(true);
       },
     );
@@ -191,12 +201,16 @@ class _DirSelectorState extends State<DirSelector> {
     }
   }
 
-  Future<void> initDirectory(String path) async {
+  Future<void> initDirectory(Directory directory) async {
     try {
       setState(() {
-        var directory = Directory(path);
         count = 0;
-        parentDir = directory;
+//        if (setParent) {
+//          parentDir = directory.parent;
+//        } else {
+//          parentDir = Directory(currentDirPath);
+//          currentDirPath = directory.path;
+//        }
         files.clear();
         files = directory.listSync().takeWhile((e) {
           return FileSystemEntity.isDirectorySync(e.path);
@@ -235,6 +249,7 @@ class _DirSelectorState extends State<DirSelector> {
     showDialog(
         context: context,
         builder: (_) => new AlertDialog(
+                backgroundColor: Colors.white,
                 title: new Text("Create a new dir"),
                 content: new TextField(
                   controller: _controller,
@@ -252,9 +267,11 @@ class _DirSelectorState extends State<DirSelector> {
                   new FlatButton(
                     child: new Text("OK"),
                     onPressed: () {
-                      var directory = new Directory("${parentDir.path}/${_controller.text}");
+                      var directory = new Directory("${currentDirPath}/${_controller.text}");
                       directory.create();
-                      initDirectory(directory.path);
+                      parentDir = Directory(currentDirPath);
+                      currentDirPath = directory.path;
+                      initDirectory(directory);
                       jumpToPosition(true);
                       Navigator.of(context).pop();
                     },
@@ -264,7 +281,7 @@ class _DirSelectorState extends State<DirSelector> {
 
   void _onSave() async {
     var manager = await FileManager.get(context);
-    manager.setImgDownloadDir(parentDir.path);
-    Navigator.of(context).pop(parentDir.path);
+    manager.setImgDownloadDir(currentDirPath);
+    Navigator.of(context).pop(currentDirPath);
   }
 }
