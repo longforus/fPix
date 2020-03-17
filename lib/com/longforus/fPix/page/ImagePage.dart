@@ -26,7 +26,7 @@ class _ImageAndVideoPageState extends State<ImageAndVideoPage> with SingleTicker
   void _onTabChange() {
     debugPrint("onchangge  $searchContent");
     if (searchContent != null) {
-      ImageGridView currentImageGridView = tabBarView.children[_tabController.index];
+      final ImageGridView currentImageGridView = tabBarView.children[_tabController.index];
       currentImageGridView.clearSearchStatus();
       setState(() {
         searchContent = null;
@@ -76,7 +76,7 @@ class _ImageAndVideoPageState extends State<ImageAndVideoPage> with SingleTicker
       floatingActionButton: searchContent != null
           ? FloatingActionButton.extended(
               onPressed: () {
-                ImageGridView currentImageGridView = tabBarView.children[_tabController.index];
+                final ImageGridView currentImageGridView = tabBarView.children[_tabController.index];
                 currentImageGridView.clearSearchStatus();
                 setState(() {
                   searchContent = null;
@@ -102,7 +102,7 @@ class _ImageAndVideoPageState extends State<ImageAndVideoPage> with SingleTicker
             )
           : FloatingActionButton(
               onPressed: () {
-                ImageGridView currentImageGridView = tabBarView.children[_tabController.index];
+                final ImageGridView currentImageGridView = tabBarView.children[_tabController.index];
                 currentImageGridView.showSearchDialog(context, (str) {
                   if (str != null && str.isNotEmpty) {
                     setState(() {

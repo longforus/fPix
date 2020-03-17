@@ -60,7 +60,6 @@ class FileManager {
         switch(permission1) {
             case PermissionStatus.restricted:
             case PermissionStatus.denied:
-            case PermissionStatus.disabled:
             case PermissionStatus.unknown:
                 return _requestPermissions(context);
             default:
@@ -73,7 +72,6 @@ class FileManager {
         switch(map[PermissionGroup.storage]) {
             case PermissionStatus.restricted:
             case PermissionStatus.denied:
-            case PermissionStatus.disabled:
             case PermissionStatus.unknown:
                 Toast.toast(context, "权限被拒绝");
                 break;

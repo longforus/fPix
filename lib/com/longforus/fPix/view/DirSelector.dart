@@ -32,7 +32,6 @@ class _DirSelectorState extends State<DirSelector> {
         switch (permission1) {
             case PermissionStatus.restricted:
             case PermissionStatus.denied:
-            case PermissionStatus.disabled:
             case PermissionStatus.unknown:
                 Map<PermissionGroup, PermissionStatus> permissions =
                 await PermissionHandler().requestPermissions([PermissionGroup.storage]);
