@@ -67,7 +67,7 @@ class MyAppState extends State<MyApp>{
   void initState() {
     super.initState();
     FlutterBoost.singleton.registerPageBuilders({
-        'homePage': (pageName, params, _) => MyHomePage(title: params["pageTitle"],),
+        'flutterPage': (pageName, params, _) => MyHomePage(title: params["pageTitle"],),
     });
   }
 

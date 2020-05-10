@@ -479,16 +479,6 @@ class CachedNetworkImageProvider
         return new SynchronousFuture<CachedNetworkImageProvider>(this);
     }
 
-    @override
-    ImageStreamCompleter load(CachedNetworkImageProvider key) {
-        return new MultiFrameImageStreamCompleter(
-            codec: _loadAsync(key),
-            scale: key.scale/*,
-        informationCollector: (StringBuffer information) {
-          information.writeln('Image provider: $this');
-          information.write('Image key: $key');
-        }*/);
-    }
 
     Future<ui.Codec> _loadAsync(CachedNetworkImageProvider key) async {
         var cacheManager = await CacheManager.getInstance();
@@ -527,4 +517,18 @@ class CachedNetworkImageProvider
 
     @override
     String toString() => '$runtimeType("$url", scale: $scale)';
+
+  @override
+  ImageStreamCompleter load(CachedNetworkImageProvider key, decode) {
+      return new MultiFrameImageStreamCompleter(
+          codec: _loadAsync(key),
+          scale: key.scale/*,
+        informationCollector: (StringBuffer information) {
+          information.writeln('Image provider: $this');
+          information.write('Image key: $key');
+        }*/);
+  }
+
+
+
 }
