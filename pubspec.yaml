@@ -27,7 +27,7 @@ dependencies:
   sqflite: ^1.1.7+2
 #  cached_network_image: ^0.5.1
   url_launcher: ^4.0.3
-  rxdart: ^0.20.0
+  rxdart: ^0.23.0
   event_bus: ^1.0.1
   shared_preferences: ^0.5.4+5
   path_provider: ^1.4.2
@@ -38,6 +38,7 @@ dependencies:
   chewie: ^0.9.7
   http: ^0.12.0+2
   sentry: ^2.2.0
+  provider: ^4.0.5+1
 
 dev_dependencies:
   flutter_test:

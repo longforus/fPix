@@ -97,15 +97,6 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  flutter_boost:
-    dependency: "direct main"
-    description:
-      path: "."
-      ref: "1.12.13+3"
-      resolved-ref: d151649e151226d4e3768fc89e3a487ebb443a8e
-      url: "https://github.com/alibaba/flutter_boost.git"
-    source: git
-    version: "1.12.13+3"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -158,6 +149,13 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "1.1.8"
+  nested:
+    dependency: transitive
+    description:
+      name: nested
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "0.0.4"
   open_iconic_flutter:
     dependency: transitive
     description:
@@ -256,6 +254,13 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "3.0.13"
+  provider:
+    dependency: "direct main"
+    description:
+      name: provider
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "4.0.5+1"
   quiver:
     dependency: transitive
     description:
@@ -269,7 +274,7 @@ packages:
       name: rxdart
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "0.20.0"
+    version: "0.23.1"
   sentry:
     dependency: "direct main"
     description:

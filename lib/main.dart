@@ -6,11 +6,19 @@ import 'package:fPix/com/longforus/fPix/page/SettingsPage.dart';
 import 'package:fPix/com/longforus/fPix/widget/flutter_cache_manager.dart';
 import 'package:fPix/com/longforus/fPix/SentryConfig.dart' as sentryConfig;
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   runZoned<Future<void>>(() async {
-    runApp(MyApp());
+    runApp(MultiProvider(
+      providers: [
+          ChangeNotifierProvider(
+          create: (_) => CurrentPageModel(),
+        )
+      ],
+      child: MyApp(),
+    ));
     // This captures errors reported by the Flutter framework.
     FlutterError.onError = (FlutterErrorDetails details) {
       if (sentryConfig.isInDebugMode) {
@@ -30,10 +38,10 @@ void main() {
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
 
-
   @override
   Widget build(BuildContext context) {
-      SharedPreferences.setMockInitialValues({});
+    SharedPreferences.setMockInitialValues({});
+    CacheManager.showDebugLogs = true;
     return MaterialApp(
       title: 'fPix',
       theme: ThemeData(
@@ -45,88 +53,20 @@ class MyApp extends StatelessWidget {
         dividerColor: Color(0xffBDBDBD),
         dialogBackgroundColor: Color.fromARGB(80, 255, 255, 255),
       ),
-      home: MyHomePage(title: 'fPix'),
+      home: Consumer<CurrentPageModel>(
+        builder: (context, selectedPageIndex, child) => Scaffold(
+            bottomNavigationBar: new BottomNavigationBar(
+              items: _getBottomNvBar(context,selectedPageIndex.value),
+              currentIndex: selectedPageIndex.value,
+              onTap: (index) {
+                selectedPageIndex.change(index);
+              },
+            ),
+            body: _getPage(selectedPageIndex.value) // This trailing comma makes auto-formatting nicer
+            // for build methods.
+            ),
+      ),
     );
-  }
-}
-
-/*class MyApp extends StatefulWidget {
-  // This widget is the root of your application.
-  @override
-  State<StatefulWidget> createState() => MyAppState();
-}
-
-
-class MyAppState extends State<MyApp>{
-
-
-    @override
-  void initState() {
-    super.initState();
-    FlutterBoost.singleton.registerPageBuilders({
-        'homePage': (pageName, params, _) => MyHomePage(title: params["pageTitle"],),
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-        title: 'fPix',
-        theme: ThemeData(
-            primaryColorBrightness: Brightness.dark,
-            primaryColor: Color(0xff03A9F4),
-            primaryColorDark: Color(0xff0288D1),
-            primaryColorLight: Color(0xffB3E5FC),
-            accentColor: Color(0xff8BC34A),
-            dividerColor: Color(0xffBDBDBD),
-            dialogBackgroundColor: Color.fromARGB(80, 255, 255, 255),
-        ),
-        home: Container(),
-        builder: FlutterBoost.init(postPush: _onRoutePushed),
-    );
-  }
-
-    void _onRoutePushed(
-        String pageName, String uniqueId, Map params, Route route, Future _) {
-        Logger.log("_onRoutePushed, name $pageName");
-    }
-
-}*/
-
-class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
-  final String title;
-
-  @override
-  _MyHomePageState createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  int selectedPageIndex = 0;
-
-  @override
-  void initState() {
-    CacheManager.showDebugLogs = true;
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-        bottomNavigationBar: new BottomNavigationBar(
-          items: _getBottomNvBar(selectedPageIndex),
-          currentIndex: selectedPageIndex,
-          onTap: (index) {
-            setState(() {
-              if (index != selectedPageIndex) {
-                selectedPageIndex = index;
-              }
-            });
-          },
-        ),
-        body: _getPage(selectedPageIndex) // This trailing comma makes auto-formatting nicer
-        // for build methods.
-        );
   }
 
   Widget _getPage(int selectedPageIndex) {
@@ -147,13 +87,13 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-  List<BottomNavigationBarItem> _getBottomNvBar(int pageIndex) {
+  List<BottomNavigationBarItem> _getBottomNvBar(context,int pageIndex) {
     return List.generate(4, (index) {
-      return _genBNVItem(index, index == pageIndex);
+      return _genBNVItem(context,index, index == pageIndex);
     }).toList();
   }
 
-  BottomNavigationBarItem _genBNVItem(int index, bool selected) {
+  BottomNavigationBarItem _genBNVItem(context,int index, bool selected) {
     Color accentColor = Theme.of(context).accentColor;
     switch (index) {
       case 0:
@@ -212,6 +152,19 @@ class _MyHomePageState extends State<MyHomePage> {
               "Settings",
               style: TextStyle(color: selected ? accentColor : Colors.grey),
             ));
+    }
+  }
+}
+
+class CurrentPageModel with ChangeNotifier {
+  int _currentPageIndex = 0;
+
+  int get value => _currentPageIndex;
+
+  void change(int index) {
+    if (index >= 0 && index <= 3 && _currentPageIndex != index) {
+      _currentPageIndex = index;
+      notifyListeners();
     }
   }
 }
