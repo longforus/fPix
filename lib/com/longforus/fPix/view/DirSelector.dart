@@ -32,7 +32,6 @@ class _DirSelectorState extends State<DirSelector> {
         switch (permission1) {
             case PermissionStatus.restricted:
             case PermissionStatus.denied:
-            case PermissionStatus.disabled:
             case PermissionStatus.unknown:
                 Map<PermissionGroup, PermissionStatus> permissions =
                 await PermissionHandler().requestPermissions([PermissionGroup.storage]);
@@ -56,7 +55,7 @@ class _DirSelectorState extends State<DirSelector> {
     Widget build(BuildContext context) {
         return WillPopScope(
             onWillPop: () {
-                _onBackPressed(context);
+               return _onBackPressed(context);
             },
             child: Scaffold(
                 appBar: AppBar(
@@ -101,14 +100,16 @@ class _DirSelectorState extends State<DirSelector> {
         );
     }
 
-    void _onBackPressed(BuildContext context) {
+    Future<bool> _onBackPressed(BuildContext context) {
         if (parentDir.path != "/") {
             currentDirPath = parentDir.path;
             initDirectory(parentDir);
             parentDir = parentDir.parent;
             jumpToPosition(false);
+            return Future.value(false);
         } else {
             Navigator.pop(context);
+            return Future.value(true);
         }
     }
 

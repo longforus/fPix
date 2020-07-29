@@ -6,8 +6,7 @@ import 'package:fPix/com/longforus/fPix/page/SettingsPage.dart';
 import 'package:fPix/com/longforus/fPix/widget/flutter_cache_manager.dart';
 import 'package:fPix/com/longforus/fPix/SentryConfig.dart' as sentryConfig;
 import 'package:flutter/material.dart';
-import 'package:flutter_boost/flutter_boost.dart';
-import 'package:flutter_boost/support/logger.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   runZoned<Future<void>>(() async {
@@ -27,7 +26,6 @@ void main() {
     sentryConfig.reportError(error, stacktrace);
   });
 }
-/*
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
@@ -51,9 +49,8 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-*/
 
-class MyApp extends StatefulWidget {
+/*class MyApp extends StatefulWidget {
   // This widget is the root of your application.
   @override
   State<StatefulWidget> createState() => MyAppState();
@@ -94,7 +91,7 @@ class MyAppState extends State<MyApp>{
         Logger.log("_onRoutePushed, name $pageName");
     }
 
-}
+}*/
 
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key, this.title}) : super(key: key);
