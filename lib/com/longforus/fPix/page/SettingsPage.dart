@@ -3,7 +3,6 @@ import 'package:fPix/com/longforus/fPix/view/DirSelector.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_boost/flutter_boost.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -86,27 +85,6 @@ class _SettingsPageState extends State<SettingsPage> {
                   ],
                 ),
               ),
-              new Container(
-                padding: EdgeInsets.all(8.0),
-                child: Text(
-                  'Test Open native Page :',
-                  textAlign: TextAlign.start,
-                  style: TextStyle(
-                    fontSize: 15,
-                  ),
-                ),
-              ),
-              new Container(
-                  padding: EdgeInsets.fromLTRB(12, 4, 12, 8),
-                  alignment: Alignment.bottomRight,
-                  child: FlatButton.icon(
-                      onPressed: () {
-                        FlutterBoost.singleton.open("sample://nativePage", urlParams: {
-                          "query": {"aaa": "bbb"}
-                        });
-                      },
-                      icon: Icon(Icons.subdirectory_arrow_right,color: Colors.lightBlue,),
-                      label: new Text("go 2 native page",style: bulueTestStyle,))),
             ],
           ),
           Container(

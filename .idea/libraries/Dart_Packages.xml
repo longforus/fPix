@@ -100,13 +100,6 @@
             </list>
           </value>
         </entry>
-        <entry key="flutter_boost">
-          <value>
-            <list>
-              <option value="C:/flutter/.pub-cache/git/flutter_boost-d151649e151226d4e3768fc89e3a487ebb443a8e/lib" />
-            </list>
-          </value>
-        </entry>
         <entry key="flutter_test">
           <value>
             <list>
@@ -467,7 +460,6 @@
       </option>
     </properties>
     <CLASSES>
-      <root url="file://C:/flutter/.pub-cache/git/flutter_boost-d151649e151226d4e3768fc89e3a487ebb443a8e/lib" />
       <root url="file://C:/flutter/.pub-cache/hosted/pub.flutter-io.cn/after_layout-1.0.7+2/lib" />
       <root url="file://C:/flutter/.pub-cache/hosted/pub.flutter-io.cn/archive-2.0.11/lib" />
       <root url="file://C:/flutter/.pub-cache/hosted/pub.flutter-io.cn/args-1.5.2/lib" />
