@@ -42,6 +42,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     SharedPreferences.setMockInitialValues({});
     CacheManager.showDebugLogs = true;
+    Color accentColor = Color(0xff8BC34A);
     return MaterialApp(
       title: 'fPix',
       theme: ThemeData(
@@ -49,15 +50,19 @@ class MyApp extends StatelessWidget {
         primaryColor: Color(0xff03A9F4),
         primaryColorDark: Color(0xff0288D1),
         primaryColorLight: Color(0xffB3E5FC),
-        accentColor: Color(0xff8BC34A),
+        accentColor: accentColor,
         dividerColor: Color(0xffBDBDBD),
         dialogBackgroundColor: Color.fromARGB(80, 255, 255, 255),
       ),
       home: Consumer<CurrentPageModel>(
         builder: (context, selectedPageIndex, child) => Scaffold(
             bottomNavigationBar: new BottomNavigationBar(
-              items: _getBottomNvBar(context,selectedPageIndex.value),
+              items: _getBottomNvBar(context),
               currentIndex: selectedPageIndex.value,
+                selectedLabelStyle: TextStyle(color: accentColor,fontSize: 15),
+                unselectedLabelStyle: TextStyle(color: Colors.grey,fontSize: 10),
+                selectedIconTheme:IconThemeData(color: accentColor,size: 36.0) ,
+                unselectedIconTheme: IconThemeData(color: Colors.grey,size: 24.0),
               onTap: (index) {
                 selectedPageIndex.change(index);
               },
@@ -87,70 +92,45 @@ class MyApp extends StatelessWidget {
     }
   }
 
-  List<BottomNavigationBarItem> _getBottomNvBar(context,int pageIndex) {
+  List<BottomNavigationBarItem> _getBottomNvBar(context) {
     return List.generate(4, (index) {
-      return _genBNVItem(context,index, index == pageIndex);
+      return _genBNVItem(context,index);
     }).toList();
   }
 
-  BottomNavigationBarItem _genBNVItem(context,int index, bool selected) {
-    Color accentColor = Theme.of(context).accentColor;
+  BottomNavigationBarItem _genBNVItem(context,int index) {
     switch (index) {
       case 0:
         return new BottomNavigationBarItem(
             icon: new Icon(
               Icons.image,
-              color: Colors.grey,
-            ),
-            activeIcon: new Icon(
-              Icons.image,
-              color: accentColor,
             ),
             title: new Text(
               "Image",
-              style: TextStyle(color: selected ? accentColor : Colors.grey),
             ));
       case 1:
         return new BottomNavigationBarItem(
             icon: new Icon(
               Icons.video_label,
-              color: Colors.grey,
-            ),
-            activeIcon: new Icon(
-              Icons.video_label,
-              color: accentColor,
             ),
             title: new Text(
               "Video",
-              style: TextStyle(color: selected ? accentColor : Colors.grey),
             ));
       case 2:
         return new BottomNavigationBarItem(
             icon: new Icon(
               Icons.favorite,
-              color: Colors.grey,
-            ),
-            activeIcon: new Icon(
-              Icons.favorite,
-              color: accentColor,
             ),
             title: new Text(
               "Favorite",
-              style: TextStyle(color: selected ? accentColor : Colors.grey),
             ));
       case 3:
         return new BottomNavigationBarItem(
             icon: new Icon(
               Icons.settings,
-              color: Colors.grey,
-            ),
-            activeIcon: new Icon(
-              Icons.settings,
-              color: accentColor,
             ),
             title: new Text(
               "Settings",
-              style: TextStyle(color: selected ? accentColor : Colors.grey),
             ));
     }
   }
