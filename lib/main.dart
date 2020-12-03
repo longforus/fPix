@@ -9,11 +9,13 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'com/longforus/fPix/model/CurrentPageModel.dart';
+
 void main() {
-  runZoned<Future<void>>(() async {
+  runZonedGuarded<Future<void>>(() async {
     runApp(MultiProvider(
       providers: [
-          ChangeNotifierProvider(
+        ChangeNotifierProvider(
           create: (_) => CurrentPageModel(),
         )
       ],
@@ -30,7 +32,7 @@ void main() {
         Zone.current.handleUncaughtError(details.exception, details.stack);
       }
     };
-  }, onError: (error, stacktrace) {
+  }, (error, stacktrace) {
     sentryConfig.reportError(error, stacktrace);
   });
 }
@@ -52,17 +54,18 @@ class MyApp extends StatelessWidget {
         primaryColorLight: Color(0xffB3E5FC),
         accentColor: accentColor,
         dividerColor: Color(0xffBDBDBD),
+        accentTextTheme: TextTheme(headline6: TextStyle(color: Color(0xff03A9F4))),
         dialogBackgroundColor: Color.fromARGB(80, 255, 255, 255),
       ),
       home: Consumer<CurrentPageModel>(
         builder: (context, selectedPageIndex, child) => Scaffold(
             bottomNavigationBar: new BottomNavigationBar(
-              items: _getBottomNvBar(context),
+              items: _getBottomNvBar(context, accentColor),
               currentIndex: selectedPageIndex.value,
-                selectedLabelStyle: TextStyle(color: accentColor,fontSize: 15),
-                unselectedLabelStyle: TextStyle(color: Colors.grey,fontSize: 10),
-                selectedIconTheme:IconThemeData(color: accentColor,size: 36.0) ,
-                unselectedIconTheme: IconThemeData(color: Colors.grey,size: 24.0),
+              selectedLabelStyle: TextStyle(color: accentColor, fontSize: 15),
+              unselectedLabelStyle: TextStyle(color: Colors.grey, fontSize: 10),
+              selectedIconTheme: IconThemeData(color: accentColor, size: 36.0),
+              unselectedIconTheme: IconThemeData(color: Colors.grey, size: 24.0),
               onTap: (index) {
                 selectedPageIndex.change(index);
               },
@@ -92,13 +95,13 @@ class MyApp extends StatelessWidget {
     }
   }
 
-  List<BottomNavigationBarItem> _getBottomNvBar(context) {
+  List<BottomNavigationBarItem> _getBottomNvBar(context, Color color) {
     return List.generate(4, (index) {
-      return _genBNVItem(context,index);
+      return _genBNVItem(context, index, color);
     }).toList();
   }
 
-  BottomNavigationBarItem _genBNVItem(context,int index) {
+  BottomNavigationBarItem _genBNVItem(context, int index, Color color) {
     switch (index) {
       case 0:
         return new BottomNavigationBarItem(
@@ -107,6 +110,7 @@ class MyApp extends StatelessWidget {
             ),
             title: new Text(
               "Image",
+              style: TextStyle(color: color),
             ));
       case 1:
         return new BottomNavigationBarItem(
@@ -115,6 +119,7 @@ class MyApp extends StatelessWidget {
             ),
             title: new Text(
               "Video",
+              style: TextStyle(color: color),
             ));
       case 2:
         return new BottomNavigationBarItem(
@@ -123,6 +128,7 @@ class MyApp extends StatelessWidget {
             ),
             title: new Text(
               "Favorite",
+              style: TextStyle(color: color),
             ));
       case 3:
         return new BottomNavigationBarItem(
@@ -131,20 +137,10 @@ class MyApp extends StatelessWidget {
             ),
             title: new Text(
               "Settings",
+              style: TextStyle(color: color),
             ));
     }
   }
 }
 
-class CurrentPageModel with ChangeNotifier {
-  int _currentPageIndex = 0;
 
-  int get value => _currentPageIndex;
-
-  void change(int index) {
-    if (index >= 0 && index <= 3 && _currentPageIndex != index) {
-      _currentPageIndex = index;
-      notifyListeners();
-    }
-  }
-}
