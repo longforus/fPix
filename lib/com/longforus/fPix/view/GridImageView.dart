@@ -8,6 +8,7 @@ import 'package:fPix/com/longforus/fPix/page/VideoPlayerPage.dart';
 import 'package:fPix/com/longforus/fPix/utils/CacheUtil.dart';
 import 'package:fPix/com/longforus/fPix/utils/Toast.dart';
 import 'package:fPix/com/longforus/fPix/page/PhotoViewPage.dart';
+import 'package:fPix/com/longforus/fPix/widget/ImageTopBar.dart';
 import 'package:fPix/com/longforus/fPix/widget/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'dart:developer';
@@ -167,7 +168,9 @@ class _ImageGridDelegateState extends State<ImageGridDelegate> {
 
     if (success) {
       if (currentPageIndex == 1) {
-        eventBus.fire(OnTopImageChangeEvent(resultList[0]));
+        final TopImageController topData = Get.find();
+        topData.topData = resultList[0];
+        // eventBus.fire(OnTopImageChangeEvent(resultList[0]));
       }
       setState(() {
         dataList.addAll(currentPageIndex == 1 ? resultList.sublist(1, resultList.length - 1) : resultList);
@@ -190,7 +193,7 @@ class _ImageGridDelegateState extends State<ImageGridDelegate> {
   }
 
   void _onCardTap(Map<String, dynamic> item) {
-    Get.to(widget.isVideo
+    Get.to(()=>widget.isVideo
         ? new VideoPlayerPage(item)
         : new PhotoViewPage(item));
     // Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) {

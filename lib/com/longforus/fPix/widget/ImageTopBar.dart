@@ -7,6 +7,7 @@ import 'package:fPix/com/longforus/fPix/page/VideoPlayerPage.dart';
 import 'package:fPix/com/longforus/fPix/utils/CacheUtil.dart';
 import 'package:fPix/com/longforus/fPix/widget/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class ImageTopBar extends StatefulWidget {
     ImageTopBar({Key key, this.isVideo,this.tabController}) : super(key: key);
@@ -19,41 +20,14 @@ class ImageTopBar extends StatefulWidget {
 }
 
 class ImageTopBarState extends State<ImageTopBar> {
-    Map<String, dynamic> topData;
-    StreamSubscription<OnTopImageChangeEvent> _streamSubscription;
+    final TopImageController tc = Get.put(TopImageController());
 
-    @override
-    void initState() {
-        _streamSubscription = eventBus.on<OnTopImageChangeEvent>().listen((event) {
-            _onTopImageChanged(event.item);
-        });
-        super.initState();
-    }
-
-    @override
-    void dispose() {
-        _streamSubscription?.cancel();
-        super.dispose();
-    }
-
-    void _onTopImageChanged(Map<String, dynamic> data) {
-        if (mounted) {
-            setState(() {
-                topData = data;
-            });
-        } else {
-            topData = data;
-        }
-    }
 
     void _go2PhotoPage() {
-        Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) {
-            return widget.isVideo
-                ? new VideoPlayerPage(topData)
-                : new PhotoViewPage(
-                topData,
-            );
-        }));
+       Get.to(()=>widget.isVideo
+           ? new VideoPlayerPage(tc.topData)
+           : new PhotoViewPage(tc.topData,
+       ));
     }
 
     @override
@@ -64,24 +38,24 @@ class ImageTopBarState extends State<ImageTopBar> {
             primary: true,
             expandedHeight: 250.0,
             flexibleSpace: FlexibleSpaceBar(
-                background: topData == null
+                background: Obx(()=>tc.topData.isEmpty
                     ? Image.asset(
                     'images/placeholder.png',
                     fit: BoxFit.cover,
                 )
                     : GestureDetector(
                     child: CachedNetworkImage(
-                        imageUrl: widget.isVideo ? getVideoImageUrl(topData) : topData['webformatURL'],
-                        cacheKey: widget.isVideo ? getVideoImageUrl(topData) : getCacheKey(topData, 'webformatURL'),
+                        imageUrl: widget.isVideo ? getVideoImageUrl(tc.topData) : tc.topData['webformatURL'],
+                        cacheKey: widget.isVideo ? getVideoImageUrl(tc.topData) : getCacheKey(tc.topData, 'webformatURL'),
                         fit: BoxFit.cover,
                     ),
                     onTap: _go2PhotoPage,
                 ),
-            ),
+                )),
             actions: <Widget>[
                 new Container(
                     padding: const EdgeInsets.all(8.0),
-                    child: topData != null
+                    child: Obx(()=>tc.topData.isNotEmpty
                         ? new Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
@@ -90,13 +64,13 @@ class ImageTopBarState extends State<ImageTopBar> {
                                 size: 15,
                                 color: Theme.of(context).accentColor,
                             ),
-                            new Text(' ${topData['likes']}')
+                            new Text('${tc.topData['likes']}')
                         ],
                     )
                         : new Icon(
                         Icons.thumb_up,
                         size: 15,
-                    ),
+                    ),)
                 )
             ],
             bottom: TabBar(
@@ -110,4 +84,12 @@ class ImageTopBarState extends State<ImageTopBar> {
             ),
         );
     }
+}
+
+
+
+class TopImageController extends GetxController {
+
+  final topData = RxMap<String,dynamic>();
+  set topData(value) => topData.assignAll(value);
 }
