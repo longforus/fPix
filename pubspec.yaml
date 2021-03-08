@@ -38,6 +38,7 @@ dependencies:
   chewie: ^0.9.7
   http: ^0.12.0+2
   sentry: ^2.2.0
+  get:
 
 dev_dependencies:
   flutter_test:

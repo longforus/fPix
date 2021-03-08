@@ -5,9 +5,10 @@ import 'package:fPix/com/longforus/fPix/page/ImagePage.dart';
 import 'package:fPix/com/longforus/fPix/page/SettingsPage.dart';
 import 'package:fPix/com/longforus/fPix/widget/flutter_cache_manager.dart';
 import 'package:fPix/com/longforus/fPix/SentryConfig.dart' as sentryConfig;
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
+import 'package:get/get.dart';
 void main() {
   runZoned<Future<void>>(() async {
     runApp(MyApp());
@@ -34,7 +35,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
       SharedPreferences.setMockInitialValues({});
-    return MaterialApp(
+    return GetMaterialApp(
       title: 'fPix',
       theme: ThemeData(
         primaryColorBrightness: Brightness.dark,
@@ -93,40 +94,28 @@ class MyAppState extends State<MyApp>{
 
 }*/
 
-class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
+class MyHomePage extends StatelessWidget {
+  MyHomePage({Key key, this.title}) : super(key: key){
+    CacheManager.showDebugLogs = !kReleaseMode;
+  }
   final String title;
 
   @override
-  _MyHomePageState createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  int selectedPageIndex = 0;
-
-  @override
-  void initState() {
-    CacheManager.showDebugLogs = true;
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
+    // 使用Get.put()实例化你的类，使其对当下的所有子路由可用。
+    final IndexController ic = Get.put(IndexController());
+
     return Scaffold(
-        bottomNavigationBar: new BottomNavigationBar(
-          items: _getBottomNvBar(selectedPageIndex),
-          currentIndex: selectedPageIndex,
+        bottomNavigationBar: Obx(()=>BottomNavigationBar(
+          items: _getBottomNvBar(context,ic.index),
+          currentIndex: ic.index,
           onTap: (index) {
-            setState(() {
-              if (index != selectedPageIndex) {
-                selectedPageIndex = index;
-              }
-            });
+            ic.index = index;
           },
-        ),
-        body: _getPage(selectedPageIndex) // This trailing comma makes auto-formatting nicer
-        // for build methods.
-        );
+        )),
+        body:Obx(()=> _getPage(ic.index)) // This trailing comma makes auto-formatting nicer
+      // for build methods.
+    );
   }
 
   Widget _getPage(int selectedPageIndex) {
@@ -147,13 +136,13 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-  List<BottomNavigationBarItem> _getBottomNvBar(int pageIndex) {
+  List<BottomNavigationBarItem> _getBottomNvBar(BuildContext context,int pageIndex) {
     return List.generate(4, (index) {
-      return _genBNVItem(index, index == pageIndex);
+      return _genBNVItem(context,index, index == pageIndex);
     }).toList();
   }
 
-  BottomNavigationBarItem _genBNVItem(int index, bool selected) {
+  BottomNavigationBarItem _genBNVItem(BuildContext context,int index, bool selected) {
     Color accentColor = Theme.of(context).accentColor;
     switch (index) {
       case 0:
@@ -214,4 +203,15 @@ class _MyHomePageState extends State<MyHomePage> {
             ));
     }
   }
+
 }
+
+
+
+class IndexController extends GetxController {
+
+  final _obj = 0.obs;
+  set index(value) => _obj.value = value;
+  get index => _obj.value;
+}
+
