@@ -12,6 +12,8 @@ import 'package:fPix/com/longforus/fPix/widget/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'dart:developer';
 
+import 'package:get/get.dart';
+
 /// @describe
 /// @author  XQ Yang
 /// @date 12/20/2018  3:46 PM
@@ -92,9 +94,9 @@ class ImageGridDelegate extends StatefulWidget {
           ),
           actions: <Widget>[
             FlatButton(
-              child: Text('cancle'),
+              child: Text('cancel'),
               onPressed: () {
-                Navigator.of(context).pop();
+                Get.back();
                 callback(null);
               },
             ),
@@ -103,7 +105,7 @@ class ImageGridDelegate extends StatefulWidget {
               onPressed: () {
 //                          debugger();
                 onRefresh(content);
-                Navigator.of(context).pop();
+                Get.back();
                 callback(content);
               },
             ),
@@ -188,13 +190,16 @@ class _ImageGridDelegateState extends State<ImageGridDelegate> {
   }
 
   void _onCardTap(Map<String, dynamic> item) {
-    Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) {
-      return widget.isVideo
-          ? new VideoPlayerPage(item)
-          : new PhotoViewPage(
-              item,
-            );
-    }));
+    Get.to(widget.isVideo
+        ? new VideoPlayerPage(item)
+        : new PhotoViewPage(item));
+    // Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) {
+    //   return widget.isVideo
+    //       ? new VideoPlayerPage(item)
+    //       : new PhotoViewPage(
+    //           item,
+    //         );
+    // }));
   }
 
   @override
