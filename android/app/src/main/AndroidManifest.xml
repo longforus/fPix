@@ -11,6 +11,7 @@
          FlutterApplication and put your custom class here. -->
     <application
         android:label="fPix"
+        android:requestLegacyExternalStorage="true"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"
