@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:fPix/com/longforus/fPix/Const.dart';
-import 'package:fPix/com/longforus/fPix/event/Events.dart';
 import 'package:fPix/com/longforus/fPix/page/VideoPlayerPage.dart';
 import 'package:fPix/com/longforus/fPix/utils/CacheUtil.dart';
 import 'package:fPix/com/longforus/fPix/utils/Toast.dart';
@@ -11,8 +10,6 @@ import 'package:fPix/com/longforus/fPix/page/PhotoViewPage.dart';
 import 'package:fPix/com/longforus/fPix/widget/ImageTopBar.dart';
 import 'package:fPix/com/longforus/fPix/widget/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'dart:developer';
-
 import 'package:get/get.dart';
 
 /// @describe

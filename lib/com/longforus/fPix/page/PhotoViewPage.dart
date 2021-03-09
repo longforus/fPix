@@ -109,7 +109,7 @@ class _PhotoViewPageState extends State<PhotoViewPage> {
             imageProvider: CachedNetworkImageProvider(widget.imageData['largeImageURL'],
                 cacheKey: getCacheKey(widget.imageData, 'largeImageURL')),
             minScale: PhotoViewComputedScale.contained * 0.8,
-            heroTag: widget.imageData['largeImageURL'],
+            heroAttributes: PhotoViewHeroAttributes(tag:  widget.imageData['largeImageURL']),
           ),
           Container(
             padding: EdgeInsets.all(12.0),

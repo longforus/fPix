@@ -1,7 +1,5 @@
-import 'dart:async';
 
 import 'package:fPix/com/longforus/fPix/Const.dart';
-import 'package:fPix/com/longforus/fPix/event/Events.dart';
 import 'package:fPix/com/longforus/fPix/page/PhotoViewPage.dart';
 import 'package:fPix/com/longforus/fPix/page/VideoPlayerPage.dart';
 import 'package:fPix/com/longforus/fPix/utils/CacheUtil.dart';
@@ -90,6 +88,7 @@ class ImageTopBarState extends State<ImageTopBar> {
 
 class TopImageController extends GetxController {
 
-  final topData = RxMap<String,dynamic>();
-  set topData(value) => topData.assignAll(value);
+  final _topData = RxMap<String,dynamic>().obs;
+  set topData(value) => _topData.value.assignAll(value);
+  Map<String,dynamic> get topData => _topData.value;
 }

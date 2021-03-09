@@ -28,19 +28,9 @@ class _DirSelectorState extends State<DirSelector> {
 
     // 权限检查与申请
     Future<void> getPermission() async {
-        PermissionStatus permission1 = await PermissionHandler().checkPermissionStatus(PermissionGroup.storage);
-        switch (permission1) {
-            case PermissionStatus.restricted:
-            case PermissionStatus.denied:
-            case PermissionStatus.unknown:
-                Map<PermissionGroup, PermissionStatus> permissions =
-                await PermissionHandler().requestPermissions([PermissionGroup.storage]);
-                if (permissions[PermissionGroup.storage] == PermissionStatus.granted) {
-                    getSDCardDir();
-                }
-                break;
-            default:
-                getSDCardDir();
+        var request = await Permission.storage.request();
+        if(request.isGranted) {
+            getSDCardDir();
         }
     }
 

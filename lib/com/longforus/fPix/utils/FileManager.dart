@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:core';
 import 'dart:io';
 
 import 'package:fPix/com/longforus/fPix/Const.dart';
@@ -56,28 +57,11 @@ class FileManager {
     }
 
     Future<bool> _checkPermissions(BuildContext context) async {
-        PermissionStatus permission1 = await PermissionHandler().checkPermissionStatus(PermissionGroup.storage);
-        switch(permission1) {
-            case PermissionStatus.restricted:
-            case PermissionStatus.denied:
-            case PermissionStatus.unknown:
-                return _requestPermissions(context);
-            default:
-               return true;
+        var status = await Permission.storage.request();
+        if (!status.isGranted) {
+            Toast.toast(context, "权限被拒绝");
         }
+        return status.isGranted;
     }
 
-    Future<bool> _requestPermissions(BuildContext context) async {
-        Map<PermissionGroup, PermissionStatus> map = await PermissionHandler().requestPermissions([PermissionGroup.storage]);
-        switch(map[PermissionGroup.storage]) {
-            case PermissionStatus.restricted:
-            case PermissionStatus.denied:
-            case PermissionStatus.unknown:
-                Toast.toast(context, "权限被拒绝");
-                break;
-            default:
-               return true;
-        }
-        return false;
-    }
 }
