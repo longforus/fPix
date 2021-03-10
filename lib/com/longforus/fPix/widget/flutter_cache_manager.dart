@@ -199,7 +199,6 @@ class CacheManager {
       /// 为什么下面的代码就不执行了??? 因为刚刚上面的 headers = new Map<String, String>();
       /// 是 headers = new Map(); 被赋值为Map类型不是_downloadFile需要的Map<String, String> 报错了,而
       CacheObject newCacheObject = await _downloadFile(url, headers,cacheKey: cacheKey);
-      debugPrint( "Downloading finish. ${newCacheObject.toString()}");
       if (newCacheObject != null) {
         _box.put(newCacheObject);
       }
@@ -238,7 +237,6 @@ class CacheManager {
 
   ///Download the file from the url
   Future<CacheObject> _downloadFile(String url, Map<String, String> headers, {String cacheKey,String relativePath, String eTag}) async {
-    debugPrint( "start download");
     if(cacheKey==null||cacheKey.isEmpty) {
       cacheKey = url;
     }
@@ -265,7 +263,6 @@ class CacheManager {
           folder.createSync(recursive: true);
         }
         await new File(filePath).writeAsBytes(response.bodyBytes);
-        debugPrint( "download succ ${newCache.toString()}");
         return newCache;
       }
       if (response.statusCode == 304) {
