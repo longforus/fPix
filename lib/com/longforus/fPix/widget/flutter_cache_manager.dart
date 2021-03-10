@@ -19,7 +19,7 @@ class CacheManager {
   static Duration inBetweenCleans = new Duration(days: 7);
   static Duration maxAgeCacheObject = new Duration(days: 30);
   static int maxNrOfCacheObjects = 200;
-  static bool showDebugLogs = false;
+  static bool showDebugLogs = true;
 
   static CacheManager _instance;
 

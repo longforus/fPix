@@ -130,7 +130,7 @@ class CacheObject {
         }
 
         if (relativePath == null) {
-            var fileName = "cache/${new Uuid().v1()}$fileExtension";
+            var fileName = "/${new Uuid().v1()}$fileExtension";
             _map[_keyFilePath] = "$fileName";
         }
     }

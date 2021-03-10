@@ -1,5 +1,6 @@
 import 'dart:io';
 
+
 import 'package:fPix/com/longforus/fPix/db/FavoriteDAO.dart';
 import 'package:fPix/com/longforus/fPix/utils/FileManager.dart';
 import 'package:fPix/com/longforus/fPix/utils/Toast.dart';
@@ -109,7 +110,7 @@ class _PhotoViewPageState extends State<PhotoViewPage> {
             imageProvider: CachedNetworkImageProvider(widget.imageData['largeImageURL'],
                 cacheKey: getCacheKey(widget.imageData, 'largeImageURL')),
             minScale: PhotoViewComputedScale.contained * 0.8,
-            heroAttributes: PhotoViewHeroAttributes(tag:  widget.imageData['largeImageURL']),
+            // heroAttributes: PhotoViewHeroAttributes(tag:  widget.imageData['largeImageURL']),
           ),
           Container(
             padding: EdgeInsets.all(12.0),

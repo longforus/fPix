@@ -7,7 +7,6 @@ import 'package:fPix/com/longforus/fPix/widget/flutter_cache_manager.dart';
 import 'package:fPix/com/longforus/fPix/SentryConfig.dart' as sentryConfig;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:get/get.dart';
 void main() {
   runZoned<Future<void>>(() async {
@@ -34,7 +33,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-      SharedPreferences.setMockInitialValues({});
+      // SharedPreferences.setMockInitialValues({});
     return GetMaterialApp(
       title: 'fPix',
       theme: ThemeData(
