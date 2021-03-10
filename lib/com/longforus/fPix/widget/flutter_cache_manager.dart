@@ -184,19 +184,20 @@ class CacheManager {
     return new File(path);
   }
 
-  Future<CacheObject> _checkCache(CacheObject cacheObject,Map headers,String url,String cacheKey) async {
+  Future<CacheObject> _checkCache(CacheObject cacheObject,Map<String, String> headers,String url,String cacheKey) async {
     // Set touched date to show that this object is being used recently
     cacheObject.touch();
 
     if (headers == null) {
-      headers = new Map();
+      headers = new Map<String, String>();
     }
 
     var filePath = await cacheObject.getFilePath();
     //If we have never downloaded this file, do download
     if (filePath == null) {
       debugPrint( "Downloading for first time.");
-      //todo 为什么下面的代码就不执行了???
+      /// 为什么下面的代码就不执行了??? 因为刚刚上面的 headers = new Map<String, String>();
+      /// 是 headers = new Map(); 被赋值为Map类型不是_downloadFile需要的Map<String, String> 报错了,而
       CacheObject newCacheObject = await _downloadFile(url, headers,cacheKey: cacheKey);
       debugPrint( "Downloading finish. ${newCacheObject.toString()}");
       if (newCacheObject != null) {

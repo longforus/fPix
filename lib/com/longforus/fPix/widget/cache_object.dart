@@ -31,6 +31,7 @@ class CacheObject {
     String cacheKey;
     @Transient()
     Lock lock;
+    @Id(assignable: true)
     int id;
 
 
