@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'dart:io';
 
+import 'package:fPix/com/longforus/fPix/db/OB.dart';
 import 'package:fPix/com/longforus/fPix/page/FavoritePage.dart';
 import 'package:fPix/com/longforus/fPix/page/ImagePage.dart';
 import 'package:fPix/com/longforus/fPix/page/SettingsPage.dart';
@@ -93,11 +95,33 @@ class MyAppState extends State<MyApp>{
 
 }*/
 
-class MyHomePage extends StatelessWidget {
-  MyHomePage({Key key, this.title}) : super(key: key){
-    CacheManager.showDebugLogs = !kReleaseMode;
-  }
+class MyHomePage extends StatefulWidget {
+
   final String title;
+  MyHomePage({Key key, this.title}) : super(key: key);
+
+  @override
+  State<StatefulWidget> createState() {
+    return HomePageState();
+  }
+}
+
+
+class HomePageState extends State<MyHomePage>{
+
+  @override
+  void initState() {
+    super.initState();
+    CacheManager.showDebugLogs = !kReleaseMode;
+    OB.getInstance();
+  }
+
+
+  @override
+  void dispose() {
+    OB.getInstance().then((value) => value.dispose());
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -202,9 +226,7 @@ class MyHomePage extends StatelessWidget {
             ));
     }
   }
-
 }
-
 
 
 class IndexController extends GetxController {

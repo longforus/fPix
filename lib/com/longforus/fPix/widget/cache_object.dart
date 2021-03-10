@@ -5,16 +5,15 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:objectbox/objectbox.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:synchronized/synchronized.dart';
 import 'package:uuid/uuid.dart';
 
 ///Cache information of one file
+///
+@Entity()
 class CacheObject {
-    static const _keyFilePath = "relativePath";
-    static const _keyValidTill = "validTill";
-    static const _keyETag = "ETag";
-    static const _keyTouched = "touched";
 
     Future<String> getFilePath() async {
         if (relativePath == null) {
@@ -24,70 +23,33 @@ class CacheObject {
         return directory.path + relativePath;
     }
 
-    String get relativePath {
-        if (_map.containsKey(_keyFilePath)) {
-            return _map[_keyFilePath];
-        }
-        return null;
-    }
-
-    DateTime get validTill {
-        if (_map.containsKey(_keyValidTill)) {
-            return new DateTime.fromMillisecondsSinceEpoch(_map[_keyValidTill]);
-        }
-        return null;
-    }
-
-    String get eTag {
-        if (_map.containsKey(_keyETag)) {
-            return _map[_keyETag];
-        }
-        return null;
-    }
-
+    String relativePath;
+    DateTime validTill;
+    String eTag;
     DateTime touched;
     String url;
     String cacheKey;
-
+    @Transient()
     Lock lock;
-    Map _map;
+    int id;
 
-    CacheObject(String url, {this.cacheKey, this.lock}) {
+
+    CacheObject({String url, this.cacheKey, this.lock}) {
         this.url = url;
         if (cacheKey == null || cacheKey.isEmpty) {
             cacheKey = url;
         }
-        _map = new Map();
+        id = cacheKey.hashCode;
         touch();
         if (lock == null) {
             lock = new Lock();
         }
     }
 
-    CacheObject.fromMap(String url, Map map, {this.cacheKey,this.lock}) {
-        this.url = url;
-        if (cacheKey == null || cacheKey.isEmpty) {
-            cacheKey = url;
-        }
-        _map = map;
 
-        if (_map.containsKey(_keyTouched)) {
-            touched = new DateTime.fromMillisecondsSinceEpoch(_map[_keyTouched]);
-        } else {
-            touch();
-        }
-        if (lock == null) {
-            lock = new Lock();
-        }
-    }
-
-    Map toMap() {
-        return _map;
-    }
 
     touch() {
         touched = new DateTime.now();
-        _map[_keyTouched] = touched.millisecondsSinceEpoch;
     }
 
     setDataFromHeaders(Map<String, String> headers) async {
@@ -108,11 +70,10 @@ class CacheObject {
             });
         }
 
-        _map[_keyValidTill] =
-            new DateTime.now().add(ageDuration).millisecondsSinceEpoch;
+        validTill = new DateTime.now().add(ageDuration);
 
         if (headers.containsKey("etag")) {
-            _map[_keyETag] = headers["etag"];
+           eTag = headers["etag"];
         }
 
         var fileExtension = "";
@@ -126,12 +87,12 @@ class CacheObject {
         var oldPath = await getFilePath();
         if (oldPath != null && !oldPath.endsWith(fileExtension)) {
             removeOldFile(oldPath);
-            _map[_keyFilePath] = null;
+            relativePath = null;
         }
 
         if (relativePath == null) {
             var fileName = "/${new Uuid().v1()}$fileExtension";
-            _map[_keyFilePath] = "$fileName";
+            relativePath = "$fileName";
         }
     }
 
@@ -143,6 +104,6 @@ class CacheObject {
     }
 
     setRelativePath(String path) {
-        _map[_keyFilePath] = path;
+        relativePath = path;
     }
 }
