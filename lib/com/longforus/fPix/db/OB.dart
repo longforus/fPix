@@ -8,10 +8,13 @@ class OB{
   static Lock _lock = new Lock();
   static Future<OB> getInstance() async {
     if (_instance == null) {
-      // keep local instance till it is fully initialized
-      var newInstance = new OB._();
-      _instance = newInstance;
-      await _instance._init();
+      await _lock.synchronized(() async {
+        if (_instance == null) {
+          var newInstance = new OB._();
+          _instance = newInstance;
+          await _instance._init();
+        }
+      });
     }
     return _instance;
   }
