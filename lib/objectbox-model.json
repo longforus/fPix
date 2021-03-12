@@ -4,51 +4,80 @@
   "_note3": "If you have VCS merge conflicts, you must resolve them according to ObjectBox docs.",
   "entities": [
     {
-      "id": "1:4097996945725361758",
-      "lastPropertyId": "7:7165745317333625521",
+      "id": "1:7128462078837807508",
+      "lastPropertyId": "7:5534287873958072387",
       "name": "CacheObject",
       "properties": [
         {
-          "id": "1:3724269101957464843",
+          "id": "1:4157210432954207619",
           "name": "relativePath",
           "type": 9
         },
         {
-          "id": "2:8973882463565019526",
+          "id": "2:5754879452479403455",
           "name": "validTill",
           "type": 10
         },
         {
-          "id": "3:6288997123460718891",
+          "id": "3:2028515447783231060",
           "name": "eTag",
           "type": 9
         },
         {
-          "id": "4:6713311070768501508",
+          "id": "4:2082161419107618444",
           "name": "touched",
           "type": 10
         },
         {
-          "id": "5:2288497649075590382",
+          "id": "5:6943838588824889391",
           "name": "url",
           "type": 9
         },
         {
-          "id": "6:8798354886688269477",
+          "id": "6:8685650650748571598",
           "name": "cacheKey",
           "type": 9
         },
         {
-          "id": "7:7165745317333625521",
+          "id": "7:5534287873958072387",
           "name": "id",
           "type": 6,
           "flags": 129
         }
       ],
       "relations": []
+    },
+    {
+      "id": "2:94774360377706587",
+      "lastPropertyId": "5:4424677321002786945",
+      "name": "FavoriteBean",
+      "properties": [
+        {
+          "id": "1:4751436240997464270",
+          "name": "id",
+          "type": 6,
+          "flags": 129
+        },
+        {
+          "id": "3:3489073029960586394",
+          "name": "tags",
+          "type": 9
+        },
+        {
+          "id": "4:5083587508770170263",
+          "name": "pageURL",
+          "type": 9
+        },
+        {
+          "id": "5:4424677321002786945",
+          "name": "largeImageURL",
+          "type": 9
+        }
+      ],
+      "relations": []
     }
   ],
-  "lastEntityId": "1:4097996945725361758",
+  "lastEntityId": "2:94774360377706587",
   "lastIndexId": "0:0",
   "lastRelationId": "0:0",
   "lastSequenceId": "0:0",
@@ -56,7 +85,9 @@
   "modelVersionParserMinimum": 5,
   "retiredEntityUids": [],
   "retiredIndexUids": [],
-  "retiredPropertyUids": [],
+  "retiredPropertyUids": [
+    5855110444782089920
+  ],
   "retiredRelationUids": [],
   "version": 1
 }

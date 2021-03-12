@@ -1,3 +1,5 @@
+import 'package:fPix/com/longforus/fPix/bean/favorite_bean.dart';
+import 'package:fPix/com/longforus/fPix/db/OB.dart';
 import 'package:fPix/com/longforus/fPix/page/PhotoViewPage.dart';
 import 'package:fPix/com/longforus/fPix/widget/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -16,16 +18,17 @@ class FavoritePage extends StatefulWidget {
 }
 
 class _FavoritePageState extends State<FavoritePage> {
-  List<Map<String, dynamic>> imgUrlList;
+  List<FavoriteBean> imgUrlList;
 
   @override
   void initState() {
     super.initState();
-    FavoriteDao.get().getAllImgUrl().then((list) {
-      setState(() {
-        imgUrlList = list;
-      });
-      print(list);
+    OB.getInstance().then((value){
+        var box = value.store.box<FavoriteBean>();
+        setState(() {
+          imgUrlList = box.getAll();
+        });
+        print(imgUrlList);
     });
   }
 
@@ -35,7 +38,7 @@ class _FavoritePageState extends State<FavoritePage> {
               child: new Card(
                   margin: const EdgeInsets.all(2.0),
                   elevation: 5,
-                  child: Hero(tag: imgUrlList[index]['largeImageURL'], child: Container(
+                  child: Hero(tag: imgUrlList[index].largeImageURL, child: Container(
                     padding: const EdgeInsets.all(2.0),
                     decoration: BoxDecoration(
                         shape: BoxShape.rectangle,
@@ -47,7 +50,7 @@ class _FavoritePageState extends State<FavoritePage> {
                               'images/placeholder.png',
                             )
                                 : CachedNetworkImageProvider(
-                                imgUrlList[index]['largeImageURL']),
+                                imgUrlList[index].largeImageURL),
                             fit: BoxFit.cover)),
                   ))),
               onTap: () {
@@ -62,7 +65,7 @@ class _FavoritePageState extends State<FavoritePage> {
       Navigator.push(context,
           MaterialPageRoute(builder: (BuildContext context) {
         return new PhotoViewPage(
-          imgUrlList[index],onFavoriteChanged: (changed){
+          imgUrlList[index].toMap(),onFavoriteChanged: (changed){
           setState(() {
             imgUrlList.removeAt(index);
           });

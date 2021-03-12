@@ -24,8 +24,10 @@ class CacheObject {
     }
 
     String relativePath;
+    @Property(type: PropertyType.date)
     DateTime validTill;
     String eTag;
+    @Property(type: PropertyType.date)
     DateTime touched;
     String url;
     String cacheKey;

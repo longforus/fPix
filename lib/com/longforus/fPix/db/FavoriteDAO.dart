@@ -4,7 +4,7 @@ import 'package:sqflite/sqflite.dart';
 /// @describe
 /// @author  XQ Yang
 /// @date 12/25/2018  10:09 AM
-
+@deprecated
 class FavoriteDao {
   Database mDb;
   static FavoriteDao dao;

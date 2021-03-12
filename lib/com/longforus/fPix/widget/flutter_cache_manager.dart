@@ -8,7 +8,7 @@ library flutter_cache_manager;
 import 'dart:io';
 
 import 'package:fPix/com/longforus/fPix/db/OB.dart';
-import 'package:fPix/com/longforus/fPix/widget/cache_object.dart';
+import 'package:fPix/com/longforus/fPix/bean/cache_object.dart';
 import 'package:fPix/objectbox.g.dart';
 import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;

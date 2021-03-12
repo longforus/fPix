@@ -1,11 +1,13 @@
 import 'dart:io';
 
 
-import 'package:fPix/com/longforus/fPix/db/FavoriteDAO.dart';
+import 'package:fPix/com/longforus/fPix/bean/favorite_bean.dart';
+import 'package:fPix/com/longforus/fPix/db/OB.dart';
 import 'package:fPix/com/longforus/fPix/utils/FileManager.dart';
 import 'package:fPix/com/longforus/fPix/utils/Toast.dart';
 import 'package:fPix/com/longforus/fPix/widget/cached_network_image.dart';
 import 'package:fPix/com/longforus/fPix/widget/flutter_cache_manager.dart';
+import 'package:fPix/objectbox.g.dart';
 import 'package:flutter/material.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -28,16 +30,17 @@ class PhotoViewPage extends StatefulWidget {
 class _PhotoViewPageState extends State<PhotoViewPage> {
   bool downloaded = false;
   bool favorited = false;
-
+  Box<FavoriteBean> _box;
   @override
   void initState() {
     if (widget.imageData != null) {
-      FavoriteDao.get().contains(widget.imageData['id']).then((v) {
-        if (mounted) {
-          setState(() {
-            favorited = v;
-          });
-        }
+      OB.getInstance().then((value){
+         _box = value.store.box();
+         if (mounted) {
+           setState(() {
+             favorited = _box.contains(widget.imageData['id']);
+           });
+         }
       });
     } else {
       setState(() {
@@ -141,23 +144,12 @@ class _PhotoViewPageState extends State<PhotoViewPage> {
 
   void _onFavorite() {
     if (favorited) {
-      FavoriteDao.get().deleteFid(widget.imageData['id']).then((onValue) {
-        if (onValue > 0) {
-          setState(() {
-            favorited = false;
-          });
-        }
+      setState(() {
+        favorited =  _box.remove(widget.imageData['id']);
       });
     } else {
-      FavoriteDao.get()
-          .insert(widget.imageData['id'], widget.imageData['tags'], widget.imageData['pageURL'],
-              widget.imageData['largeImageURL'])
-          .then((onValue) {
-        if (onValue > 0) {
-          setState(() {
-            favorited = true;
-          });
-        }
+      setState(() {
+        favorited = _box.put(FavoriteBean.formMap(widget.imageData))!=0;
       });
     }
     if (widget.onFavoriteChanged != null) {
