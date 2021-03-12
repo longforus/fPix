@@ -117,8 +117,8 @@ class HomePageState extends State<MyHomePage>{
 
 
   @override
-  void dispose() {
-    OB.getInstance().then((value) => value.dispose());
+  void dispose(){
+    OB.getInstance().dispose();
     super.dispose();
   }
 

@@ -6,13 +6,13 @@ import 'package:synchronized/synchronized.dart';
 class OB{
   static OB _instance;
   static Lock _lock = new Lock();
-  static Future<OB> getInstance() async {
+  static OB getInstance()  {
     if (_instance == null) {
-      await _lock.synchronized(() async {
+       _lock.synchronized(()  {
         if (_instance == null) {
           var newInstance = new OB._();
           _instance = newInstance;
-          await _instance._init();
+           _instance._init();
         }
       });
     }

@@ -23,12 +23,10 @@ class _FavoritePageState extends State<FavoritePage> {
   @override
   void initState() {
     super.initState();
-    OB.getInstance().then((value){
-        var box = value.store.box<FavoriteBean>();
-        setState(() {
-          imgUrlList = box.getAll();
-        });
-        print(imgUrlList);
+    var box = OB.getInstance().store.box<FavoriteBean>();
+    setState(() {
+      imgUrlList = box.getAll();
+      print(imgUrlList);
     });
   }
 

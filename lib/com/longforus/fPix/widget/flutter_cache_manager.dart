@@ -50,7 +50,7 @@ class CacheManager {
   ///Shared preferences is used to keep track of the information about the files
   Future _init() async {
     _prefs = await SharedPreferences.getInstance();
-    await OB.getInstance().then((value) => _box = value.store.box());
+    _box =  OB.getInstance().store.box();
     _getLastCleanTimestampFromPreferences();
   }
 

@@ -34,14 +34,12 @@ class _PhotoViewPageState extends State<PhotoViewPage> {
   @override
   void initState() {
     if (widget.imageData != null) {
-      OB.getInstance().then((value){
-         _box = value.store.box();
-         if (mounted) {
-           setState(() {
-             favorited = _box.contains(widget.imageData['id']);
-           });
-         }
-      });
+      _box = OB.getInstance().store.box();
+      if (mounted) {
+        setState(() {
+          favorited = _box.contains(widget.imageData['id']);
+        });
+      }
     } else {
       setState(() {
         favorited = true;
