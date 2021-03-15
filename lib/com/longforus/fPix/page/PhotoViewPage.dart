@@ -156,7 +156,9 @@ class _PhotoViewPageState extends State<PhotoViewPage> {
       });
     } else {
       setState(() {
-        favorited = _box.put(FavoriteBean.formMap(widget.imageData))!=0;
+        var favoriteBean = FavoriteBean.formMap(widget.imageData);
+        favoriteBean.cache.targetId = getCacheKey(widget.imageData, 'largeImageURL').hashCode;
+        favorited = _box.put(favoriteBean)!=0;
       });
     }
     if (widget.onFavoriteChanged != null) {

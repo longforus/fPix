@@ -4,7 +4,6 @@ import 'package:fPix/com/longforus/fPix/page/PhotoViewPage.dart';
 import 'package:fPix/com/longforus/fPix/widget/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:fPix/com/longforus/fPix/db/FavoriteDAO.dart';
 
 class FavoritePage extends StatefulWidget {
   const FavoritePage({
@@ -48,7 +47,7 @@ class _FavoritePageState extends State<FavoritePage> {
                               'images/placeholder.png',
                             )
                                 : CachedNetworkImageProvider(
-                                imgUrlList[index].largeImageURL),
+                                imgUrlList[index].largeImageURL,cacheKey: imgUrlList[index].getCacheKey()),
                             fit: BoxFit.cover)),
                   ))),
               onTap: () {

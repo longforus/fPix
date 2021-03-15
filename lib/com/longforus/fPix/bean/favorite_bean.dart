@@ -1,3 +1,4 @@
+import 'package:fPix/com/longforus/fPix/bean/cache_object.dart';
 import 'package:objectbox/objectbox.dart';
 
 @Entity()
@@ -8,6 +9,7 @@ class FavoriteBean{
     String tags;
     String pageURL;
     String largeImageURL;
+    final cache = ToOne<CacheObject>();
 
     FavoriteBean();
 
@@ -25,5 +27,14 @@ class FavoriteBean{
             'pageURL':pageURL,
             'largeImageURL':largeImageURL,
         };
+    }
+
+    String getCacheKey() {
+        String imgUrl = largeImageURL;
+        if(imgUrl==null||imgUrl.isEmpty){
+            return "";
+        }
+        String size = imgUrl.substring(imgUrl.lastIndexOf('_'), imgUrl.lastIndexOf('.'));
+        return "${id}$size";
     }
 }

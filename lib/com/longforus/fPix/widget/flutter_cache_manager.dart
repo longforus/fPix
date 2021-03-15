@@ -176,7 +176,9 @@ class CacheManager {
     //If non of the above is true, than we don't have to download anything.
     _save();
     if (showDebugLogs) print(log);
-
+    if(cacheObject==null) {
+      return null;
+    }
     var path = await cacheObject.getFilePath();
     if (path == null) {
       return null;
@@ -218,8 +220,8 @@ class CacheManager {
       return newCacheObject;
     }
     //If file is old, download if server has newer one
-    if (cacheObject.validTill == null ||
-        cacheObject.validTill.isBefore(new DateTime.now())) {
+    if (!cacheObject.favorite.hasValue&&(cacheObject.validTill == null ||
+        cacheObject.validTill.isBefore(new DateTime.now()))) {
       debugPrint( "Updating file in cache.");
       CacheObject newCacheObject = await _downloadFile(url, headers,
           relativePath: cacheObject.relativePath, eTag: cacheObject.eTag, cacheKey: cacheKey);
@@ -254,23 +256,28 @@ class CacheManager {
       debugPrint( "download error $e");
     }
     if (response != null) {
-      if (response.statusCode == 200) {
-        await newCache.setDataFromHeaders(response.headers);
+      switch(response.statusCode){
+        case 200:
+          await newCache.setDataFromHeaders(response.headers);
 
-        var filePath = await newCache.getFilePath();
-        var folder = new File(filePath).parent;
-        if (!(await folder.exists())) {
-          folder.createSync(recursive: true);
-        }
-        await new File(filePath).writeAsBytes(response.bodyBytes);
-        return newCache;
-      }
-      if (response.statusCode == 304) {
-        await newCache.setDataFromHeaders(response.headers);
-        return newCache;
+          var filePath = await newCache.getFilePath();
+          var folder = new File(filePath).parent;
+          if (!(await folder.exists())) {
+            folder.createSync(recursive: true);
+          }
+          await new File(filePath).writeAsBytes(response.bodyBytes);
+          return newCache;
+          break;
+
+        case 304:
+          await newCache.setDataFromHeaders(response.headers);
+          return newCache;
+          break;
+        case 400:
+          _box.remove(newCache.id);
+          break;
       }
     }
-
     return null;
   }
 }

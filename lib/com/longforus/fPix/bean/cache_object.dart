@@ -5,6 +5,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:fPix/com/longforus/fPix/bean/favorite_bean.dart';
 import 'package:objectbox/objectbox.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:synchronized/synchronized.dart';
@@ -36,6 +37,8 @@ class CacheObject {
     @Id(assignable: true)
     int id;
 
+    @Backlink()
+    final favorite = ToOne<FavoriteBean>();
 
     CacheObject({String url, this.cacheKey, this.lock}) {
         this.url = url;

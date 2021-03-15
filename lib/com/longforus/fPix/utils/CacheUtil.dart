@@ -11,6 +11,7 @@ String getCacheKey(Map<String, dynamic> imageData, String imgKey) {
   return "${imageData['id']}$size";
 }
 
+
 String getVideoImageUrl(Map<String, dynamic> data, {String size = "640x360"}) {
     return "https://i.vimeocdn.com/video/${data['picture_id']}_$size.jpg";
 }
