@@ -108,6 +108,15 @@ class _PhotoViewPageState extends State<PhotoViewPage> {
         alignment: Alignment.bottomLeft,
         children: <Widget>[
           PhotoView(
+            loadingBuilder: (context,event){
+            return Center(
+                child: Container(
+                  width: 40.0,
+                  height: 40.0,
+                  child: CircularProgressIndicator(),
+                ),
+              );
+            },
             imageProvider: CachedNetworkImageProvider(widget.imageData['largeImageURL'],
                 cacheKey: getCacheKey(widget.imageData, 'largeImageURL')),
             minScale: PhotoViewComputedScale.contained * 0.8,
