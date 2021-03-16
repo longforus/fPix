@@ -3,7 +3,7 @@ import 'dart:core';
 import 'dart:io';
 
 import 'package:fPix/com/longforus/fPix/Const.dart';
-import 'package:fPix/com/longforus/fPix/utils/Toast.dart';
+import 'package:fPix/com/longforus/fPix/utils/fpix_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:path_provider/path_provider.dart';
@@ -59,7 +59,7 @@ class FileManager {
     Future<bool> _checkPermissions(BuildContext context) async {
         var status = await Permission.storage.request();
         if (!status.isGranted) {
-            Toast.toast(context, "权限被拒绝");
+            shortToast( "权限被拒绝");
         }
         return status.isGranted;
     }

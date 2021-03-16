@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:fPix/com/longforus/fPix/bean/favorite_bean.dart';
 import 'package:fPix/com/longforus/fPix/db/OB.dart';
 import 'package:fPix/com/longforus/fPix/utils/FileManager.dart';
-import 'package:fPix/com/longforus/fPix/utils/Toast.dart';
+import 'package:fPix/com/longforus/fPix/utils/fpix_toast.dart';
 import 'package:fPix/com/longforus/fPix/widget/cached_network_image.dart';
 import 'package:fPix/com/longforus/fPix/widget/flutter_cache_manager.dart';
 import 'package:fPix/objectbox.g.dart';
@@ -187,16 +187,16 @@ class _PhotoViewPageState extends State<PhotoViewPage> {
               FileManager.get(context).then((manager) async {
                 if (manager != null) {
                   File result = await manager.save2SdCard(file);
-                  Toast.toast(context, 'save to ${result.path}');
+                  shortToast('save to ${result.path}');
                 } else {
-                  Toast.toast(context, '存储权限未获取');
+                  shortToast('存储权限未获取');
                 }
               });
             } catch (e) {
-              Toast.toast(context, 'Save Fail');
+              shortToast( 'Save Fail');
             }
           } else {
-            Toast.toast(context, 'Download Fail');
+            shortToast('Download Fail');
           }
         });
       });

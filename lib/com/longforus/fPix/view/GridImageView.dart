@@ -3,10 +3,11 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:fPix/com/longforus/fPix/Const.dart';
+import 'package:fPix/com/longforus/fPix/http/dio_manager.dart';
 import 'package:fPix/com/longforus/fPix/page/VideoPlayerPage.dart';
 import 'package:fPix/com/longforus/fPix/utils/CacheUtil.dart';
-import 'package:fPix/com/longforus/fPix/utils/Toast.dart';
 import 'package:fPix/com/longforus/fPix/page/PhotoViewPage.dart';
+import 'package:fPix/com/longforus/fPix/utils/fpix_toast.dart';
 import 'package:fPix/com/longforus/fPix/widget/ImageTopBar.dart';
 import 'package:fPix/com/longforus/fPix/widget/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -133,7 +134,6 @@ class _ImageGridDelegateState extends State<ImageGridDelegate> {
 
   void getImageData([Completer completer]) async {
     var url = widget.isVideo ? BASE_URL_VIDEO : BASE_URL;
-    var httpClient = new HttpClient();
     bool success = false;
     url += "&category=$imageType";
     url += "&page=$currentPageIndex";
@@ -143,18 +143,13 @@ class _ImageGridDelegateState extends State<ImageGridDelegate> {
     }
     List resultList;
     try {
-      var request = await httpClient.getUrl(Uri.parse(url));
-      var response = await request.close();
-      if (response.statusCode == HttpStatus.ok) {
-        var jsonStr = await response.transform(utf8.decoder).join();
-        var data = json.decode(jsonStr);
-        resultList = data['hits'];
-        success = resultList.isNotEmpty;
-      } else {
-        Toast.toast(context, 'Error getting status=${response.statusCode}');
-      }
+     var result =  await DioManager.getInstance().get(url, {},onError: (code,msg){
+        shortToast( msg);
+      });
+     resultList = result['hits'];
+     success = resultList.isNotEmpty;
     } catch (exception) {
-      Toast.toast(context, 'Failed getting');
+      shortToast( 'Failed getting');
     }
     completer?.complete();
 
