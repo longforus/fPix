@@ -18,7 +18,7 @@ class DioManager {
   //写一个单例
   //在 Dart 里，带下划线开头的变量是私有变量
   static DioManager _instance;
-  static String baseUrl = '';
+  static String baseUrl ;
   static Map<String, String> reqCons={};
 
   static DioManager getInstance() {

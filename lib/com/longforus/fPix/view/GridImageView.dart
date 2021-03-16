@@ -133,17 +133,18 @@ class _ImageGridDelegateState extends State<ImageGridDelegate> {
   }
 
   void getImageData([Completer completer]) async {
-    var url = widget.isVideo ? BASE_URL_VIDEO : BASE_URL;
     bool success = false;
-    url += "&category=$imageType";
-    url += "&page=$currentPageIndex";
-    url += "&per_page=$pageSize";
+    var reqMap = {
+      'category':imageType,
+      'page':currentPageIndex,
+      'per_page':pageSize,
+    };
     if (keyword != null && keyword.isNotEmpty) {
-      url += "&q=$keyword";
+        reqMap['q']=keyword;
     }
     List resultList;
     try {
-     var result =  await DioManager.getInstance().get(url, {},onError: (code,msg){
+     var result =  await DioManager.getInstance().get(widget.isVideo ? '/videos' : '',reqMap ,onError: (code,msg){
         shortToast( msg);
       });
      resultList = result['hits'];

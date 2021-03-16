@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:fPix/com/longforus/fPix/db/OB.dart';
+import 'package:fPix/com/longforus/fPix/http/dio_manager.dart';
 import 'package:fPix/com/longforus/fPix/page/FavoritePage.dart';
 import 'package:fPix/com/longforus/fPix/page/ImagePage.dart';
 import 'package:fPix/com/longforus/fPix/page/SettingsPage.dart';
@@ -113,6 +114,10 @@ class HomePageState extends State<MyHomePage>{
     super.initState();
     CacheManager.showDebugLogs = !kReleaseMode;
     OB.getInstance();
+    DioManager.baseUrl = 'https://pixabay.com/api';
+    DioManager.reqCons = {
+      'key':'11042541-60a032dcf49543f53d415848c'
+    };
   }
 
 
