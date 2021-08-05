@@ -1,0 +1,90 @@
+plugins {
+    id 'com.android.application'
+    id 'kotlin-android'
+}
+
+android {
+    compileSdk 30
+
+    defaultConfig {
+        applicationId "com.longforus.cpix"
+        minSdk 21
+        targetSdk 30
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        vectorDrawables {
+            useSupportLibrary true
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+    kotlinOptions {
+        jvmTarget = '11'
+        useIR = true
+    }
+    buildFeatures {
+        viewBinding true
+        compose true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion compose_version
+        kotlinCompilerVersion '1.5.10'
+    }
+    packagingOptions {
+        resources {
+            excludes += '/META-INF/{AL2.0,LGPL2.1}'
+        }
+    }
+}
+
+dependencies {
+
+    implementation 'androidx.core:core-ktx:1.6.0'
+    implementation 'androidx.appcompat:appcompat:1.3.1'
+    implementation 'com.google.android.material:material:1.4.0'
+    implementation "androidx.compose.ui:ui:$compose_version"
+    implementation "androidx.compose.material:material:$compose_version"
+    // Material design icons
+    implementation "androidx.compose.material:material-icons-core:$compose_version"
+    implementation "androidx.compose.material:material-icons-extended:$compose_version"
+    implementation "androidx.compose.ui:ui-tooling-preview:$compose_version"
+    // Integration with ViewModels
+    implementation "androidx.lifecycle:lifecycle-viewmodel-compose:1.0.0-alpha07"
+    // Integration with observables
+    implementation "androidx.compose.runtime:runtime-livedata:$compose_version"
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.3.1"
+    implementation 'androidx.activity:activity-compose:1.3.0'
+    testImplementation 'junit:junit:4.+'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+    androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_version"
+    debugImplementation "androidx.compose.ui:ui-tooling:$compose_version"
+
+
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlin_coroutines_version"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$kotlin_coroutines_version"
+
+
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$rootProject.lifecycle_version" // For Kotlin use lifecycle-viewmodel-ktx
+    // alternatively - just LiveData
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$rootProject.lifecycle_version"
+    //     AndroidX libraries use this lightweight import for Lifecycle
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:$rootProject.lifecycle_version"
+    implementation "androidx.lifecycle:lifecycle-common-java8:$rootProject.lifecycle_version"
+
+
+    def fragment_version = "1.3.6"
+    // Kotlin
+    implementation "androidx.fragment:fragment-ktx:$fragment_version"
+}
