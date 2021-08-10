@@ -37,3 +37,16 @@ object LogUtil {
     }
 }
 
+/**
+ * Returns a string containing the first [n] characters from this string, or the entire string if this string is shorter.
+ * 如果length超过n返回实际长度,否则截取前n个char
+ *
+ * @throws IllegalArgumentException if [n] is negative.
+ *
+ * @sample samples.text.Strings.take
+ */
+fun String.ifTakeAppendLength(n: Int): String {
+    require(n >= 0) { "Requested character count $n is less than zero." }
+    val endIndex = n.coerceAtMost(length)
+    return substring(0, endIndex) + if (endIndex == n) "......(length = $length)" else ""
+}

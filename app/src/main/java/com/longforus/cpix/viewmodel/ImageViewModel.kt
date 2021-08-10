@@ -4,25 +4,78 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.longforus.cpix.bean.ImageListBean
+import com.longforus.cpix.bean.Img
+import com.longforus.cpix.http.coHttp
+import com.longforus.cpix.typeList
+import com.longforus.cpix.util.LogUtils
+import kotlinx.coroutines.launch
+import java.util.*
 
-class ImageViewModel:ViewModel() {
+class ImageViewModel : ViewModel() {
     val TAG = "ImageViewModel"
     private val _selectTab = MutableLiveData<Int>(0)
-    val selectTab:LiveData<Int> = _selectTab
+    val selectTab: LiveData<Int> = _selectTab
 
-    val topImageUrl = MutableLiveData<String>("https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fi0.hdslb.com%2Fbfs%2Farticle%2F2a1e91dde2d9b4e6d66293663132decffe1c4f2e.jpg&refer=http%3A%2F%2Fi0.hdslb.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=jpeg?sec=1631153328&t=95ddfdc85b6f7c58df117149597ae61e")
+    val topImageUrl = MutableLiveData<Img>()
 
-    fun setSelectedTabIndex(pos:Int){
-        _selectTab.value = pos
+    private val pageSize = 20
+    private var currentPageIndex = 1
+    private var imageType = typeList[0]
+    private var keyWord = ""
+
+    fun setSelectedTabIndex(pos: Int) {
+        if (pos != _selectTab.value) {
+            _selectTab.value = pos
+            imageType = typeList[pos]
+            currentPageIndex = 1
+            keyWord = ""
+            loadMore()
+        }
     }
+
+
+    init {
+        loadMore()
+    }
+
 
     fun loadMore() {
-        Log.d(TAG,"on load more")
+        Log.d(TAG, "on load more")
+        viewModelScope.launch {
+            coHttp<ImageListBean> {
+                api { service, parameter ->
+                    parameter["category"] = imageType.lowercase(Locale.getDefault())
+                    parameter["page"] = currentPageIndex++
+                    parameter["per_page"] = pageSize
+                    if (keyWord.isNotEmpty()) {
+                        parameter["q"] = keyWord
+                    }
+                    service.getImages(parameter.build())
+                }
+
+                onError {
+                    it.printStackTrace()
+                }
+            }?.let {
+                LogUtils.d(TAG, it)
+                if (currentPageIndex == 2) {
+                    topImageUrl.value = it.hits[0]
+                    imageList.value = it.hits.drop(1)
+                } else {
+                    val toMutableList = imageList.value?.toMutableList()
+                    if (toMutableList.isNullOrEmpty()) {
+                        imageList.value = it.hits
+                    } else {
+                        imageList.value = toMutableList + it.hits
+                    }
+                }
+            }
+        }
     }
 
-    val imageList = MutableLiveData<List<String>>()
-
-
+    val imageList = MutableLiveData<List<Img>>()
 
 
 }
