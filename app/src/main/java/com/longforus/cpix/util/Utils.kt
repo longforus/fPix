@@ -6,12 +6,8 @@ import android.graphics.Color
 import android.util.Log
 import android.view.View
 import android.view.WindowManager
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.longforus.cpix.R
 
 object StatusBarUtil {
     fun transparentStatusBar(activity: Activity) {
@@ -40,3 +36,4 @@ object LogUtil {
         Log.d(tag, message)
     }
 }
+
