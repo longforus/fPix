@@ -27,7 +27,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import coil.compose.rememberImagePainter
@@ -85,6 +87,8 @@ class ImageFragment : Fragment() {
         Image(
             painter = rememberImagePainter(data = topImage?.webformatURL, builder = {
                 crossfade(true)
+                placeholder(R.drawable.placeholder)
+                error(ColorDrawable(android.graphics.Color.GREEN))
                 scale(Scale.FIT)
             }),
             contentDescription = null,
@@ -106,7 +110,7 @@ class ImageFragment : Fragment() {
         val listState = rememberLazyListState()
         val isRefreshing by vm.isRefreshing.collectAsState()
         if (list.isNotEmpty()) {
-            SwipeRefresh(state = rememberSwipeRefreshState(isRefreshing) , onRefresh = {
+            SwipeRefresh(state = rememberSwipeRefreshState(isRefreshing), onRefresh = {
                 vm.onRefresh()
             }) {
                 LazyVerticalGrid(
@@ -115,6 +119,7 @@ class ImageFragment : Fragment() {
                     modifier = Modifier.fillMaxWidth(),
                     state = listState,
                 ) {
+                    //fixme grid现在还不支持key,所以加载第二页的时候,会闪动?
                     itemsIndexed(list) { pos, str ->
                         Image(painter = rememberImagePainter(data = str.webformatURL, builder = {
                             placeholder(R.drawable.placeholder)
@@ -145,7 +150,11 @@ class ImageFragment : Fragment() {
                 }
             }
         } else {
-            Text("loading...",modifier =  Modifier.fillMaxWidth())
+            Text("loading...",
+                modifier = Modifier.fillMaxWidth().padding(top = 150.dp),
+                fontSize = 30.sp,
+                textAlign = TextAlign.Center
+            )
         }
     }
 
@@ -155,10 +164,10 @@ class ImageFragment : Fragment() {
             selectedTabIndex = selectIndex,
             backgroundColor = Color(0x22000000),
             edgePadding = 0.dp,
-            indicator = {tabPositions ->
+            indicator = { tabPositions ->
                 TabRowDefaults.Indicator(
                     Modifier.tabIndicatorOffset(tabPositions[selectIndex]),
-                    color =  Purple500
+                    color = Purple500
                 )
             }
         ) {
@@ -170,7 +179,8 @@ class ImageFragment : Fragment() {
                     },
                     modifier = Modifier.height(40.dp)
                 ) {
-                    Text(text = s,
+                    Text(
+                        text = s,
                         color = Color.White
                     )
                 }
