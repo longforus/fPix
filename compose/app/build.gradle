@@ -98,4 +98,5 @@ dependencies {
 //    implementation "androidx.paging:paging-compose:1.0.0-alpha12"
 
     implementation "com.google.accompanist:accompanist-coil:0.15.0"
+    implementation "com.google.accompanist:accompanist-swiperefresh:0.16.1"
 }

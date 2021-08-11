@@ -18,11 +18,8 @@ import androidx.compose.material.*
 import androidx.compose.material.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -35,6 +32,8 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import coil.compose.rememberImagePainter
 import coil.size.Scale
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.longforus.cpix.R
 import com.longforus.cpix.bean.Img
 import com.longforus.cpix.typeList
@@ -49,7 +48,7 @@ import kotlinx.coroutines.flow.map
 class ImageFragment : Fragment() {
 
 
-    val vm by viewModels<ImageViewModel>()
+    private val vm by viewModels<ImageViewModel>()
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -105,34 +104,37 @@ class ImageFragment : Fragment() {
     private fun ContentList(list: List<Img>) {
 
         val listState = rememberLazyListState()
-
+        val isRefreshing by vm.isRefreshing.collectAsState()
         if (list.isNotEmpty()) {
-            LazyVerticalGrid(
-                cells = GridCells.Fixed(2),
-                contentPadding = PaddingValues(2.dp),
-                modifier = Modifier.fillMaxWidth(),
-                state = listState,
-            ) {
-                itemsIndexed(list) { pos, str ->
-                    Image(painter = rememberImagePainter(data = str.webformatURL, builder = {
-                        placeholder(R.drawable.placeholder)
-                        error(ColorDrawable(android.graphics.Color.GREEN))
-                        crossfade(true)
-                        scale(Scale.FIT)
-                    }), contentDescription = null,
-                        modifier = Modifier
-                        .clickable {
+            SwipeRefresh(state = rememberSwipeRefreshState(isRefreshing) , onRefresh = {
+                vm.onRefresh()
+            }) {
+                LazyVerticalGrid(
+                    cells = GridCells.Fixed(2),
+                    contentPadding = PaddingValues(2.dp),
+                    modifier = Modifier.fillMaxWidth(),
+                    state = listState,
+                ) {
+                    itemsIndexed(list) { pos, str ->
+                        Image(painter = rememberImagePainter(data = str.webformatURL, builder = {
+                            placeholder(R.drawable.placeholder)
+                            error(ColorDrawable(android.graphics.Color.GREEN))
+                            crossfade(true)
+                            scale(Scale.FIT)
+                        }), contentDescription = null,
+                            modifier = Modifier
+                                .clickable {
 
-                        }
-                        .height(180.dp)
-                        .padding(start = if (pos % 2 == 0) 0.dp else 3.dp, top = 3.dp)
-                        .clip(RoundedCornerShape(5.dp)),
-                        contentScale = ContentScale.Crop
-                    )
+                                }
+                                .height(180.dp)
+                                .padding(start = if (pos % 2 == 0) 0.dp else 3.dp, top = 3.dp)
+                                .clip(RoundedCornerShape(5.dp)),
+                            contentScale = ContentScale.Crop
+                        )
+                    }
+
                 }
-
             }
-
             LaunchedEffect(listState) {
                 snapshotFlow {
                     listState.layoutInfo.visibleItemsInfo.last().index * 2 + 2
