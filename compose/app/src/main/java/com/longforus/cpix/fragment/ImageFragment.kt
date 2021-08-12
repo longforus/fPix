@@ -38,6 +38,7 @@ import com.longforus.cpix.bean.Img
 import com.longforus.cpix.typeList
 import com.longforus.cpix.ui.theme.CPixTheme
 import com.longforus.cpix.ui.theme.Purple500
+import com.longforus.cpix.util.LogUtils
 import com.longforus.cpix.viewmodel.ImageViewModel
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -47,7 +48,7 @@ import kotlin.math.ceil
 
 class ImageFragment : Fragment() {
 
-
+    val TAG = "ImageFragment"
     private val vm by viewModels<ImageViewModel>()
 
 
@@ -123,7 +124,10 @@ class ImageFragment : Fragment() {
                     items(pairs, key = {
                         "${it.first.id}_${it.second?.id}"
                     }) { item ->
-                        Row (Modifier.padding(start = 2.dp,end = 2.dp).height(180.dp)){
+                        Row(
+                            Modifier
+                                .padding(start = 2.dp, end = 2.dp)
+                                .height(180.dp)) {
                             ItemImage(item.first, true)
                             item.second?.let {
                                 ItemImage(it, false)
@@ -158,11 +162,12 @@ class ImageFragment : Fragment() {
 //                    }
 //                }
             }
-            LaunchedEffect(listState) {
+            LaunchedEffect(listState,list) {
                 snapshotFlow {
-                    listState.layoutInfo.visibleItemsInfo.last().index * 2 + 2
+                    listState.layoutInfo.visibleItemsInfo.last().index + 1
                 }.map {
-                    it >= list.size
+                    LogUtils.d(TAG, "map:$it  listSize=${list.size} ")
+                    it >= list.size / 2
                 }.distinctUntilChanged().filter { it }.collect {
                     vm.loadMore()
                 }
