@@ -1,6 +1,7 @@
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
+    id 'kotlin-android-extensions'
 }
 
 android {
@@ -36,6 +37,9 @@ android {
     buildFeatures {
         viewBinding true
         compose true
+    }
+    androidExtensions {
+        experimental = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion compose_version
@@ -96,4 +100,7 @@ dependencies {
 
     implementation "com.google.accompanist:accompanist-coil:0.15.0"
     implementation "com.google.accompanist:accompanist-swiperefresh:0.16.1"
+
+
+    implementation 'com.github.chrisbanes:PhotoView:2.3.0'
 }

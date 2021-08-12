@@ -1,5 +1,8 @@
 package com.longforus.cpix.bean
 
+import android.os.Parcelable
+import kotlinx.android.parcel.Parcelize
+
 
 data class ImageListBean(
     var hits: List<Img> = listOf(),
@@ -8,6 +11,7 @@ data class ImageListBean(
 )
 
 
+@Parcelize
 data class Img(
     var collections: Int = 0, // 2687
     var comments: Int = 0, // 507
@@ -31,4 +35,4 @@ data class Img(
     var webformatHeight: Int = 0, // 415
     var webformatURL: String = "", // https://pixabay.com/get/gca2881aa72e3bdd30ba44211b8b077e778c6ea8bd1f684729db5586e9eb93dbf8b15c9d2681fe681b41e76ce11a38d451f87269433daa8f5b9d4c625eaf4466f_640.jpg
     var webformatWidth: Int = 0 // 640
-)
+):Parcelable

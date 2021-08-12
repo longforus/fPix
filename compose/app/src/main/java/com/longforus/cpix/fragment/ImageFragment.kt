@@ -1,5 +1,6 @@
 package com.longforus.cpix.fragment
 
+import android.content.Intent
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -33,6 +34,7 @@ import coil.compose.rememberImagePainter
 import coil.size.Scale
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
+import com.longforus.cpix.PhotoActivity
 import com.longforus.cpix.R
 import com.longforus.cpix.bean.Img
 import com.longforus.cpix.typeList
@@ -93,6 +95,9 @@ class ImageFragment : Fragment() {
             contentDescription = null,
             modifier = Modifier
                 .height(230.dp)
+                .clickable {
+                    startActivity(Intent(requireContext(), PhotoActivity::class.java).putExtra("bean", topImage))
+                }
                 .fillMaxWidth(),
             contentScale = ContentScale.Crop
         )
@@ -127,7 +132,8 @@ class ImageFragment : Fragment() {
                         Row(
                             Modifier
                                 .padding(start = 2.dp, end = 2.dp)
-                                .height(180.dp)) {
+                                .height(180.dp)
+                        ) {
                             ItemImage(item.first, true)
                             item.second?.let {
                                 ItemImage(it, false)
@@ -162,7 +168,7 @@ class ImageFragment : Fragment() {
 //                    }
 //                }
             }
-            LaunchedEffect(listState,list) {
+            LaunchedEffect(listState, list) {
                 snapshotFlow {
                     listState.layoutInfo.visibleItemsInfo.last().index + 1
                 }.map {
@@ -194,7 +200,7 @@ class ImageFragment : Fragment() {
         }), contentDescription = null,
             modifier = Modifier
                 .clickable {
-
+                    startActivity(Intent(requireContext(), PhotoActivity::class.java).putExtra("bean", img))
                 }
                 .fillMaxHeight()
                 .fillMaxWidth(if (isLeft) 0.5f else 1f)
