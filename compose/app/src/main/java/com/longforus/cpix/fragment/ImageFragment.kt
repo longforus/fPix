@@ -28,10 +28,12 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.paging.LoadState
+import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.compose.items
 import coil.compose.rememberImagePainter
 import coil.size.Scale
 import com.google.accompanist.swiperefresh.SwipeRefresh
@@ -59,13 +61,14 @@ class ImageFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return ComposeView(requireContext()).apply {
             setContent {
-                ImageScreen()
+                val usePaging by vm.usePaging.observeAsState()
+                ImageScreen(usePaging ?: false)
             }
         }
     }
 
     @Composable
-    private fun ImageScreen() {
+    private fun ImageScreen(usePaging: Boolean) {
         CPixTheme {
             Scaffold(floatingActionButton = {
                 FloatingActionButton(onClick = { /*TODO*/ }) {
@@ -77,11 +80,13 @@ class ImageFragment : Fragment() {
                         val topImage by vm.topImageUrl.observeAsState()
                         TopImageView(topImage)
                     }
-                    val contentList by vm.imageList.observeAsState()
-//                    val lazyPagingItems = vm.imagePager.flow.collectAsLazyPagingItems()
-//                    lazyPagingItems.itemCount
-                    ContentList(contentList ?: emptyList())
-
+                    if (usePaging) {
+                        val lazyPagingItems = vm.imagePager.flow.collectAsLazyPagingItems()
+                        ContentListPaging(lazyPagingItems)
+                    } else {
+                        val contentList by vm.imageList.observeAsState()
+                        ContentList(contentList ?: emptyList())
+                    }
                 }
             }
         }
@@ -146,31 +151,6 @@ class ImageFragment : Fragment() {
                     }
 
                 }
-                //直接使用LazyColumn 应该可以解决grid现在还不支持key,所以加载后续页面的时候可能会整体闪动的问题
-//                LazyVerticalGrid(
-//                    cells = GridCells.Fixed(2),
-//                    contentPadding = PaddingValues(2.dp),
-//                    modifier = Modifier.fillMaxWidth(),
-//                    state = listState,
-//                ) {
-//                    itemsIndexed(list) { pos, str ->
-//                        Image(painter = rememberImagePainter(data = str.webformatURL, builder = {
-//                            placeholder(R.drawable.placeholder)
-//                            error(ColorDrawable(android.graphics.Color.GREEN))
-//                            crossfade(true)
-//                            scale(Scale.FIT)
-//                        }), contentDescription = null,
-//                            modifier = Modifier
-//                                .clickable {
-//
-//                                }
-//                                .height(180.dp)
-//                                .padding(start = if (pos % 2 == 0) 0.dp else 3.dp, top = 3.dp)
-//                                .clip(RoundedCornerShape(5.dp)),
-//                            contentScale = ContentScale.Crop
-//                        )
-//                    }
-//                }
             }
             LaunchedEffect(listState, list) {
                 snapshotFlow {
@@ -203,6 +183,43 @@ class ImageFragment : Fragment() {
 
             }
 
+        }
+    }
+
+    @OptIn(ExperimentalFoundationApi::class)
+    @Composable
+    private fun ContentListPaging(list: LazyPagingItems<Img>) {
+        SwipeRefresh(state = rememberSwipeRefreshState(list.loadState.refresh == LoadState.Loading), onRefresh = {
+            list.refresh()
+        }) {
+            //LazyPagingItems还不支持grid
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 3.dp, end = 3.dp),
+            ) {
+                items(list, key = {
+                    it.id
+                }) { img ->
+                    img ?: return@items
+                    Image(painter = rememberImagePainter(data = img.webformatURL, builder = {
+                        placeholder(R.drawable.placeholder)
+                        error(ColorDrawable(android.graphics.Color.GREEN))
+                        crossfade(true)
+                        scale(Scale.FIT)
+                    }), contentDescription = null,
+                        modifier = Modifier
+                            .clickable {
+                                startActivity(Intent(requireContext(), PhotoActivity::class.java).putExtra("bean", img))
+                            }
+                            .height(180.dp)
+                            .fillMaxWidth()
+                            .padding(top = 3.dp)
+                            .clip(RoundedCornerShape(5.dp)),
+                        contentScale = ContentScale.Crop
+                    )
+                }
+            }
         }
     }
 

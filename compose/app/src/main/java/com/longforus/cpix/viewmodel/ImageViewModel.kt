@@ -32,6 +32,8 @@ class ImageViewModel : ViewModel() {
     private var imageType = typeList[0]
     private var keyWord = ""
 
+    val usePaging = MutableLiveData(false)
+
     fun setSelectedTabIndex(pos: Int) {
         if (pos != _selectTab.value) {
             _selectTab.value = pos
@@ -129,7 +131,7 @@ class ImageViewModel : ViewModel() {
                 api { service, parameter ->
                     parameter["category"] = imageType.lowercase(Locale.getDefault())
                     parameter["page"] = i
-                    parameter["per_page"] = pageSize
+                    parameter["per_page"] = params.loadSize
                     if (keyWord.isNotEmpty()) {
                         parameter["q"] = keyWord
                     }
