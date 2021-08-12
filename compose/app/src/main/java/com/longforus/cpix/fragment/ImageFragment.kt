@@ -9,10 +9,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.GridCells
-import androidx.compose.foundation.lazy.LazyVerticalGrid
-import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.lazy.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.TabRowDefaults.tabIndicatorOffset
@@ -46,6 +43,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
+import kotlin.math.ceil
 
 class ImageFragment : Fragment() {
 
@@ -113,32 +111,52 @@ class ImageFragment : Fragment() {
             SwipeRefresh(state = rememberSwipeRefreshState(isRefreshing), onRefresh = {
                 vm.onRefresh()
             }) {
-                LazyVerticalGrid(
-                    cells = GridCells.Fixed(2),
-                    contentPadding = PaddingValues(2.dp),
+                val pairs = ArrayList<Pair<Img, Img?>>(ceil(list.size / 2.0).toInt())
+                var i = 0
+                while (i < list.size) {
+                    pairs.add(list[i++] to list.getOrNull(i++))
+                }
+                LazyColumn(
                     modifier = Modifier.fillMaxWidth(),
                     state = listState,
                 ) {
-                    //fixme grid现在还不支持key,所以加载第二页的时候,会闪动?
-                    itemsIndexed(list) { pos, str ->
-                        Image(painter = rememberImagePainter(data = str.webformatURL, builder = {
-                            placeholder(R.drawable.placeholder)
-                            error(ColorDrawable(android.graphics.Color.GREEN))
-                            crossfade(true)
-                            scale(Scale.FIT)
-                        }), contentDescription = null,
-                            modifier = Modifier
-                                .clickable {
-
-                                }
-                                .height(180.dp)
-                                .padding(start = if (pos % 2 == 0) 0.dp else 3.dp, top = 3.dp)
-                                .clip(RoundedCornerShape(5.dp)),
-                            contentScale = ContentScale.Crop
-                        )
+                    items(pairs, key = {
+                        "${it.first.id}_${it.second?.id}"
+                    }) { item ->
+                        Row (Modifier.padding(start = 2.dp,end = 2.dp).height(180.dp)){
+                            ItemImage(item.first, true)
+                            item.second?.let {
+                                ItemImage(it, false)
+                            }
+                        }
                     }
 
                 }
+                //直接使用LazyColumn 应该可以解决grid现在还不支持key,所以加载后续页面的时候可能会整体闪动的问题
+//                LazyVerticalGrid(
+//                    cells = GridCells.Fixed(2),
+//                    contentPadding = PaddingValues(2.dp),
+//                    modifier = Modifier.fillMaxWidth(),
+//                    state = listState,
+//                ) {
+//                    itemsIndexed(list) { pos, str ->
+//                        Image(painter = rememberImagePainter(data = str.webformatURL, builder = {
+//                            placeholder(R.drawable.placeholder)
+//                            error(ColorDrawable(android.graphics.Color.GREEN))
+//                            crossfade(true)
+//                            scale(Scale.FIT)
+//                        }), contentDescription = null,
+//                            modifier = Modifier
+//                                .clickable {
+//
+//                                }
+//                                .height(180.dp)
+//                                .padding(start = if (pos % 2 == 0) 0.dp else 3.dp, top = 3.dp)
+//                                .clip(RoundedCornerShape(5.dp)),
+//                            contentScale = ContentScale.Crop
+//                        )
+//                    }
+//                }
             }
             LaunchedEffect(listState) {
                 snapshotFlow {
@@ -150,12 +168,35 @@ class ImageFragment : Fragment() {
                 }
             }
         } else {
-            Text("loading...",
-                modifier = Modifier.fillMaxWidth().padding(top = 150.dp),
+            Text(
+                "loading...",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 150.dp),
                 fontSize = 30.sp,
                 textAlign = TextAlign.Center
             )
         }
+    }
+
+    @Composable
+    private fun ItemImage(img: Img, isLeft: Boolean) {
+        Image(painter = rememberImagePainter(data = img.webformatURL, builder = {
+            placeholder(R.drawable.placeholder)
+            error(ColorDrawable(android.graphics.Color.GREEN))
+            crossfade(true)
+            scale(Scale.FIT)
+        }), contentDescription = null,
+            modifier = Modifier
+                .clickable {
+
+                }
+                .fillMaxHeight()
+                .fillMaxWidth(if (isLeft) 0.5f else 1f)
+                .padding(start = if (isLeft) 0.dp else 3.dp, top = 3.dp)
+                .clip(RoundedCornerShape(5.dp)),
+            contentScale = ContentScale.Crop
+        )
     }
 
     @Composable
