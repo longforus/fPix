@@ -16,6 +16,7 @@ class MyApp:Application() {
 
         val imageLoader = ImageLoader.Builder(applicationContext)
             .crossfade(true)
+            .placeholder(R.drawable.placeholder)
             .okHttpClient {
                 OkHttpClient.Builder()
                     .cache(CoilUtils.createDefaultCache(applicationContext))
