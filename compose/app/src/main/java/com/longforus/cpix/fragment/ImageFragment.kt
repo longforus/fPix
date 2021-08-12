@@ -28,8 +28,10 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.rememberImagePainter
 import coil.size.Scale
 import com.google.accompanist.swiperefresh.SwipeRefresh
@@ -76,6 +78,8 @@ class ImageFragment : Fragment() {
                         TopImageView(topImage)
                     }
                     val contentList by vm.imageList.observeAsState()
+//                    val lazyPagingItems = vm.imagePager.flow.collectAsLazyPagingItems()
+//                    lazyPagingItems.itemCount
                     ContentList(contentList ?: emptyList())
 
                 }
@@ -181,7 +185,8 @@ class ImageFragment : Fragment() {
         } else {
             Box(
                 modifier = Modifier
-                    .fillMaxHeight().fillMaxWidth(),
+                    .fillMaxHeight()
+                    .fillMaxWidth(),
                 contentAlignment = Alignment.Center
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {

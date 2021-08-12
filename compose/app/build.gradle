@@ -92,11 +92,11 @@ dependencies {
     // Kotlin
     implementation "androidx.fragment:fragment-ktx:$fragment_version"
     //现在的问题是paging-compose还没支持lazyGridView
-    //    def paging_version = "3.0.1"
-    //    implementation "androidx.paging:paging-runtime-ktx:$paging_version"
-    //
-    // optional - Jetpack Compose integration
-    //    implementation "androidx.paging:paging-compose:1.0.0-alpha12"
+        def paging_version = "3.0.1"
+        implementation "androidx.paging:paging-runtime-ktx:$paging_version"
+
+//     optional - Jetpack Compose integration
+        implementation "androidx.paging:paging-compose:1.0.0-alpha12"
 
     implementation "com.google.accompanist:accompanist-coil:0.15.0"
     implementation "com.google.accompanist:accompanist-swiperefresh:0.16.1"
