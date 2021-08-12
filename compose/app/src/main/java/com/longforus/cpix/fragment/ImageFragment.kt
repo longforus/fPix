@@ -179,14 +179,25 @@ class ImageFragment : Fragment() {
                 }
             }
         } else {
-            Text(
-                "loading...",
+            Box(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 150.dp),
-                fontSize = 30.sp,
-                textAlign = TextAlign.Center
-            )
+                    .fillMaxHeight().fillMaxWidth(),
+                contentAlignment = Alignment.Center
+            ) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
+                    CircularProgressIndicator(color = Purple500)
+                    Text(
+                        "loading...",
+                        modifier = Modifier
+                            .padding(top = 5.dp),
+                        fontSize = 30.sp,
+                        textAlign = TextAlign.Center,
+                        color = Purple500
+                    )
+                }
+
+            }
+
         }
     }
 
