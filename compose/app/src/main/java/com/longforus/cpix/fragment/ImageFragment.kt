@@ -15,7 +15,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Handyman
+import androidx.compose.material.icons.filled.LocalPizza
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.ThumbUpAlt
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
@@ -26,6 +29,7 @@ import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.fragment.app.Fragment
@@ -93,23 +97,39 @@ class ImageFragment : Fragment() {
     }
 
     @Composable
-    private fun TopImageView(topImage: Img?) {
-        Image(
-            painter = rememberImagePainter(data = topImage?.webformatURL, builder = {
-                crossfade(true)
-                placeholder(R.drawable.placeholder)
-                error(ColorDrawable(android.graphics.Color.GREEN))
-                scale(Scale.FIT)
-            }),
-            contentDescription = null,
-            modifier = Modifier
-                .height(230.dp)
-                .clickable {
-                    startActivity(Intent(requireContext(), PhotoActivity::class.java).putExtra("bean", topImage))
-                }
-                .fillMaxWidth(),
-            contentScale = ContentScale.Crop
-        )
+    @Preview(showSystemUi = true)
+    private fun TopImageView(topImage: Img? = null) {
+        Box(contentAlignment = Alignment.TopEnd) {
+            Image(
+                painter = rememberImagePainter(data = topImage?.webformatURL, builder = {
+                    crossfade(true)
+                    placeholder(R.drawable.placeholder)
+                    error(ColorDrawable(android.graphics.Color.GREEN))
+                    scale(Scale.FIT)
+                }),
+                contentDescription = null,
+                modifier = Modifier
+                    .height(230.dp)
+                    .clickable {
+                        startActivity(Intent(requireContext(), PhotoActivity::class.java).putExtra("bean", topImage))
+                    }
+                    .fillMaxWidth(),
+                contentScale = ContentScale.Crop
+            )
+
+            Row(horizontalArrangement = Arrangement.End,
+                modifier = Modifier.padding(top = 40.dp,end = 10.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(painter = rememberVectorPainter(image = Icons.Filled.ThumbUpAlt),
+                    contentDescription = null,
+                    tint = Purple500
+                )
+                Spacer(modifier = Modifier.width(3.dp))
+                Text(text = topImage?.likes?.toString() ?: "  ",color = Color.White)
+            }
+        }
+
         val selectIndex: Int by vm.selectTab.observeAsState(0)
         TypeRow(typeList, selectIndex) { title, pos ->
             vm.setSelectedTabIndex(pos = pos)

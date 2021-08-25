@@ -23,6 +23,7 @@ import coil.load
 import coil.request.ImageRequest
 import com.github.chrisbanes.photoview.PhotoView
 import com.longforus.cpix.bean.Img
+import com.longforus.cpix.ui.theme.Purple500
 import com.longforus.cpix.util.StatusBarUtil
 
 class PhotoActivity : AppCompatActivity() {
@@ -73,7 +74,7 @@ class PhotoActivity : AppCompatActivity() {
                     .fillMaxWidth(),
                 contentAlignment = Alignment.Center
             ) {
-                CircularProgressIndicator(color = Color.White)
+                CircularProgressIndicator(color = Purple500)
             }
         } else {
             AndroidView(
