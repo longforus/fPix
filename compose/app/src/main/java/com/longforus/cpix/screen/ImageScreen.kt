@@ -1,11 +1,7 @@
-package com.longforus.cpix.fragment
+package com.longforus.cpix.screen
 
 import android.content.Intent
 import android.graphics.drawable.ColorDrawable
-import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -15,9 +11,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Handyman
-import androidx.compose.material.icons.filled.LocalPizza
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.ThumbUpAlt
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
@@ -27,13 +20,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -46,7 +36,6 @@ import com.longforus.cpix.PhotoActivity
 import com.longforus.cpix.R
 import com.longforus.cpix.bean.Img
 import com.longforus.cpix.typeList
-import com.longforus.cpix.ui.theme.CPixTheme
 import com.longforus.cpix.ui.theme.Purple500
 import com.longforus.cpix.util.LogUtils
 import com.longforus.cpix.viewmodel.ImageViewModel
@@ -56,49 +45,32 @@ import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
 import kotlin.math.ceil
 
-class ImageFragment : Fragment() {
+class ImageScreen (private val imageVm :ImageViewModel) {
 
     val TAG = "ImageFragment"
-    private val vm by viewModels<ImageViewModel>()
 
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return ComposeView(requireContext()).apply {
-            setContent {
-                val usePaging by vm.usePaging.observeAsState()
-                ImageScreen(usePaging ?: false)
+
+    @Composable
+    fun ImageScreen(usePaging: Boolean) {
+        Column {
+            Box(contentAlignment = Alignment.BottomCenter) {
+                val topImage by imageVm.topImageUrl.observeAsState()
+                TopImageView(topImage)
+            }
+            if (usePaging) {
+                val lazyPagingItems = imageVm.imagePager.flow.collectAsLazyPagingItems()
+                ContentListPaging(lazyPagingItems)
+            } else {
+                val contentList by imageVm.imageList.observeAsState()
+                ContentList(contentList ?: emptyList())
             }
         }
     }
 
     @Composable
-    private fun ImageScreen(usePaging: Boolean) {
-        CPixTheme {
-            Scaffold(floatingActionButton = {
-                FloatingActionButton(onClick = { /*TODO*/ }) {
-                    Icon(painter = rememberVectorPainter(image = Icons.Filled.Search), contentDescription = null)
-                }
-            }) {
-                Column {
-                    Box(contentAlignment = Alignment.BottomCenter) {
-                        val topImage by vm.topImageUrl.observeAsState()
-                        TopImageView(topImage)
-                    }
-                    if (usePaging) {
-                        val lazyPagingItems = vm.imagePager.flow.collectAsLazyPagingItems()
-                        ContentListPaging(lazyPagingItems)
-                    } else {
-                        val contentList by vm.imageList.observeAsState()
-                        ContentList(contentList ?: emptyList())
-                    }
-                }
-            }
-        }
-    }
-
-    @Composable
-    @Preview(showSystemUi = true)
     private fun TopImageView(topImage: Img? = null) {
+        val context = LocalContext.current
         Box(contentAlignment = Alignment.TopEnd) {
             Image(
                 painter = rememberImagePainter(data = topImage?.webformatURL, builder = {
@@ -111,7 +83,7 @@ class ImageFragment : Fragment() {
                 modifier = Modifier
                     .height(230.dp)
                     .clickable {
-                        startActivity(Intent(requireContext(), PhotoActivity::class.java).putExtra("bean", topImage))
+                        context.startActivity(Intent(context, PhotoActivity::class.java).putExtra("bean", topImage))
                     }
                     .fillMaxWidth(),
                 contentScale = ContentScale.Crop
@@ -130,9 +102,9 @@ class ImageFragment : Fragment() {
             }
         }
 
-        val selectIndex: Int by vm.selectTab.observeAsState(0)
+        val selectIndex: Int by imageVm.selectTab.observeAsState(0)
         TypeRow(typeList, selectIndex) { title, pos ->
-            vm.setSelectedTabIndex(pos = pos)
+            imageVm.setSelectedTabIndex(pos = pos)
         }
     }
 
@@ -141,10 +113,10 @@ class ImageFragment : Fragment() {
     private fun ContentList(list: List<Img>) {
 
         val listState = rememberLazyListState()
-        val isRefreshing by vm.isRefreshing.collectAsState()
+        val isRefreshing by imageVm.isRefreshing.collectAsState()
         if (list.isNotEmpty()) {
             SwipeRefresh(state = rememberSwipeRefreshState(isRefreshing), onRefresh = {
-                vm.onRefresh()
+                imageVm.onRefresh()
             }) {
                 val pairs = ArrayList<Pair<Img, Img?>>(ceil(list.size / 2.0).toInt())
                 var i = 0
@@ -179,7 +151,7 @@ class ImageFragment : Fragment() {
                     LogUtils.d(TAG, "map:$it  listSize=${list.size} ")
                     it >= list.size / 2
                 }.distinctUntilChanged().filter { it }.collect {
-                    vm.loadMore()
+                    imageVm.loadMore()
                 }
             }
         } else {
@@ -213,6 +185,7 @@ class ImageFragment : Fragment() {
             list.refresh()
         }) {
             //LazyPagingItems还不支持grid
+            val context = LocalContext.current
             LazyColumn(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -230,7 +203,7 @@ class ImageFragment : Fragment() {
                     }), contentDescription = null,
                         modifier = Modifier
                             .clickable {
-                                startActivity(Intent(requireContext(), PhotoActivity::class.java).putExtra("bean", img))
+                                context.startActivity(Intent(context, PhotoActivity::class.java).putExtra("bean", img))
                             }
                             .height(180.dp)
                             .fillMaxWidth()
@@ -245,6 +218,7 @@ class ImageFragment : Fragment() {
 
     @Composable
     private fun ItemImage(img: Img, isLeft: Boolean) {
+        val context = LocalContext.current
         Image(painter = rememberImagePainter(data = img.webformatURL, builder = {
             placeholder(R.drawable.placeholder)
             error(ColorDrawable(android.graphics.Color.GREEN))
@@ -253,7 +227,7 @@ class ImageFragment : Fragment() {
         }), contentDescription = null,
             modifier = Modifier
                 .clickable {
-                    startActivity(Intent(requireContext(), PhotoActivity::class.java).putExtra("bean", img))
+                    context.startActivity(Intent(context, PhotoActivity::class.java).putExtra("bean", img))
                 }
                 .fillMaxHeight()
                 .fillMaxWidth(if (isLeft) 0.5f else 1f)
@@ -293,6 +267,8 @@ class ImageFragment : Fragment() {
         }
 
     }
+
+
 
 
 }

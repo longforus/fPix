@@ -11,7 +11,7 @@ import java.lang.ref.WeakReference
 sealed class Either
 
 class Succ<T>(val result: T):Either()
-class Fail( val result:Exception):Either()
+class Fail(val result:Exception):Either()
 
 val TAG = "CoNetExtFuns"
 
