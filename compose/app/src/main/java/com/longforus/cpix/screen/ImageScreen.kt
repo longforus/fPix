@@ -1,5 +1,6 @@
 package com.longforus.cpix.screen
 
+import android.content.Context
 import android.content.Intent
 import android.graphics.drawable.ColorDrawable
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -24,6 +25,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -45,10 +47,9 @@ import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
 import kotlin.math.ceil
 
-class ImageScreen (private val imageVm :ImageViewModel) {
+class ImageScreen(private val imageVm: ImageViewModel, private val navController: NavHostController) {
 
     val TAG = "ImageFragment"
-
 
 
     @Composable
@@ -71,6 +72,7 @@ class ImageScreen (private val imageVm :ImageViewModel) {
     @Composable
     private fun TopImageView(topImage: Img? = null) {
         val context = LocalContext.current
+
         Box(contentAlignment = Alignment.TopEnd) {
             Image(
                 painter = rememberImagePainter(data = topImage?.webformatURL, builder = {
@@ -83,22 +85,24 @@ class ImageScreen (private val imageVm :ImageViewModel) {
                 modifier = Modifier
                     .height(230.dp)
                     .clickable {
-                        context.startActivity(Intent(context, PhotoActivity::class.java).putExtra("bean", topImage))
+                        gotoPhotoView(topImage,context)
                     }
                     .fillMaxWidth(),
                 contentScale = ContentScale.Crop
             )
 
-            Row(horizontalArrangement = Arrangement.End,
-                modifier = Modifier.padding(top = 40.dp,end = 10.dp),
+            Row(
+                horizontalArrangement = Arrangement.End,
+                modifier = Modifier.padding(top = 40.dp, end = 10.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Icon(painter = rememberVectorPainter(image = Icons.Filled.ThumbUpAlt),
+                Icon(
+                    painter = rememberVectorPainter(image = Icons.Filled.ThumbUpAlt),
                     contentDescription = null,
                     tint = Purple500
                 )
                 Spacer(modifier = Modifier.width(3.dp))
-                Text(text = topImage?.likes?.toString() ?: "  ",color = Color.White)
+                Text(text = topImage?.likes?.toString() ?: "  ", color = Color.White)
             }
         }
 
@@ -106,6 +110,12 @@ class ImageScreen (private val imageVm :ImageViewModel) {
         TypeRow(typeList, selectIndex) { title, pos ->
             imageVm.setSelectedTabIndex(pos = pos)
         }
+    }
+
+
+    private fun gotoPhotoView(topImage: Img?,context: Context) {
+//        navController.navigate(R.id.main_2_photo, bundleOf("bean" to topImage))
+        context.startActivity(Intent(context, PhotoActivity::class.java).putExtra("bean", topImage))
     }
 
     @OptIn(ExperimentalFoundationApi::class)
@@ -186,6 +196,7 @@ class ImageScreen (private val imageVm :ImageViewModel) {
         }) {
             //LazyPagingItems还不支持grid
             val context = LocalContext.current
+
             LazyColumn(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -201,10 +212,9 @@ class ImageScreen (private val imageVm :ImageViewModel) {
                         crossfade(true)
                         scale(Scale.FIT)
                     }), contentDescription = null,
-                        modifier = Modifier
-                            .clickable {
-                                context.startActivity(Intent(context, PhotoActivity::class.java).putExtra("bean", img))
-                            }
+                        modifier = Modifier.clickable {
+                            gotoPhotoView(img,context)
+                        }
                             .height(180.dp)
                             .fillMaxWidth()
                             .padding(top = 3.dp)
@@ -219,6 +229,7 @@ class ImageScreen (private val imageVm :ImageViewModel) {
     @Composable
     private fun ItemImage(img: Img, isLeft: Boolean) {
         val context = LocalContext.current
+
         Image(painter = rememberImagePainter(data = img.webformatURL, builder = {
             placeholder(R.drawable.placeholder)
             error(ColorDrawable(android.graphics.Color.GREEN))
@@ -227,7 +238,7 @@ class ImageScreen (private val imageVm :ImageViewModel) {
         }), contentDescription = null,
             modifier = Modifier
                 .clickable {
-                    context.startActivity(Intent(context, PhotoActivity::class.java).putExtra("bean", img))
+                    gotoPhotoView(img,context)
                 }
                 .fillMaxHeight()
                 .fillMaxWidth(if (isLeft) 0.5f else 1f)
@@ -267,8 +278,6 @@ class ImageScreen (private val imageVm :ImageViewModel) {
         }
 
     }
-
-
 
 
 }

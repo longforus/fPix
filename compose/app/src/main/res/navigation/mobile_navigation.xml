@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/mobile_navigation"
+    >
+
+    <activity
+        android:id="@+id/photoActivity"
+        android:name="com.longforus.cpix.PhotoActivity"
+        android:label="PhotoActivity" />
+
+    <activity
+        android:id="@+id/mainActivity"
+        android:name="com.longforus.cpix.MainActivity"
+        android:label="MainActivity" >
+
+    </activity>
+    <action
+        android:id="@+id/main_2_photo"
+        app:destination="@id/photoActivity"
+        app:launchSingleTop="true"
+        />
+
+</navigation>

@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
@@ -11,8 +12,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.*
@@ -34,32 +36,48 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-
     @Composable
     fun AppMainNavigation() {
-
         val navController = rememberNavController()
-
         NavHost(navController, startDestination = IconScreens.Image.route) {
-
-
             // Bottom Nav
             composable(IconScreens.Image.route) {
                 ImageScreen(navController)
             }
             composable(IconScreens.Video.route) {
                 ScaffoldScreen(navController) {
-                    Text(text = IconScreens.Video.label)
+                    Box(
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .fillMaxWidth(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(text = IconScreens.Video.label)
+                    }
                 }
             }
             composable(IconScreens.Favorite.route) {
                 ScaffoldScreen(navController) {
-                    Text(text = IconScreens.Favorite.label)
+                    Box(
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .fillMaxWidth(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(text = IconScreens.Favorite.label)
+                    }
                 }
             }
             composable(IconScreens.Setting.route) {
                 ScaffoldScreen(navController) {
-                    Text(text = IconScreens.Setting.label)
+                    Box(
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .fillMaxWidth(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(text = IconScreens.Setting.label)
+                    }
                 }
             }
         }
@@ -69,14 +87,21 @@ class MainActivity : AppCompatActivity() {
     fun ImageScreen(navController: NavHostController) {
         ScaffoldScreen(navController = navController,
             float = {
-                FloatingActionButton(onClick = { /*TODO*/ }) {
-                    Icon(painter = rememberVectorPainter(image = Icons.Filled.Search), contentDescription = null)
+                FloatingActionButton(
+                    onClick = { /*TODO*/ },
+                    backgroundColor = Purple500
+                ) {
+                    Icon(
+                        Icons.Filled.Search,
+                        contentDescription = null,
+                        tint = Color.White
+                    )
                 }
             }
         ) {
             val usePaging by imageVm.usePaging.observeAsState()
             val imageFragment = remember {
-                ImageScreen(imageVm)
+                ImageScreen(imageVm,navController)
             }
             imageFragment.ImageScreen(usePaging = usePaging ?: false)
         }
@@ -84,7 +109,6 @@ class MainActivity : AppCompatActivity() {
 
     @Composable
     fun ScaffoldScreen(navController: NavHostController, float: @Composable (() -> Unit)? = null, screen: @Composable () -> Unit) {
-
         val bottomNavigationItems = listOf(
             IconScreens.Image,
             IconScreens.Video,
@@ -98,8 +122,6 @@ class MainActivity : AppCompatActivity() {
                 floatingActionButton = { float?.invoke() }
             )
         }
-
-
     }
 
 
@@ -123,9 +145,7 @@ class MainActivity : AppCompatActivity() {
                         }
                     },
                     label = {
-                        if (currentRoute == screen.route) {
-                            Text(text = screen.label)
-                        }
+                        Text(text = screen.label)
                     },
                     alwaysShowLabel = false
                 )
