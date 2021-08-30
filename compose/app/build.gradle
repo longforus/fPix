@@ -35,7 +35,6 @@ android {
         useIR = true
     }
     buildFeatures {
-        viewBinding true
         compose true
     }
     androidExtensions {
