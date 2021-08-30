@@ -12,13 +12,6 @@
     <activity
         android:id="@+id/mainActivity"
         android:name="com.longforus.cpix.MainActivity"
-        android:label="MainActivity" >
-
-    </activity>
-    <action
-        android:id="@+id/main_2_photo"
-        app:destination="@id/photoActivity"
-        app:launchSingleTop="true"
-        />
+        android:label="MainActivity" />
 
 </navigation>

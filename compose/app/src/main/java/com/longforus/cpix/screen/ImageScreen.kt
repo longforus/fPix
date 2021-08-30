@@ -1,7 +1,5 @@
 package com.longforus.cpix.screen
 
-import android.content.Context
-import android.content.Intent
 import android.graphics.drawable.ColorDrawable
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
@@ -25,6 +23,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.os.bundleOf
 import androidx.navigation.NavHostController
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
@@ -71,7 +70,7 @@ class ImageScreen(private val imageVm: ImageViewModel, private val navController
 
     @Composable
     private fun TopImageView(topImage: Img? = null) {
-        val context = LocalContext.current
+        
 
         Box(contentAlignment = Alignment.TopEnd) {
             Image(
@@ -85,7 +84,7 @@ class ImageScreen(private val imageVm: ImageViewModel, private val navController
                 modifier = Modifier
                     .height(230.dp)
                     .clickable {
-                        gotoPhotoView(topImage,context)
+                        gotoPhotoView(topImage)
                     }
                     .fillMaxWidth(),
                 contentScale = ContentScale.Crop
@@ -113,9 +112,9 @@ class ImageScreen(private val imageVm: ImageViewModel, private val navController
     }
 
 
-    private fun gotoPhotoView(topImage: Img?,context: Context) {
-//        navController.navigate(R.id.main_2_photo, bundleOf("bean" to topImage))
-        context.startActivity(Intent(context, PhotoActivity::class.java).putExtra("bean", topImage))
+    private fun gotoPhotoView(topImage: Img?) {
+        navController.navigate(R.id.photoActivity, bundleOf("bean" to topImage))
+//        context.startActivity(Intent(context, PhotoActivity::class.java).putExtra("bean", topImage))
     }
 
     @OptIn(ExperimentalFoundationApi::class)
@@ -195,8 +194,6 @@ class ImageScreen(private val imageVm: ImageViewModel, private val navController
             list.refresh()
         }) {
             //LazyPagingItems还不支持grid
-            val context = LocalContext.current
-
             LazyColumn(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -213,7 +210,7 @@ class ImageScreen(private val imageVm: ImageViewModel, private val navController
                         scale(Scale.FIT)
                     }), contentDescription = null,
                         modifier = Modifier.clickable {
-                            gotoPhotoView(img,context)
+                            gotoPhotoView(img)
                         }
                             .height(180.dp)
                             .fillMaxWidth()
@@ -228,7 +225,7 @@ class ImageScreen(private val imageVm: ImageViewModel, private val navController
 
     @Composable
     private fun ItemImage(img: Img, isLeft: Boolean) {
-        val context = LocalContext.current
+        
 
         Image(painter = rememberImagePainter(data = img.webformatURL, builder = {
             placeholder(R.drawable.placeholder)
@@ -238,7 +235,7 @@ class ImageScreen(private val imageVm: ImageViewModel, private val navController
         }), contentDescription = null,
             modifier = Modifier
                 .clickable {
-                    gotoPhotoView(img,context)
+                    gotoPhotoView(img)
                 }
                 .fillMaxHeight()
                 .fillMaxWidth(if (isLeft) 0.5f else 1f)

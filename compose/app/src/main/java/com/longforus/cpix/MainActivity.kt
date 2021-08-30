@@ -81,6 +81,7 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+        navController.graph.addAll(navController.navInflater.inflate(R.navigation.mobile_navigation))
     }
 
     @Composable
