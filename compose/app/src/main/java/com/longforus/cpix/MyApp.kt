@@ -4,6 +4,8 @@ import android.app.Application
 import coil.Coil
 import coil.ImageLoader
 import coil.util.CoilUtils
+import com.longforus.cpix.bean.MyObjectBox
+import com.longforus.cpix.bean.OB
 import com.longforus.cpix.http.ProjectCoreHttpManager
 import com.longforus.cpix.util.LogUtils
 import okhttp3.OkHttpClient
@@ -24,5 +26,6 @@ class MyApp:Application() {
             }
             .build()
         Coil.setImageLoader(imageLoader)
+        OB.init(this,MyObjectBox.builder())
     }
 }

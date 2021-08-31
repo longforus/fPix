@@ -6,6 +6,7 @@ import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -19,100 +20,125 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import coil.imageLoader
 import coil.load
 import coil.request.ImageRequest
 import com.github.chrisbanes.photoview.PhotoView
 import com.longforus.cpix.bean.Img
+import com.longforus.cpix.bean.OB
 import com.longforus.cpix.ui.theme.Purple500
 import com.longforus.cpix.util.StatusBarUtil
+import com.longforus.cpix.viewmodel.PhotoViewModel
 
 class PhotoActivity : AppCompatActivity() {
 
     val TAG = "PhotoActivity"
-    private val img by lazy { intent.getParcelableExtra<Img>("bean") }
+    private val imgBean by lazy { intent.getParcelableExtra<Img>("bean") }
+    private val viewModel by viewModels<PhotoViewModel> {
+        object : ViewModelProvider.Factory {
+            override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+                return PhotoViewModel(imgBean?.id ?: 0) as T
+            }
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         StatusBarUtil.transparentStatusBar(this)
         setContent {
-            Scaffold(
-                backgroundColor = Color.Black
-            ) {
-                Box(
-                     modifier = Modifier
-                         .fillMaxHeight()
-                         .fillMaxWidth()
-                ) {
-                    val imageDrawable by loadNetworkImage(img?.largeImageURL, LocalContext.current)
-                    ImageContent(imageDrawable)
-                    TopAppBar(
-                        backgroundColor = Color(0x22000000),
-                        modifier = Modifier
-                            .padding(top = 34.dp)
-                            .align(Alignment.TopCenter),
-                        elevation = 0.dp
-                    ) {
+            imgBean?.let {
+                val favorited by viewModel.favorited.collectAsState()
+                PhotoContent(it, favorited)
+            }
+        }
+    }
 
+    @Composable
+    private fun PhotoContent(img: Img, contains: Boolean) {
+        Scaffold(
+            backgroundColor = Color.Black
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .fillMaxWidth()
+            ) {
+                val imageDrawable by loadNetworkImage(img?.largeImageURL, LocalContext.current)
+                ImageContent(imageDrawable)
+                TopAppBar(
+                    backgroundColor = Color(0x22000000),
+                    modifier = Modifier
+                        .padding(top = 34.dp)
+                        .align(Alignment.TopCenter),
+                    elevation = 0.dp
+                ) {
+
+                    Icon(
+                        Icons.Filled.ArrowBack,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .clickable {
+                                finish()
+                            }
+                            .padding(start = 15.dp),
+                        tint = Color.Gray
+                    )
+
+                    Row(
+                        horizontalArrangement = Arrangement.End,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(end = 15.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
                         Icon(
-                            Icons.Filled.ArrowBack,
+                            Icons.Filled.Download,
                             contentDescription = null,
                             modifier = Modifier.clickable {
-                                finish()
-                            }.padding(start = 15.dp),
+
+                            },
                             tint = Color.Gray
                         )
-
-                        Row(
-                            horizontalArrangement = Arrangement.End,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(end = 15.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Icon(
-                                Icons.Filled.Download,
-                                contentDescription = null,
-                                modifier = Modifier.clickable {
-
-                                },
-                                tint = Color.Gray
-                            )
-                            Spacer(modifier = Modifier.width(20.dp))
-                            Icon(
-                                Icons.Filled.Public,
-                                contentDescription = null,
-                                modifier = Modifier.clickable {
-                                    startActivity(Intent(Intent.ACTION_VIEW).apply {
-                                        data = Uri.parse(img?.pageURL)
-                                    })
-                                },
-                                tint = Color.Gray
-                            )
-                            Spacer(modifier = Modifier.width(20.dp))
-                            Icon(
-                                Icons.Filled.Favorite,
-                                contentDescription = null,
-                                modifier = Modifier.clickable {
-
-                                },
-                                tint = Color.Gray
-                            )
-                        }
+                        Spacer(modifier = Modifier.width(20.dp))
+                        Icon(
+                            Icons.Filled.Public,
+                            contentDescription = null,
+                            modifier = Modifier.clickable {
+                                startActivity(Intent(Intent.ACTION_VIEW).apply {
+                                    data = Uri.parse(img?.pageURL)
+                                })
+                            },
+                            tint = Color.Gray
+                        )
+                        Spacer(modifier = Modifier.width(20.dp))
+                        Icon(
+                            Icons.Filled.Favorite,
+                            contentDescription = null,
+                            modifier = Modifier.clickable {
+                                if (contains) {
+                                    OB.boxFor<Img>().remove(img.id)
+                                } else {
+                                    OB.boxFor<Img>().put(img)
+                                }
+                                viewModel.favorited.tryEmit(OB.boxFor<Img>().contains(img.id))
+                            },
+                            tint = if (contains) Purple500 else Color.Gray
+                        )
                     }
-                    if (!img?.tags.isNullOrEmpty()) {
-                        BottomAppBar(
-                            backgroundColor = Color(0x22000000),
-                            modifier = Modifier
-                                .align(Alignment.BottomCenter),
-                            elevation = 0.dp
-                        ) {
-                            Text(text = img!!.tags,color = Purple500,modifier = Modifier.padding(start = 15.dp))
-                        }
+                }
+                if (!img.tags.isNullOrEmpty()) {
+                    BottomAppBar(
+                        backgroundColor = Color(0x22000000),
+                        modifier = Modifier
+                            .align(Alignment.BottomCenter),
+                        elevation = 0.dp
+                    ) {
+                        Text(text = img.tags, color = Purple500, modifier = Modifier.padding(start = 15.dp))
                     }
                 }
             }

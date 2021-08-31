@@ -1,7 +1,9 @@
 package com.longforus.cpix.bean
 
 import android.os.Parcelable
-import kotlinx.android.parcel.Parcelize
+import io.objectbox.annotation.Entity
+import io.objectbox.annotation.Id
+import kotlinx.parcelize.Parcelize
 
 
 data class ImageListBean(
@@ -12,11 +14,13 @@ data class ImageListBean(
 
 
 @Parcelize
+@Entity
 data class Img(
     var collections: Int = 0, // 2687
     var comments: Int = 0, // 507
     var downloads: Int = 0, // 1075242
-    var id: Int = 0, // 3605547
+    @Id(assignable = true)
+    var id: Long = 0, // 3605547
     var imageHeight: Int = 0, // 3894
     var imageSize: Int = 0, // 3590092
     var imageWidth: Int = 0, // 6000

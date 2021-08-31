@@ -1,0 +1,150 @@
+{
+  "_note1": "KEEP THIS FILE! Check it into a version control system (VCS) like git.",
+  "_note2": "ObjectBox manages crucial IDs for your object model. See docs for details.",
+  "_note3": "If you have VCS merge conflicts, you must resolve them according to ObjectBox docs.",
+  "entities": [
+    {
+      "id": "1:1702402405011837220",
+      "lastPropertyId": "22:3022110374920553076",
+      "name": "Img",
+      "properties": [
+        {
+          "id": "1:6393716443779857217",
+          "name": "collections",
+          "type": 5,
+          "flags": 4
+        },
+        {
+          "id": "2:7409681969265988122",
+          "name": "comments",
+          "type": 5,
+          "flags": 4
+        },
+        {
+          "id": "3:4958549324145507905",
+          "name": "downloads",
+          "type": 5,
+          "flags": 4
+        },
+        {
+          "id": "4:7855581386410684248",
+          "name": "id",
+          "type": 6,
+          "flags": 129
+        },
+        {
+          "id": "5:4596908637326394285",
+          "name": "imageHeight",
+          "type": 5,
+          "flags": 4
+        },
+        {
+          "id": "6:1650190498562216042",
+          "name": "imageSize",
+          "type": 5,
+          "flags": 4
+        },
+        {
+          "id": "7:3854234088503094496",
+          "name": "imageWidth",
+          "type": 5,
+          "flags": 4
+        },
+        {
+          "id": "8:2011307845702238271",
+          "name": "largeImageURL",
+          "type": 9
+        },
+        {
+          "id": "9:332930994488897746",
+          "name": "likes",
+          "type": 5,
+          "flags": 4
+        },
+        {
+          "id": "10:9210870387457787963",
+          "name": "pageURL",
+          "type": 9
+        },
+        {
+          "id": "11:7803174259002620054",
+          "name": "previewHeight",
+          "type": 5,
+          "flags": 4
+        },
+        {
+          "id": "12:2463141553271174802",
+          "name": "previewURL",
+          "type": 9
+        },
+        {
+          "id": "13:1433776044677177494",
+          "name": "previewWidth",
+          "type": 5,
+          "flags": 4
+        },
+        {
+          "id": "14:5604349847383912526",
+          "name": "tags",
+          "type": 9
+        },
+        {
+          "id": "15:1471233219822144467",
+          "name": "type",
+          "type": 9
+        },
+        {
+          "id": "16:3723520780423209947",
+          "name": "user",
+          "type": 9
+        },
+        {
+          "id": "17:935233943488345567",
+          "name": "userId",
+          "type": 5,
+          "flags": 4
+        },
+        {
+          "id": "18:6761760826590521631",
+          "name": "userImageURL",
+          "type": 9
+        },
+        {
+          "id": "19:8791992955174828642",
+          "name": "views",
+          "type": 5,
+          "flags": 4
+        },
+        {
+          "id": "20:8535746577014851432",
+          "name": "webformatHeight",
+          "type": 5,
+          "flags": 4
+        },
+        {
+          "id": "21:5343791812116269410",
+          "name": "webformatURL",
+          "type": 9
+        },
+        {
+          "id": "22:3022110374920553076",
+          "name": "webformatWidth",
+          "type": 5,
+          "flags": 4
+        }
+      ],
+      "relations": []
+    }
+  ],
+  "lastEntityId": "1:1702402405011837220",
+  "lastIndexId": "0:0",
+  "lastRelationId": "0:0",
+  "lastSequenceId": "0:0",
+  "modelVersion": 5,
+  "modelVersionParserMinimum": 5,
+  "retiredEntityUids": [],
+  "retiredIndexUids": [],
+  "retiredPropertyUids": [],
+  "retiredRelationUids": [],
+  "version": 1
+}

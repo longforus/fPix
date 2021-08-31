@@ -1,7 +1,9 @@
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
-    id 'kotlin-android-extensions'
+    id 'kotlin-kapt'
+    id 'io.objectbox'
+    id 'kotlin-parcelize'
 }
 
 android {
@@ -37,9 +39,7 @@ android {
     buildFeatures {
         compose true
     }
-    androidExtensions {
-        experimental = true
-    }
+
     composeOptions {
         kotlinCompilerExtensionVersion compose_version
         kotlinCompilerVersion kotlin_version
