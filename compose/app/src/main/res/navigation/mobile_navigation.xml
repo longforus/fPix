@@ -14,4 +14,12 @@
         android:name="com.longforus.cpix.MainActivity"
         android:label="MainActivity" />
 
+    <composable
+        android:id="@+id/toPhotoCom"
+        android:label="PhotoScreen"
+        app:route="photo" />
+
+    <action
+        android:id="@+id/go2Photo"
+        app:destination="@id/toPhotoCom" />
 </navigation>

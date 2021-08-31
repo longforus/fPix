@@ -1,6 +1,8 @@
 package com.longforus.cpix.screen
 
+import android.content.Intent
 import android.graphics.drawable.ColorDrawable
+import android.os.Bundle
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -23,7 +25,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.net.toUri
 import androidx.core.os.bundleOf
+import androidx.navigation.NavController
+import androidx.navigation.NavDeepLinkRequest
+import androidx.navigation.NavDestination
 import androidx.navigation.NavHostController
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
@@ -70,7 +76,7 @@ class ImageScreen(private val imageVm: ImageViewModel, private val navController
 
     @Composable
     private fun TopImageView(topImage: Img? = null) {
-        
+
 
         Box(contentAlignment = Alignment.TopEnd) {
             Image(
@@ -113,6 +119,8 @@ class ImageScreen(private val imageVm: ImageViewModel, private val navController
 
 
     private fun gotoPhotoView(topImage: Img?) {
+        //使用route不能直接传参 是个bug吧
+//        navController.navigate(R.id.go2Photo,  bundleOf("img" to topImage))
         navController.navigate(R.id.photoActivity, bundleOf("bean" to topImage))
 //        context.startActivity(Intent(context, PhotoActivity::class.java).putExtra("bean", topImage))
     }
@@ -209,9 +217,10 @@ class ImageScreen(private val imageVm: ImageViewModel, private val navController
                         crossfade(true)
                         scale(Scale.FIT)
                     }), contentDescription = null,
-                        modifier = Modifier.clickable {
-                            gotoPhotoView(img)
-                        }
+                        modifier = Modifier
+                            .clickable {
+                                gotoPhotoView(img)
+                            }
                             .height(180.dp)
                             .fillMaxWidth()
                             .padding(top = 3.dp)
@@ -225,7 +234,7 @@ class ImageScreen(private val imageVm: ImageViewModel, private val navController
 
     @Composable
     private fun ItemImage(img: Img, isLeft: Boolean) {
-        
+
 
         Image(painter = rememberImagePainter(data = img.webformatURL, builder = {
             placeholder(R.drawable.placeholder)

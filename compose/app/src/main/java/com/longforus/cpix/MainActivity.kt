@@ -17,9 +17,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.*
 import com.longforus.cpix.bean.IconScreens
+import com.longforus.cpix.bean.Img
 import com.longforus.cpix.screen.ImageScreen
+import com.longforus.cpix.screen.PhotoScreen
 import com.longforus.cpix.ui.theme.CPixTheme
 import com.longforus.cpix.ui.theme.Purple500
 import com.longforus.cpix.util.StatusBarUtil
@@ -80,6 +83,13 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
             }
+
+            composable("photo",arguments = listOf(navArgument("img"){
+                type = NavType.ParcelableType(Img::class.java)
+            })){
+                PhotoScreen( it.arguments?.getParcelable("img"),navHostController = navController)
+            }
+
         }
         navController.graph.addAll(navController.navInflater.inflate(R.navigation.mobile_navigation))
     }
@@ -117,7 +127,7 @@ class MainActivity : AppCompatActivity() {
             IconScreens.Setting
         )
         CPixTheme {
-            Scaffold(topBar = {},
+            Scaffold(
                 bottomBar = { BottomAppNavBar(navController, bottomNavigationItems) },
                 content = { screen() },
                 floatingActionButton = { float?.invoke() }

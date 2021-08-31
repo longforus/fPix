@@ -1,7 +1,9 @@
 package com.longforus.cpix
 
 import android.content.Context
+import android.content.Intent
 import android.graphics.drawable.Drawable
+import android.net.Uri
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
@@ -10,6 +12,9 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Download
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.Public
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -39,28 +44,77 @@ class PhotoActivity : AppCompatActivity() {
                 backgroundColor = Color.Black
             ) {
                 Box(
-                    contentAlignment = Alignment.TopCenter, modifier = Modifier
-                        .fillMaxHeight()
-                        .fillMaxWidth()
+                     modifier = Modifier
+                         .fillMaxHeight()
+                         .fillMaxWidth()
                 ) {
                     val imageDrawable by loadNetworkImage(img?.largeImageURL, LocalContext.current)
                     ImageContent(imageDrawable)
                     TopAppBar(
                         backgroundColor = Color(0x22000000),
-                        modifier = Modifier.padding(top = 20.dp),
-                        elevation = 1.dp
+                        modifier = Modifier
+                            .padding(top = 34.dp)
+                            .align(Alignment.TopCenter),
+                        elevation = 0.dp
                     ) {
+
                         Icon(
-                            painter = rememberVectorPainter(image = Icons.Filled.ArrowBack),
+                            Icons.Filled.ArrowBack,
                             contentDescription = null,
                             modifier = Modifier.clickable {
                                 finish()
-                            },
-                            tint = Color.White
+                            }.padding(start = 15.dp),
+                            tint = Color.Gray
                         )
+
+                        Row(
+                            horizontalArrangement = Arrangement.End,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(end = 15.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                Icons.Filled.Download,
+                                contentDescription = null,
+                                modifier = Modifier.clickable {
+
+                                },
+                                tint = Color.Gray
+                            )
+                            Spacer(modifier = Modifier.width(20.dp))
+                            Icon(
+                                Icons.Filled.Public,
+                                contentDescription = null,
+                                modifier = Modifier.clickable {
+                                    startActivity(Intent(Intent.ACTION_VIEW).apply {
+                                        data = Uri.parse(img?.pageURL)
+                                    })
+                                },
+                                tint = Color.Gray
+                            )
+                            Spacer(modifier = Modifier.width(20.dp))
+                            Icon(
+                                Icons.Filled.Favorite,
+                                contentDescription = null,
+                                modifier = Modifier.clickable {
+
+                                },
+                                tint = Color.Gray
+                            )
+                        }
+                    }
+                    if (!img?.tags.isNullOrEmpty()) {
+                        BottomAppBar(
+                            backgroundColor = Color(0x22000000),
+                            modifier = Modifier
+                                .align(Alignment.BottomCenter),
+                            elevation = 0.dp
+                        ) {
+                            Text(text = img!!.tags,color = Purple500,modifier = Modifier.padding(start = 15.dp))
+                        }
                     }
                 }
-
             }
         }
     }
