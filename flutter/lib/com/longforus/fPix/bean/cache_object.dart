@@ -37,7 +37,6 @@ class CacheObject {
     @Id(assignable: true)
     int id;
 
-    @Backlink()
     final favorite = ToOne<FavoriteBean>();
 
     CacheObject({String url, this.cacheKey, this.lock}) {

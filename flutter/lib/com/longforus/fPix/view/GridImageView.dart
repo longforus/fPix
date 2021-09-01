@@ -277,7 +277,7 @@ class _ImageGridDelegateState extends State<ImageGridDelegate> {
                             'images/placeholder.png',
                           ),
                           image: CachedNetworkImageProvider(
-                              widget.isVideo ? getVideoImageUrl(dataList[index]) : dataList[index]['previewURL']))
+                              widget.isVideo ? getVideoImageUrl(dataList[index]) : dataList[index]['webformatURL']))
                       .image,
               fit: BoxFit.cover)),
     );

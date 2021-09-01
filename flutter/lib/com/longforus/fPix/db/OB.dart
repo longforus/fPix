@@ -25,6 +25,7 @@ class OB{
   _init() async {
     Directory dir =  await getApplicationDocumentsDirectory();
     // Note: getObjectBoxModel() is generated for you in objectbox.g.dart
+    // need run `  flutter pub run build_runner build `
     store = Store(getObjectBoxModel(), directory: dir.path + '/objectbox');
   }
 
