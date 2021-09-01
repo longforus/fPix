@@ -3,6 +3,8 @@
     package="com.longforus.cpix">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <!-- Required to run keep-alive service when targeting API 28 or higher -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
     <application
         android:name=".MyApp"
         android:allowBackup="false"

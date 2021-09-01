@@ -32,7 +32,6 @@ class ImageViewModel : ViewModel() {
     private var imageType = typeList[0]
     private var keyWord = ""
 
-    val usePaging = MutableLiveData(false)
 
     fun setSelectedTabIndex(pos: Int) {
         if (pos != _selectTab.value) {

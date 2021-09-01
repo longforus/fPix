@@ -5,7 +5,7 @@
   "entities": [
     {
       "id": "1:1702402405011837220",
-      "lastPropertyId": "24:3030289300073417950",
+      "lastPropertyId": "23:5374683001518782340",
       "name": "Img",
       "properties": [
         {
@@ -49,6 +49,11 @@
           "name": "imageWidth",
           "type": 5,
           "flags": 4
+        },
+        {
+          "id": "8:2011307845702238271",
+          "name": "largeImageURL",
+          "type": 9
         },
         {
           "id": "9:332930994488897746",
@@ -117,6 +122,11 @@
           "flags": 4
         },
         {
+          "id": "21:5343791812116269410",
+          "name": "webformatURL",
+          "type": 9
+        },
+        {
           "id": "22:3022110374920553076",
           "name": "webformatWidth",
           "type": 5,
@@ -125,12 +135,6 @@
         {
           "id": "23:5374683001518782340",
           "name": "favoriteDate",
-          "type": 6,
-          "flags": 4
-        },
-        {
-          "id": "24:3030289300073417950",
-          "name": "lastUpdateDate",
           "type": 6,
           "flags": 4
         }
@@ -146,10 +150,7 @@
   "modelVersionParserMinimum": 5,
   "retiredEntityUids": [],
   "retiredIndexUids": [],
-  "retiredPropertyUids": [
-    2011307845702238271,
-    5343791812116269410
-  ],
+  "retiredPropertyUids": [],
   "retiredRelationUids": [],
   "version": 1
 }

@@ -68,39 +68,32 @@ class PhotoActivity : AppCompatActivity() {
                     .fillMaxHeight()
                     .fillMaxWidth()
             ) {
-                val imageDrawable by loadNetworkImage(img?.largeImageURL, LocalContext.current)
+                val imageDrawable by loadNetworkImage(img.largeImageURL, LocalContext.current)
                 ImageContent(imageDrawable)
                 TopAppBar(
                     backgroundColor = Color(0x22000000),
                     modifier = Modifier
                         .padding(top = 34.dp)
                         .align(Alignment.TopCenter),
-                    elevation = 0.dp
-                ) {
-
-                    Icon(
-                        Icons.Filled.ArrowBack,
-                        contentDescription = null,
-                        modifier = Modifier
-                            .clickable {
-                                finish()
-                            }
-                            .padding(start = 15.dp),
-                        tint = Color.Gray
-                    )
-
-                    Row(
-                        horizontalArrangement = Arrangement.End,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(end = 15.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
+                    elevation = 0.dp,
+                    navigationIcon = {
+                        Icon(
+                            Icons.Filled.ArrowBack,
+                            contentDescription = null,
+                            modifier = Modifier
+                                .clickable {
+                                    finish()
+                                }
+                                .padding(start = 15.dp),
+                            tint = Color.Gray
+                        )
+                    },
+                    actions = {
                         Icon(
                             Icons.Filled.Download,
                             contentDescription = null,
                             modifier = Modifier.clickable {
-
+                                //todo
                             },
                             tint = Color.Gray
                         )
@@ -110,7 +103,7 @@ class PhotoActivity : AppCompatActivity() {
                             contentDescription = null,
                             modifier = Modifier.clickable {
                                 startActivity(Intent(Intent.ACTION_VIEW).apply {
-                                    data = Uri.parse(img?.pageURL)
+                                    data = Uri.parse(img.pageURL)
                                 })
                             },
                             tint = Color.Gray
@@ -118,19 +111,22 @@ class PhotoActivity : AppCompatActivity() {
                         Spacer(modifier = Modifier.width(20.dp))
                         Icon(
                             Icons.Filled.Favorite,
-                            contentDescription = null,
+                            contentDescription = "favorite the image",
                             modifier = Modifier.clickable {
                                 if (contains) {
                                     OB.boxFor<Img>().remove(img.id)
                                 } else {
+                                    img.favoriteDate = System.currentTimeMillis()
                                     OB.boxFor<Img>().put(img)
                                 }
-                                viewModel.favorited.tryEmit(OB.boxFor<Img>().contains(img.id))
+                                viewModel.favoriteStateChanged()
                             },
                             tint = if (contains) Purple500 else Color.Gray
                         )
+                    },
+                    title = {
                     }
-                }
+                )
                 if (!img.tags.isNullOrEmpty()) {
                     BottomAppBar(
                         backgroundColor = Color(0x22000000),

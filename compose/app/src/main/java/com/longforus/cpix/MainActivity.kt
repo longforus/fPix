@@ -16,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.*
@@ -23,10 +24,12 @@ import com.longforus.cpix.bean.IconScreens
 import com.longforus.cpix.bean.Img
 import com.longforus.cpix.screen.ImageScreen
 import com.longforus.cpix.screen.PhotoScreen
+import com.longforus.cpix.screen.SettingsScreen
 import com.longforus.cpix.ui.theme.CPixTheme
 import com.longforus.cpix.ui.theme.Purple500
 import com.longforus.cpix.util.StatusBarUtil
 import com.longforus.cpix.viewmodel.ImageViewModel
+import com.longforus.cpix.viewmodel.MainViewModel
 
 class MainActivity : AppCompatActivity() {
     private val imageVm by viewModels<ImageViewModel>()
@@ -42,10 +45,12 @@ class MainActivity : AppCompatActivity() {
     @Composable
     fun AppMainNavigation() {
         val navController = rememberNavController()
+        val viewModel:MainViewModel = viewModel()
+
         NavHost(navController, startDestination = IconScreens.Image.route) {
             // Bottom Nav
             composable(IconScreens.Image.route) {
-                ImageScreen(navController)
+                ImageScreen(navController,viewModel)
             }
             composable(IconScreens.Video.route) {
                 ScaffoldScreen(navController) {
@@ -73,14 +78,7 @@ class MainActivity : AppCompatActivity() {
             }
             composable(IconScreens.Setting.route) {
                 ScaffoldScreen(navController) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxHeight()
-                            .fillMaxWidth(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(text = IconScreens.Setting.label)
-                    }
+                    SettingsScreen(viewModel)
                 }
             }
 
@@ -95,7 +93,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     @Composable
-    fun ImageScreen(navController: NavHostController) {
+    fun ImageScreen(navController: NavHostController,viewModel: MainViewModel) {
         ScaffoldScreen(navController = navController,
             float = {
                 FloatingActionButton(
@@ -110,7 +108,7 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         ) {
-            val usePaging by imageVm.usePaging.observeAsState()
+            val usePaging by viewModel.usePaging.observeAsState()
             val imageFragment = remember {
                 ImageScreen(imageVm,navController)
             }

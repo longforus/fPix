@@ -9,8 +9,14 @@ import com.longforus.cpix.bean.OB
 import com.longforus.cpix.http.ProjectCoreHttpManager
 import com.longforus.cpix.util.LogUtils
 import okhttp3.OkHttpClient
+import com.tencent.mmkv.MMKV
+
+
+
 
 class MyApp:Application() {
+
+    val TAG = "MyApp"
     override fun onCreate() {
         super.onCreate()
         LogUtils.Builder(this).setBorderSwitch(false)
@@ -27,5 +33,8 @@ class MyApp:Application() {
             .build()
         Coil.setImageLoader(imageLoader)
         OB.init(this,MyObjectBox.builder())
+
+        val rootDir = MMKV.initialize(this)
+        LogUtils.d(TAG, "mmkv root: $rootDir")
     }
 }

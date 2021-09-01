@@ -3,7 +3,9 @@ package com.longforus.cpix.bean
 import android.os.Parcelable
 import io.objectbox.annotation.Entity
 import io.objectbox.annotation.Id
+import io.objectbox.annotation.Transient
 import kotlinx.parcelize.Parcelize
+import java.util.*
 
 
 data class ImageListBean(
@@ -24,6 +26,7 @@ data class Img(
     var imageHeight: Int = 0, // 3894
     var imageSize: Int = 0, // 3590092
     var imageWidth: Int = 0, // 6000
+    @Transient
     var largeImageURL: String = "", // https://pixabay.com/get/g36f515e410ee10b43d2da5e165a36aea216baec423d96c2369d9d64d301f3be833573acad871f2459572d8ba03a5d5d60ae62388c3d3fc8efd5ca50fba2cada4_1280.jpg
     var likes: Int = 0, // 2996
     var pageURL: String = "", // https://pixabay.com/photos/ocean-milky-way-boat-sailing-3605547/
@@ -37,6 +40,9 @@ data class Img(
     var userImageURL: String = "", // https://cdn.pixabay.com/user/2021/02/03/19-57-56-895_250x250.jpg
     var views: Int = 0, // 1790495
     var webformatHeight: Int = 0, // 415
+    @Transient
     var webformatURL: String = "", // https://pixabay.com/get/gca2881aa72e3bdd30ba44211b8b077e778c6ea8bd1f684729db5586e9eb93dbf8b15c9d2681fe681b41e76ce11a38d451f87269433daa8f5b9d4c625eaf4466f_640.jpg
-    var webformatWidth: Int = 0 // 640
+    var webformatWidth: Int = 0, // 640
+    var favoriteDate:Long = 0L,
+    var lastUpdateDate:Long = System.currentTimeMillis(),
 ):Parcelable
