@@ -29,11 +29,11 @@ import coil.imageLoader
 import coil.load
 import coil.request.ImageRequest
 import com.github.chrisbanes.photoview.PhotoView
-import com.longforus.cpix.bean.Img
+import com.longforus.cpix.bean.Item
 import com.longforus.cpix.ui.theme.Purple500
 
 @Composable
-fun PhotoScreen(img: Img?,navHostController: NavHostController){
+fun PhotoScreen(img: Item?,navHostController: NavHostController){
     Scaffold(
         backgroundColor = Color.Black
     ) {

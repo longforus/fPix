@@ -8,20 +8,18 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.*
 import com.longforus.cpix.bean.IconScreens
-import com.longforus.cpix.bean.Img
+import com.longforus.cpix.bean.Item
+import com.longforus.cpix.screen.FavoriteScreen
 import com.longforus.cpix.screen.ImageScreen
 import com.longforus.cpix.screen.PhotoScreen
 import com.longforus.cpix.screen.SettingsScreen
@@ -31,8 +29,13 @@ import com.longforus.cpix.util.StatusBarUtil
 import com.longforus.cpix.viewmodel.ImageViewModel
 import com.longforus.cpix.viewmodel.MainViewModel
 
+val LocalNavCtrl = staticCompositionLocalOf<NavHostController?> {
+    null
+}
+
 class MainActivity : AppCompatActivity() {
     private val imageVm by viewModels<ImageViewModel>()
+    private val viewModel: MainViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,55 +48,48 @@ class MainActivity : AppCompatActivity() {
     @Composable
     fun AppMainNavigation() {
         val navController = rememberNavController()
-        val viewModel:MainViewModel = viewModel()
-
-        NavHost(navController, startDestination = IconScreens.Image.route) {
-            // Bottom Nav
-            composable(IconScreens.Image.route) {
-                ImageScreen(navController,viewModel)
-            }
-            composable(IconScreens.Video.route) {
-                ScaffoldScreen(navController) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxHeight()
-                            .fillMaxWidth(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(text = IconScreens.Video.label)
+        CompositionLocalProvider(LocalNavCtrl provides navController) {
+            NavHost(navController, startDestination = IconScreens.Image.route) {
+                // Bottom Nav
+                composable(IconScreens.Image.route) {
+                    ImageScreen(navController, viewModel)
+                }
+                composable(IconScreens.Video.route) {
+                    ScaffoldScreen(navController) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxHeight()
+                                .fillMaxWidth(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(text = IconScreens.Video.label)
+                        }
                     }
                 }
-            }
-            composable(IconScreens.Favorite.route) {
-                ScaffoldScreen(navController) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxHeight()
-                            .fillMaxWidth(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(text = IconScreens.Favorite.label)
+                composable(IconScreens.Favorite.route) {
+                    ScaffoldScreen(navController) {
+                        FavoriteScreen()
                     }
                 }
-            }
-            composable(IconScreens.Setting.route) {
-                ScaffoldScreen(navController) {
-                    SettingsScreen(viewModel)
+                composable(IconScreens.Setting.route) {
+                    ScaffoldScreen(navController) {
+                        SettingsScreen(viewModel)
+                    }
                 }
-            }
 
-            composable("photo",arguments = listOf(navArgument("img"){
-                type = NavType.ParcelableType(Img::class.java)
-            })){
-                PhotoScreen( it.arguments?.getParcelable("img"),navHostController = navController)
-            }
+                composable("photo", arguments = listOf(navArgument("img") {
+                    type = NavType.ParcelableType(Item::class.java)
+                })) {
+                    PhotoScreen(it.arguments?.getParcelable("img"), navHostController = navController)
+                }
 
+            }
+            navController.graph.addAll(navController.navInflater.inflate(R.navigation.mobile_navigation))
         }
-        navController.graph.addAll(navController.navInflater.inflate(R.navigation.mobile_navigation))
     }
 
     @Composable
-    fun ImageScreen(navController: NavHostController,viewModel: MainViewModel) {
+    fun ImageScreen(navController: NavHostController, viewModel: MainViewModel) {
         ScaffoldScreen(navController = navController,
             float = {
                 FloatingActionButton(
@@ -109,10 +105,7 @@ class MainActivity : AppCompatActivity() {
             }
         ) {
             val usePaging by viewModel.usePaging.observeAsState()
-            val imageFragment = remember {
-                ImageScreen(imageVm,navController)
-            }
-            imageFragment.ImageScreen(usePaging = usePaging ?: false)
+            ImageScreen(usePaging = usePaging ?: false, imageVm = imageVm)
         }
     }
 

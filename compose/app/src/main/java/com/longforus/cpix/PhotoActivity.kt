@@ -29,7 +29,7 @@ import coil.imageLoader
 import coil.load
 import coil.request.ImageRequest
 import com.github.chrisbanes.photoview.PhotoView
-import com.longforus.cpix.bean.Img
+import com.longforus.cpix.bean.Item
 import com.longforus.cpix.bean.OB
 import com.longforus.cpix.ui.theme.Purple500
 import com.longforus.cpix.util.StatusBarUtil
@@ -38,7 +38,7 @@ import com.longforus.cpix.viewmodel.PhotoViewModel
 class PhotoActivity : AppCompatActivity() {
 
     val TAG = "PhotoActivity"
-    private val imgBean by lazy { intent.getParcelableExtra<Img>("bean") }
+    private val imgBean by lazy { intent.getParcelableExtra<Item>("bean") }
     private val viewModel by viewModels<PhotoViewModel> {
         object : ViewModelProvider.Factory {
             override fun <T : ViewModel?> create(modelClass: Class<T>): T {
@@ -59,7 +59,7 @@ class PhotoActivity : AppCompatActivity() {
     }
 
     @Composable
-    private fun PhotoContent(img: Img, contains: Boolean) {
+    private fun PhotoContent(img: Item, contains: Boolean) {
         Scaffold(
             backgroundColor = Color.Black
         ) {
@@ -114,10 +114,10 @@ class PhotoActivity : AppCompatActivity() {
                             contentDescription = "favorite the image",
                             modifier = Modifier.clickable {
                                 if (contains) {
-                                    OB.boxFor<Img>().remove(img.id)
+                                    OB.boxFor<Item>().remove(img.id)
                                 } else {
                                     img.favoriteDate = System.currentTimeMillis()
-                                    OB.boxFor<Img>().put(img)
+                                    OB.boxFor<Item>().put(img)
                                 }
                                 viewModel.favoriteStateChanged()
                             },

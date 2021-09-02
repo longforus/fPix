@@ -9,12 +9,11 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.longforus.cpix.bean.ImageListBean
-import com.longforus.cpix.bean.Img
+import com.longforus.cpix.bean.ContentListBean
+import com.longforus.cpix.bean.Item
 import com.longforus.cpix.http.*
 import com.longforus.cpix.typeList
 import com.longforus.cpix.util.LogUtils
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import java.lang.RuntimeException
@@ -25,7 +24,7 @@ class ImageViewModel : ViewModel() {
     private val _selectTab = MutableLiveData<Int>(0)
     val selectTab: LiveData<Int> = _selectTab
 
-    val topImageUrl = MutableLiveData<Img>()
+    val topImageUrl = MutableLiveData<Item>()
     val isRefreshing = MutableStateFlow(false)
     private val pageSize = 20
     private var currentPageIndex = 1
@@ -55,7 +54,7 @@ class ImageViewModel : ViewModel() {
     fun loadMore() {
         Log.d(TAG, "on load more")
         viewModelScope.launch {
-            coHttp<ImageListBean> {
+            coHttp<ContentListBean> {
                 api { service, parameter ->
                     parameter["category"] = imageType.lowercase(Locale.getDefault())
                     parameter["page"] = currentPageIndex
@@ -98,18 +97,18 @@ class ImageViewModel : ViewModel() {
         }
     }
 
-    val imageList = MutableLiveData<List<Img>>()
+    val imageList = MutableLiveData<List<Item>>()
 
 
-    val imagePager = Pager<Int, Img>(PagingConfig(pageSize, prefetchDistance = 20), initialKey = currentPageIndex) {
+    val imagePager = Pager<Int, Item>(PagingConfig(pageSize, prefetchDistance = 20), initialKey = currentPageIndex) {
         ImgPageSources()
     }
 
 
 
-    inner class ImgPageSources : PagingSource<Int, Img>() {
+    inner class ImgPageSources : PagingSource<Int, Item>() {
 
-        override fun getRefreshKey(state: PagingState<Int, Img>): Int? {
+        override fun getRefreshKey(state: PagingState<Int, Item>): Int? {
             // Try to find the page key of the closest page to anchorPosition, from
             // either the prevKey or the nextKey, but you need to handle nullability
             // here:
@@ -123,10 +122,10 @@ class ImageViewModel : ViewModel() {
             }
         }
 
-        override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Img> {
+        override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Item> {
 
             val i = params.key ?: 1
-            val bean = coHttp<ImageListBean> {
+            val bean = coHttp<ContentListBean> {
                 api { service, parameter ->
                     parameter["category"] = imageType.lowercase(Locale.getDefault())
                     parameter["page"] = i
@@ -144,7 +143,7 @@ class ImageViewModel : ViewModel() {
             } ?: return LoadResult.Error(RuntimeException("load error"))
 
             LogUtils.d(TAG, bean)
-            val list: List<Img>
+            val list: List<Item>
             if (i == 1) {
                 topImageUrl.value = bean.hits[0]
                 list = bean.hits.drop(1)

@@ -1,6 +1,6 @@
 package com.longforus.cpix.http
 
-import com.longforus.cpix.bean.ImageListBean
+import com.longforus.cpix.bean.ContentListBean
 import retrofit2.http.GET
 import retrofit2.http.QueryMap
 
@@ -11,9 +11,9 @@ import retrofit2.http.QueryMap
 interface ProjectCoreHttpService {
 
     @GET("/api")
-    suspend fun getImages(@QueryMap map: Map<String, String>): retrofit2.Response<ImageListBean>
+    suspend fun getImages(@QueryMap map: Map<String, String>): retrofit2.Response<ContentListBean>
 
     @GET("/api/videos")
-    suspend fun getVideos(@QueryMap map: Map<String, String>): retrofit2.Response<ImageListBean>
+    suspend fun getVideos(@QueryMap map: Map<String, String>): retrofit2.Response<ContentListBean>
 
 }
