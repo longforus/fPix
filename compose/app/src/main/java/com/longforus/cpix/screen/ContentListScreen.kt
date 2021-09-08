@@ -10,7 +10,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.PlayCircle
+import androidx.compose.material.icons.filled.PlayCircleOutline
 import androidx.compose.material.icons.filled.ThumbUpAlt
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
@@ -208,24 +208,37 @@ private fun ContentListPaging(list: LazyPagingItems<Item>) {
         ) {
             items(list, key = {
                 it.id
-            }) { img ->
-                img ?: return@items
-                Image(painter = rememberImagePainter(data = img.coverImageUrl, builder = {
-                    placeholder(R.drawable.placeholder)
-                    error(ColorDrawable(android.graphics.Color.GREEN))
-                    crossfade(true)
-                    scale(Scale.FIT)
-                }), contentDescription = null,
-                    modifier = Modifier
-                        .clickable {
-                            gotoDetailView(img, navController)
-                        }
-                        .height(180.dp)
-                        .fillMaxWidth()
-                        .padding(top = 3.dp)
-                        .clip(RoundedCornerShape(5.dp)),
-                    contentScale = ContentScale.Crop
-                )
+            }) { item ->
+                item ?: return@items
+                Box(Modifier
+                    .clickable {
+                        gotoDetailView(item, navController)
+                    }
+                    .height(180.dp)
+                    .fillMaxWidth()
+                    .padding(top = 3.dp)
+                    .clip(RoundedCornerShape(5.dp)),
+                    contentAlignment = Alignment.BottomEnd) {
+                    Image(
+                        painter = rememberImagePainter(data = item.coverImageUrl, builder = {
+                            placeholder(R.drawable.placeholder)
+                            error(ColorDrawable(android.graphics.Color.GREEN))
+                            crossfade(true)
+                            scale(Scale.FIT)
+                        }), contentDescription = null,
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        contentScale = ContentScale.Crop
+                    )
+                    if (item.isVideo) {
+                        Icon(
+                            Icons.Filled.PlayCircleOutline,
+                            contentDescription = null,
+                            tint = Purple500,
+                            modifier = Modifier.padding(bottom = 5.dp, end = 5.dp)
+                        )
+                    }
+                }
             }
         }
     }
@@ -233,59 +246,36 @@ private fun ContentListPaging(list: LazyPagingItems<Item>) {
 
 @Composable
 fun ItemImage(item: Item, isLeft: Boolean, navController: NavHostController) {
-    if (item.isVideo) {
-        Box(Modifier
-            .clickable {
-                gotoDetailView(item, navController)
-            }
-            .fillMaxHeight()
-            .fillMaxWidth(if (isLeft) 0.5f else 1f)
-            .padding(start = if (isLeft) 0.dp else 3.dp, top = 3.dp),
-            contentAlignment = Alignment.BottomEnd
-        ) {
-            Image(
-                painter = rememberImagePainter(data = item.coverImageUrl, builder = {
-                    placeholder(R.drawable.placeholder)
-                    error(ColorDrawable(android.graphics.Color.RED))
-                    crossfade(true)
-                    scale(Scale.FIT)
-                }), contentDescription = null,
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .fillMaxWidth()
-                    .clip(RoundedCornerShape(5.dp)),
-                contentScale = ContentScale.Crop
-            )
+    Box(Modifier
+        .clickable {
+            gotoDetailView(item, navController)
+        }
+        .fillMaxHeight()
+        .fillMaxWidth(if (isLeft) 0.5f else 1f)
+        .padding(start = if (isLeft) 0.dp else 3.dp, top = 3.dp),
+        contentAlignment = Alignment.BottomEnd
+    ) {
+        Image(
+            painter = rememberImagePainter(data = item.coverImageUrl, builder = {
+                placeholder(R.drawable.placeholder)
+                error(ColorDrawable(android.graphics.Color.RED))
+                crossfade(true)
+                scale(Scale.FIT)
+            }), contentDescription = null,
+            modifier = Modifier
+                .fillMaxHeight()
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(5.dp)),
+            contentScale = ContentScale.Crop
+        )
+        if (item.isVideo) {
             Icon(
-                Icons.Filled.PlayCircle,
+                Icons.Filled.PlayCircleOutline,
                 contentDescription = null,
                 tint = Purple500,
                 modifier = Modifier.padding(bottom = 5.dp, end = 5.dp)
             )
         }
-    } else {
-        Image(painter = rememberImagePainter(data = item.coverImageUrl, builder = {
-            placeholder(R.drawable.placeholder)
-            error(ColorDrawable(android.graphics.Color.RED))
-            crossfade(true)
-            scale(Scale.FIT)
-//        listener (onError = {r,t->
-            //也可以在这里更新过期连接
-//            if (System.currentTimeMillis() - img.lastUpdateDate > 24 * 60 * 60 * 1000) {
-//
-//            }
-//        })
-        }), contentDescription = null,
-            modifier = Modifier
-                .clickable {
-                    gotoDetailView(item, navController)
-                }
-                .fillMaxHeight()
-                .fillMaxWidth(if (isLeft) 0.5f else 1f)
-                .padding(start = if (isLeft) 0.dp else 3.dp, top = 3.dp)
-                .clip(RoundedCornerShape(5.dp)),
-            contentScale = ContentScale.Crop
-        )
     }
 }
 

@@ -51,11 +51,15 @@ class MainActivity : AppCompatActivity() {
             NavHost(navController, startDestination = IconScreens.Image.route) {
                 // Bottom Nav
                 composable(IconScreens.Image.route) {
-                    ImageScreen(navController)
+                    SearchableScreen(navController){
+                        val usePaging by viewModel.usePaging.observeAsState()
+                        ContentScreen(usePaging = usePaging ?: false, imageVm = imageVm)
+                    }
                 }
                 composable(IconScreens.Video.route) {
-                    ScaffoldScreen(navController) {
-                        VideoScreen(navController)
+                    SearchableScreen(navController) {
+                        val usePaging by viewModel.usePaging.observeAsState()
+                        ContentScreen(usePaging = usePaging ?: false, imageVm = videoVm)
                     }
                 }
                 composable(IconScreens.Favorite.route) {
@@ -80,29 +84,10 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    @Composable
-    fun ImageScreen(navController: NavHostController) {
-        ScaffoldScreen(navController = navController,
-            float = {
-                FloatingActionButton(
-                    onClick = { /*TODO*/ },
-                    backgroundColor = Purple500
-                ) {
-                    Icon(
-                        Icons.Filled.Search,
-                        contentDescription = null,
-                        tint = Color.White
-                    )
-                }
-            }
-        ) {
-            val usePaging by viewModel.usePaging.observeAsState()
-            ContentScreen(usePaging = usePaging ?: false, imageVm = imageVm)
-        }
-    }
+
 
     @Composable
-    fun VideoScreen(navController: NavHostController) {
+    fun SearchableScreen(navController: NavHostController, screen: @Composable () -> Unit) {
         ScaffoldScreen(navController = navController,
             float = {
                 FloatingActionButton(
@@ -115,11 +100,9 @@ class MainActivity : AppCompatActivity() {
                         tint = Color.White
                     )
                 }
-            }
-        ) {
-            val usePaging by viewModel.usePaging.observeAsState()
-            ContentScreen(usePaging = usePaging ?: false, imageVm = videoVm)
-        }
+            },
+            screen = screen
+        )
     }
 
     @Composable
