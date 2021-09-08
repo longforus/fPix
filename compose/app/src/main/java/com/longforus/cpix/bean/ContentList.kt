@@ -11,7 +11,6 @@ import kotlinx.coroutines.CoroutineStart
 import kotlinx.parcelize.Parcelize
 
 
-
 data class ContentListBean(
     var hits: List<Item> = listOf(),
     var total: Int = 0, // 1433183
@@ -45,25 +44,35 @@ data class Item(
     var webformatHeight: Int = 0, // 415
     var webformatURL: String = "", // https://pixabay.com/get/gca2881aa72e3bdd30ba44211b8b077e778c6ea8bd1f684729db5586e9eb93dbf8b15c9d2681fe681b41e76ce11a38d451f87269433daa8f5b9d4c625eaf4466f_640.jpg
     var webformatWidth: Int = 0, // 640
-    var favoriteDate:Long = 0L,
-    var lastUpdateDate:Long = System.currentTimeMillis(),
+    var favoriteDate: Long = 0L,
+    var lastUpdateDate: Long = System.currentTimeMillis(),
 
     var duration: Int = 0, // 12
     var picture_id: String = "", // 529927645
-    @Convert(converter = VideosConverter::class,dbType = String::class)
+    @Convert(converter = VideosConverter::class, dbType = String::class)
     var videos: Videos = Videos(),
-):Parcelable
+) : Parcelable {
+    val coverImageUrl: String
+        get() {
+            if (isVideo) {
+                return "https://i.vimeocdn.com/video/${picture_id}_640x360.jpg"
+            }
+            return webformatURL
+        }
+    val isVideo: Boolean
+        get() = type in listOf("film", "animation")
+}
 
 
 @Parcelize
 data class Videos(
-    @Convert(converter = VideoConverter::class,dbType = String::class)
+    @Convert(converter = VideoConverter::class, dbType = String::class)
     var large: Video = Video(),
-    @Convert(converter = VideoConverter::class,dbType = String::class)
+    @Convert(converter = VideoConverter::class, dbType = String::class)
     var medium: Video = Video(),
-    @Convert(converter = VideoConverter::class,dbType = String::class)
+    @Convert(converter = VideoConverter::class, dbType = String::class)
     var small: Video = Video(),
-    @Convert(converter = VideoConverter::class,dbType = String::class)
+    @Convert(converter = VideoConverter::class, dbType = String::class)
     var tiny: Video = Video()
 ) : Parcelable
 
@@ -73,13 +82,13 @@ data class Video(
     var size: Int = 0, // 6615235
     var url: String = "", // https://player.vimeo.com/external/135736646.hd.mp4?s=ed02d71c92dd0df7d1110045e6eb65a6&profile_id=119
     var width: Int = 0 // 1920
-) :Parcelable
+) : Parcelable
 
 
 class VideosConverter : PropertyConverter<Videos?, String?> {
 
     override fun convertToEntityProperty(databaseValue: String?): Videos {
-        return OB.fromJson(databaseValue ?: "",Videos::class.java)
+        return OB.fromJson(databaseValue ?: "", Videos::class.java)
     }
 
     override fun convertToDatabaseValue(entityProperty: Videos?): String {
@@ -87,10 +96,11 @@ class VideosConverter : PropertyConverter<Videos?, String?> {
     }
 
 }
+
 class VideoConverter : PropertyConverter<Video?, String?> {
 
     override fun convertToEntityProperty(databaseValue: String?): Video {
-        return OB.fromJson(databaseValue ?: "",Video::class.java)
+        return OB.fromJson(databaseValue ?: "", Video::class.java)
     }
 
     override fun convertToDatabaseValue(entityProperty: Video?): String {

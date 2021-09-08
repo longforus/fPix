@@ -4,14 +4,11 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
@@ -20,7 +17,7 @@ import androidx.navigation.compose.*
 import com.longforus.cpix.bean.IconScreens
 import com.longforus.cpix.bean.Item
 import com.longforus.cpix.screen.FavoriteScreen
-import com.longforus.cpix.screen.ImageScreen
+import com.longforus.cpix.screen.ContentScreen
 import com.longforus.cpix.screen.PhotoScreen
 import com.longforus.cpix.screen.SettingsScreen
 import com.longforus.cpix.ui.theme.CPixTheme
@@ -28,6 +25,7 @@ import com.longforus.cpix.ui.theme.Purple500
 import com.longforus.cpix.util.StatusBarUtil
 import com.longforus.cpix.viewmodel.ImageViewModel
 import com.longforus.cpix.viewmodel.MainViewModel
+import com.longforus.cpix.viewmodel.VideoViewModel
 
 val LocalNavCtrl = staticCompositionLocalOf<NavHostController?> {
     null
@@ -35,6 +33,7 @@ val LocalNavCtrl = staticCompositionLocalOf<NavHostController?> {
 
 class MainActivity : AppCompatActivity() {
     private val imageVm by viewModels<ImageViewModel>()
+    private val videoVm by viewModels<VideoViewModel>()
     private val viewModel: MainViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -52,18 +51,11 @@ class MainActivity : AppCompatActivity() {
             NavHost(navController, startDestination = IconScreens.Image.route) {
                 // Bottom Nav
                 composable(IconScreens.Image.route) {
-                    ImageScreen(navController, viewModel)
+                    ImageScreen(navController)
                 }
                 composable(IconScreens.Video.route) {
                     ScaffoldScreen(navController) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxHeight()
-                                .fillMaxWidth(),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(text = IconScreens.Video.label)
-                        }
+                        VideoScreen(navController)
                     }
                 }
                 composable(IconScreens.Favorite.route) {
@@ -89,7 +81,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     @Composable
-    fun ImageScreen(navController: NavHostController, viewModel: MainViewModel) {
+    fun ImageScreen(navController: NavHostController) {
         ScaffoldScreen(navController = navController,
             float = {
                 FloatingActionButton(
@@ -105,7 +97,28 @@ class MainActivity : AppCompatActivity() {
             }
         ) {
             val usePaging by viewModel.usePaging.observeAsState()
-            ImageScreen(usePaging = usePaging ?: false, imageVm = imageVm)
+            ContentScreen(usePaging = usePaging ?: false, imageVm = imageVm)
+        }
+    }
+
+    @Composable
+    fun VideoScreen(navController: NavHostController) {
+        ScaffoldScreen(navController = navController,
+            float = {
+                FloatingActionButton(
+                    onClick = { /*TODO*/ },
+                    backgroundColor = Purple500
+                ) {
+                    Icon(
+                        Icons.Filled.Search,
+                        contentDescription = null,
+                        tint = Color.White
+                    )
+                }
+            }
+        ) {
+            val usePaging by viewModel.usePaging.observeAsState()
+            ContentScreen(usePaging = usePaging ?: false, imageVm = videoVm)
         }
     }
 

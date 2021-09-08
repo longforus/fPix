@@ -35,7 +35,9 @@ private fun UsingPagingRow(using: Boolean, viewModel: MainViewModel) {
         horizontalArrangement = Arrangement.SpaceAround
     ) {
         Text(text = "Change grid to paging list")
-        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.End, modifier = Modifier.weight(1f)) {
+        Row(verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.End,
+            modifier = Modifier.weight(1f)) {
             Switch(checked = using, onCheckedChange = {
                 viewModel.onUsingPagingChanged(it)
             })

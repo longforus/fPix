@@ -13,6 +13,7 @@ interface ProjectCoreHttpService {
     @GET("/api")
     suspend fun getImages(@QueryMap map: Map<String, String>): retrofit2.Response<ContentListBean>
 
+
     @GET("/api/videos")
     suspend fun getVideos(@QueryMap map: Map<String, String>): retrofit2.Response<ContentListBean>
 

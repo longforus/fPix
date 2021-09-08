@@ -10,6 +10,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.PlayCircle
 import androidx.compose.material.icons.filled.ThumbUpAlt
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
@@ -38,39 +39,40 @@ import com.longforus.cpix.bean.Item
 import com.longforus.cpix.typeList
 import com.longforus.cpix.ui.theme.Purple500
 import com.longforus.cpix.util.LogUtils
-import com.longforus.cpix.viewmodel.ImageViewModel
+import com.longforus.cpix.viewmodel.ContentViewModel
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
 import kotlin.math.ceil
 
+private const val TAG = "ImageScreen"
 
 @Composable
-fun ImageScreen(usePaging: Boolean,imageVm: ImageViewModel) {
+fun ContentScreen(usePaging: Boolean, imageVm: ContentViewModel) {
     Column {
         Box(contentAlignment = Alignment.BottomCenter) {
             val topImage by imageVm.topImageUrl.observeAsState()
-            TopImageView(topImage,imageVm)
+            TopImageView(topImage, imageVm)
         }
         if (usePaging) {
             val lazyPagingItems = imageVm.imagePager.flow.collectAsLazyPagingItems()
             ContentListPaging(lazyPagingItems)
         } else {
             val contentList by imageVm.imageList.observeAsState()
-            ContentList(contentList ?: emptyList(),imageVm)
+            ContentList(contentList ?: emptyList(), imageVm)
         }
     }
 }
 
 @Composable
-private fun TopImageView(topImage: Item? = null,imageVm: ImageViewModel) {
+private fun TopImageView(topImage: Item? = null, imageVm: ContentViewModel) {
 
     val navController = LocalNavCtrl.current!!
 
     Box(contentAlignment = Alignment.TopEnd) {
         Image(
-            painter = rememberImagePainter(data = topImage?.webformatURL, builder = {
+            painter = rememberImagePainter(data = topImage?.coverImageUrl, builder = {
                 crossfade(true)
                 placeholder(R.drawable.placeholder)
                 error(ColorDrawable(android.graphics.Color.GREEN))
@@ -80,7 +82,7 @@ private fun TopImageView(topImage: Item? = null,imageVm: ImageViewModel) {
             modifier = Modifier
                 .height(230.dp)
                 .clickable {
-                    gotoPhotoView(topImage, navController)
+                    gotoDetailView(topImage, navController)
                 }
                 .fillMaxWidth(),
             contentScale = ContentScale.Crop
@@ -108,22 +110,28 @@ private fun TopImageView(topImage: Item? = null,imageVm: ImageViewModel) {
 }
 
 
-private fun gotoPhotoView(topImage: Item?, navController: NavHostController) {
-    //使用route不能直接传参 是个bug吧
-//        navController.navigate(R.id.go2Photo,  bundleOf("img" to topImage))
-    navController.navigate(R.id.photoActivity, bundleOf("bean" to topImage))
+private fun gotoDetailView(topImage: Item?, navController: NavHostController) {
+    topImage ?: return
+    if (topImage.isVideo) {
+        //todo
+        navController.navigate(R.id.photoActivity, bundleOf("bean" to topImage))
+    } else {
+        //使用route不能直接传参 是个bug吧
+        //        navController.navigate(R.id.go2Photo,  bundleOf("img" to topImage))
+        navController.navigate(R.id.photoActivity, bundleOf("bean" to topImage))
 //        context.startActivity(Intent(context, PhotoActivity::class.java).putExtra("bean", topImage))
+    }
 }
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-private fun ContentList(list: List<Item>,imageVm: ImageViewModel) {
+private fun ContentList(list: List<Item>, viewModel: ContentViewModel) {
     val listState = rememberLazyListState()
-    val isRefreshing by imageVm.isRefreshing.collectAsState()
+    val isRefreshing by viewModel.isRefreshing.collectAsState()
     val navController = LocalNavCtrl.current!!
     if (list.isNotEmpty()) {
         SwipeRefresh(state = rememberSwipeRefreshState(isRefreshing), onRefresh = {
-            imageVm.onRefresh()
+            viewModel.onRefresh()
         }) {
             val pairs = ArrayList<Pair<Item, Item?>>(ceil(list.size / 2.0).toInt())
             var i = 0
@@ -142,9 +150,9 @@ private fun ContentList(list: List<Item>,imageVm: ImageViewModel) {
                             .padding(start = 2.dp, end = 2.dp)
                             .height(180.dp)
                     ) {
-                        ItemImage(item.first, true,navController)
+                        ItemImage(item.first, true, navController)
                         item.second?.let {
-                            ItemImage(it, false,navController)
+                            ItemImage(it, false, navController)
                         }
                     }
                 }
@@ -158,7 +166,7 @@ private fun ContentList(list: List<Item>,imageVm: ImageViewModel) {
                 LogUtils.d(TAG, "map:$it  listSize=${list.size} ")
                 it >= list.size / 2
             }.distinctUntilChanged().filter { it }.collect {
-                imageVm.loadMore()
+                viewModel.loadMore()
             }
         }
     } else {
@@ -202,7 +210,7 @@ private fun ContentListPaging(list: LazyPagingItems<Item>) {
                 it.id
             }) { img ->
                 img ?: return@items
-                Image(painter = rememberImagePainter(data = img.webformatURL, builder = {
+                Image(painter = rememberImagePainter(data = img.coverImageUrl, builder = {
                     placeholder(R.drawable.placeholder)
                     error(ColorDrawable(android.graphics.Color.GREEN))
                     crossfade(true)
@@ -210,7 +218,7 @@ private fun ContentListPaging(list: LazyPagingItems<Item>) {
                 }), contentDescription = null,
                     modifier = Modifier
                         .clickable {
-                            gotoPhotoView(img, navController)
+                            gotoDetailView(img, navController)
                         }
                         .height(180.dp)
                         .fillMaxWidth()
@@ -224,30 +232,63 @@ private fun ContentListPaging(list: LazyPagingItems<Item>) {
 }
 
 @Composable
-fun ItemImage(img: Item, isLeft: Boolean,navController: NavHostController) {
-    Image(painter = rememberImagePainter(data = img.webformatURL, builder = {
-        placeholder(R.drawable.placeholder)
-        error(ColorDrawable(android.graphics.Color.RED))
-        crossfade(true)
-        scale(Scale.FIT)
+fun ItemImage(item: Item, isLeft: Boolean, navController: NavHostController) {
+    if (item.isVideo) {
+        Box(Modifier
+            .clickable {
+                gotoDetailView(item, navController)
+            }
+            .fillMaxHeight()
+            .fillMaxWidth(if (isLeft) 0.5f else 1f)
+            .padding(start = if (isLeft) 0.dp else 3.dp, top = 3.dp),
+            contentAlignment = Alignment.BottomEnd
+        ) {
+            Image(
+                painter = rememberImagePainter(data = item.coverImageUrl, builder = {
+                    placeholder(R.drawable.placeholder)
+                    error(ColorDrawable(android.graphics.Color.RED))
+                    crossfade(true)
+                    scale(Scale.FIT)
+                }), contentDescription = null,
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(5.dp)),
+                contentScale = ContentScale.Crop
+            )
+            Icon(
+                Icons.Filled.PlayCircle,
+                contentDescription = null,
+                tint = Purple500,
+                modifier = Modifier.padding(bottom = 5.dp, end = 5.dp)
+            )
+        }
+    } else {
+        Image(painter = rememberImagePainter(data = item.coverImageUrl, builder = {
+            placeholder(R.drawable.placeholder)
+            error(ColorDrawable(android.graphics.Color.RED))
+            crossfade(true)
+            scale(Scale.FIT)
 //        listener (onError = {r,t->
-        //也可以在这里更新过期连接
+            //也可以在这里更新过期连接
 //            if (System.currentTimeMillis() - img.lastUpdateDate > 24 * 60 * 60 * 1000) {
 //
 //            }
 //        })
-    }), contentDescription = null,
-        modifier = Modifier
-            .clickable {
-                gotoPhotoView(img, navController)
-            }
-            .fillMaxHeight()
-            .fillMaxWidth(if (isLeft) 0.5f else 1f)
-            .padding(start = if (isLeft) 0.dp else 3.dp, top = 3.dp)
-            .clip(RoundedCornerShape(5.dp)),
-        contentScale = ContentScale.Crop
-    )
+        }), contentDescription = null,
+            modifier = Modifier
+                .clickable {
+                    gotoDetailView(item, navController)
+                }
+                .fillMaxHeight()
+                .fillMaxWidth(if (isLeft) 0.5f else 1f)
+                .padding(start = if (isLeft) 0.dp else 3.dp, top = 3.dp)
+                .clip(RoundedCornerShape(5.dp)),
+            contentScale = ContentScale.Crop
+        )
+    }
 }
+
 
 @Composable
 private fun TypeRow(typeList: List<String>, selectIndex: Int = 0, onTabClick: (String, Int) -> Unit) {

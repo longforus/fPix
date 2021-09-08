@@ -5,8 +5,8 @@ import com.longforus.cpix.http.*
 import retrofit2.Response
 import java.util.*
 
-class ImageViewModel : ContentViewModel() {
-     val TAG = "ImageViewModel"
+class VideoViewModel : ContentViewModel() {
+     val TAG = "VideoViewModel"
     override suspend fun getRequest(
         parameter: RequestMap,
         service: ProjectCoreHttpService,
@@ -18,7 +18,13 @@ class ImageViewModel : ContentViewModel() {
         if (keyWord.isNotEmpty()) {
             parameter["q"] = keyWord
         }
-        return service.getImages(parameter.build())
+        return service.getVideos(parameter.build()).apply {
+            if (isSuccessful) {
+                this.body()?.hits?.forEach {
+
+                }
+            }
+        }
     }
 
 }

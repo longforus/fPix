@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -20,8 +19,6 @@ import com.longforus.cpix.bean.Item
 import com.longforus.cpix.ui.theme.Purple500
 import com.longforus.cpix.viewmodel.FavoriteViewModel
 import kotlin.math.ceil
-
-val TAG = "FavoriteScreen"
 
 @Composable
 fun FavoriteScreen(){
