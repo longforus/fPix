@@ -113,8 +113,7 @@ private fun TopImageView(topImage: Item? = null, imageVm: ContentViewModel) {
 private fun gotoDetailView(topImage: Item?, navController: NavHostController) {
     topImage ?: return
     if (topImage.isVideo) {
-        //todo
-        navController.navigate(R.id.photoActivity, bundleOf("bean" to topImage))
+        navController.navigate(R.id.videoActivity, bundleOf("bean" to topImage))
     } else {
         //使用route不能直接传参 是个bug吧
         //        navController.navigate(R.id.go2Photo,  bundleOf("img" to topImage))
@@ -176,7 +175,8 @@ private fun ContentList(list: List<Item>, viewModel: ContentViewModel) {
                 .fillMaxWidth(),
             contentAlignment = Alignment.Center
         ) {
-            Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center) {
                 CircularProgressIndicator(color = Purple500)
                 Text(
                     "loading...",

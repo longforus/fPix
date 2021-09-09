@@ -74,7 +74,9 @@ data class Videos(
     var small: Video = Video(),
     @Convert(converter = VideoConverter::class, dbType = String::class)
     var tiny: Video = Video()
-) : Parcelable
+) : Parcelable{
+
+}
 
 @Parcelize
 data class Video(
