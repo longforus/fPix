@@ -61,6 +61,7 @@ dependencies {
     implementation "androidx.compose.material:material-icons-core:$compose_version"
     implementation "androidx.compose.material:material-icons-extended:$compose_version"
     implementation "androidx.compose.ui:ui-tooling-preview:$compose_version"
+    implementation "androidx.constraintlayout:constraintlayout-compose:1.0.0-beta02"
     // Integration with ViewModels
     implementation "androidx.lifecycle:lifecycle-viewmodel-compose:1.0.0-alpha07"
     // Integration with observables

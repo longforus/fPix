@@ -24,7 +24,9 @@ class FavoriteViewModel : ViewModel() {
     val imageList = ObjectBoxLiveData<Item>(OB.boxFor<Item>().query {
         orderDesc(Item_.favoriteDate)
     }).switchMap { list ->
+        //这样的问题是如果需要更新的话,肯定会造成整个list 重组,会有闪烁发生
         liveData {
+            emit(list)
             val now = System.currentTimeMillis()
             val partition = list.partition {
                 now - it.lastUpdateDate > 23 * 60 * 60 * 1000
@@ -52,8 +54,6 @@ class FavoriteViewModel : ViewModel() {
                 emit((partition.second + newList).sortedByDescending {
                     it?.favoriteDate
                 })
-            } else {
-                emit(list)
             }
         }
     }

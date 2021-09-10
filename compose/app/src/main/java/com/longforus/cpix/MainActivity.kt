@@ -1,5 +1,7 @@
 package com.longforus.cpix
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -51,7 +53,7 @@ class MainActivity : AppCompatActivity() {
             NavHost(navController, startDestination = IconScreens.Image.route) {
                 // Bottom Nav
                 composable(IconScreens.Image.route) {
-                    SearchableScreen(navController){
+                    SearchableScreen(navController) {
                         val usePaging by viewModel.usePaging.observeAsState()
                         ContentScreen(usePaging = usePaging ?: false, imageVm = imageVm)
                     }
@@ -69,7 +71,11 @@ class MainActivity : AppCompatActivity() {
                 }
                 composable(IconScreens.Setting.route) {
                     ScaffoldScreen(navController) {
-                        SettingsScreen(viewModel)
+                        SettingsScreen(viewModel) {
+                            startActivity(Intent(Intent.ACTION_VIEW).apply {
+                            data = Uri.parse("https://github.com/longforus/fPix")
+                        })
+                        }
                     }
                 }
 
@@ -85,10 +91,10 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-
     @Composable
     fun SearchableScreen(navController: NavHostController, screen: @Composable () -> Unit) {
-        ScaffoldScreen(navController = navController,
+        ScaffoldScreen(
+            navController = navController,
             float = {
                 FloatingActionButton(
                     onClick = { /*TODO*/ },

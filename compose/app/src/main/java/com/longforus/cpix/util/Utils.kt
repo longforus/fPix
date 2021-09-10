@@ -22,20 +22,6 @@ object StatusBarUtil {
     }
 }
 
-object DensityUtil {
-    fun dxToDp(resources: Resources, px: Int): Int =
-        (px / resources.displayMetrics.density + 0.5f).toInt()
-}
-
-object ValueUtil {
-    fun getRandomDp(fromDp: Dp, toDp: Dp): Dp  = (fromDp.value.toInt()..toDp.value.toInt()).random().dp
-}
-
-object LogUtil {
-    fun printLog(tag : String = "FlappyBird", message: String) {
-        Log.d(tag, message)
-    }
-}
 
 /**
  * Returns a string containing the first [n] characters from this string, or the entire string if this string is shorter.
