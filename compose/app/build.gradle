@@ -114,7 +114,7 @@ dependencies {
 
 
     implementation 'com.tencent:mmkv-static:1.2.10'
-
+    implementation 'com.guolindev.permissionx:permissionx:1.5.0'
 
     implementation 'com.github.CarGuo.GSYVideoPlayer:gsyVideoPlayer-java:v8.1.5-jitpack'
 

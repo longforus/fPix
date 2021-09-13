@@ -1,8 +1,10 @@
 package com.longforus.cpix
 
+import android.Manifest
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -28,6 +30,7 @@ import com.longforus.cpix.util.StatusBarUtil
 import com.longforus.cpix.viewmodel.ImageViewModel
 import com.longforus.cpix.viewmodel.MainViewModel
 import com.longforus.cpix.viewmodel.VideoViewModel
+import com.permissionx.guolindev.PermissionX
 
 val LocalNavCtrl = staticCompositionLocalOf<NavHostController?> {
     null
@@ -43,6 +46,14 @@ class MainActivity : AppCompatActivity() {
         StatusBarUtil.transparentStatusBar(this)
         setContent {
             AppMainNavigation()
+        }
+        PermissionX.init(this).permissions(
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+        ).request { allGranted, grantedList, deniedList ->
+            if (!allGranted) {
+                Toast.makeText(this, "cant download image", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
@@ -73,8 +84,8 @@ class MainActivity : AppCompatActivity() {
                     ScaffoldScreen(navController) {
                         SettingsScreen(viewModel) {
                             startActivity(Intent(Intent.ACTION_VIEW).apply {
-                            data = Uri.parse("https://github.com/longforus/fPix")
-                        })
+                                data = Uri.parse("https://github.com/longforus/fPix")
+                            })
                         }
                     }
                 }
