@@ -34,6 +34,7 @@ import com.longforus.cpix.bean.OB
 import com.longforus.cpix.ui.theme.Purple500
 import com.longforus.cpix.util.StatusBarUtil
 import com.longforus.cpix.viewmodel.PhotoViewModel
+import kotlinx.coroutines.launch
 
 class PhotoActivity : AppCompatActivity() {
 
@@ -60,8 +61,10 @@ class PhotoActivity : AppCompatActivity() {
 
     @Composable
     private fun PhotoContent(img: Item, contains: Boolean) {
+        val scaffoldState: ScaffoldState = rememberScaffoldState()
         Scaffold(
-            backgroundColor = Color.Black
+            backgroundColor = Color.Black,
+            scaffoldState = scaffoldState
         ) {
             Box(
                 modifier = Modifier
@@ -89,11 +92,23 @@ class PhotoActivity : AppCompatActivity() {
                         )
                     },
                     actions = {
+                        // Creates a CoroutineScope bound to the lifecycle
+                        val scope = rememberCoroutineScope()
                         Icon(
                             Icons.Filled.Download,
                             contentDescription = null,
                             modifier = Modifier.clickable {
-                                //todo
+                               scope.launch {
+                                   if (viewModel.saveImage(imageDrawable, img.saveName)) {
+                                       val showSnackbar = scaffoldState.snackbarHostState.showSnackbar(
+                                           "save success", "open", duration = SnackbarDuration.Long)
+                                       if (showSnackbar == SnackbarResult.ActionPerformed) {
+                                           viewModel.openDownLoadedImage(img.saveName)
+                                       }
+                                   } else {
+                                       scaffoldState.snackbarHostState.showSnackbar("save failure")
+                                   }
+                               }
                             },
                             tint = Color.Gray
                         )

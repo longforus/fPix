@@ -1,0 +1,16 @@
+<resources>
+  <paths>
+    <files-path path="" name="files" />
+    <cache-path path="" name="cache" />
+    <external-path path="xm" name="external" />
+    <external-files-path path="" name="externalfiles"/>
+    <!-- 此标签需要 support 25.0.0以上才可以使用-->
+    <external-cache-path  path="" name="externalcache"/>
+    <root-path name="xm" path="" />
+
+    <!-- /storage/emulated/0/Download/${applicationId}/.beta/apk-->
+    <external-path name="beta_external_path" path="Download/"/>
+    <!--/storage/emulated/0/Android/data/${applicationId}/files/apk/-->
+    <external-path name="beta_external_files_path" path="Android/data/"/>
+  </paths>
+</resources>

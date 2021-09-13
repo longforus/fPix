@@ -52,6 +52,8 @@ data class Item(
     @Convert(converter = VideosConverter::class, dbType = String::class)
     var videos: Videos = Videos(),
 ) : Parcelable {
+    val saveName: String
+        get() = "${id}_${imageWidth}*${imageHeight}.jpg"
     val coverImageUrl: String
         get() {
             if (isVideo) {
@@ -74,7 +76,7 @@ data class Videos(
     var small: Video = Video(),
     @Convert(converter = VideoConverter::class, dbType = String::class)
     var tiny: Video = Video()
-) : Parcelable{
+) : Parcelable {
 
 }
 

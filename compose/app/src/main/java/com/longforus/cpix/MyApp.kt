@@ -16,6 +16,14 @@ import com.tencent.mmkv.MMKV
 
 class MyApp:Application() {
 
+    companion object{
+        lateinit var app: MyApp
+    }
+
+    init {
+        app = this
+    }
+
     val TAG = "MyApp"
     override fun onCreate() {
         super.onCreate()
