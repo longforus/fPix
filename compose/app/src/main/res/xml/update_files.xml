@@ -1,8 +1,9 @@
 <resources>
   <paths>
     <files-path path="" name="files" />
+    <files-path path="Download/" name="imageDownload" />
     <cache-path path="" name="cache" />
-    <external-path path="xm" name="external" />
+    <external-path path="" name="external" />
     <external-files-path path="" name="externalfiles"/>
     <!-- 此标签需要 support 25.0.0以上才可以使用-->
     <external-cache-path  path="" name="externalcache"/>

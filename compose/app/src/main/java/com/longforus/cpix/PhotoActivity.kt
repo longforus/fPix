@@ -43,7 +43,7 @@ class PhotoActivity : AppCompatActivity() {
     private val viewModel by viewModels<PhotoViewModel> {
         object : ViewModelProvider.Factory {
             override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-                return PhotoViewModel(imgBean?.id ?: 0) as T
+                return PhotoViewModel(imgBean!!) as T
             }
         }
     }
@@ -54,13 +54,14 @@ class PhotoActivity : AppCompatActivity() {
         setContent {
             imgBean?.let {
                 val favorited by viewModel.favorited.collectAsState()
-                PhotoContent(it, favorited)
+                val downloaded by viewModel.downloaded.collectAsState()
+                PhotoContent(it, favorited, downloaded)
             }
         }
     }
 
     @Composable
-    private fun PhotoContent(img: Item, contains: Boolean) {
+    private fun PhotoContent(img: Item, contains: Boolean, downloaded: Boolean) {
         val scaffoldState: ScaffoldState = rememberScaffoldState()
         Scaffold(
             backgroundColor = Color.Black,
@@ -98,19 +99,25 @@ class PhotoActivity : AppCompatActivity() {
                             Icons.Filled.Download,
                             contentDescription = null,
                             modifier = Modifier.clickable {
-                               scope.launch {
-                                   if (viewModel.saveImage(imageDrawable, img.saveName)) {
-                                       val showSnackbar = scaffoldState.snackbarHostState.showSnackbar(
-                                           "save success", "open", duration = SnackbarDuration.Long)
-                                       if (showSnackbar == SnackbarResult.ActionPerformed) {
-                                           viewModel.openDownLoadedImage(img.saveName)
-                                       }
-                                   } else {
-                                       scaffoldState.snackbarHostState.showSnackbar("save failure")
-                                   }
-                               }
+                                if (downloaded) {
+                                    viewModel.openDownLoadedImage(img.downloadFile(this@PhotoActivity))
+                                } else {
+                                    scope.launch {
+                                        if (viewModel.saveImage(imageDrawable, img.downloadFile(this@PhotoActivity))) {
+                                            val showSnackbar = scaffoldState.snackbarHostState.showSnackbar(
+                                                "save success", "open", duration = SnackbarDuration.Long
+                                            )
+                                            if (showSnackbar == SnackbarResult.ActionPerformed) {
+                                                viewModel.openDownLoadedImage(img.downloadFile(this@PhotoActivity))
+                                            }
+                                        } else {
+                                            scaffoldState.snackbarHostState.showSnackbar("save failure")
+                                        }
+                                    }
+                                }
+
                             },
-                            tint = Color.Gray
+                            tint = if (downloaded) Purple500 else Color.Gray
                         )
                         Spacer(modifier = Modifier.width(20.dp))
                         Icon(

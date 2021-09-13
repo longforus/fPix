@@ -1,5 +1,7 @@
 package com.longforus.cpix.screen
 
+
+import android.os.Environment
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.ClickableText
@@ -17,7 +19,10 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
+import com.longforus.cpix.MyApp
+import com.longforus.cpix.util.getOpenDirIntent
 import com.longforus.cpix.viewmodel.MainViewModel
+import java.io.File
 
 @Composable
 fun SettingsScreen(viewModel: MainViewModel, go2GitHub: (Int) -> Unit) {
@@ -37,6 +42,26 @@ fun SettingsScreen(viewModel: MainViewModel, go2GitHub: (Int) -> Unit) {
                 .verticalScroll(scrollState)) {
             val usingPaging by viewModel.usePaging.observeAsState()
             UsingPagingRow(usingPaging ?: false, viewModel, Modifier.height(60.dp))
+            Text(text = "Image download path:")
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.End,
+                modifier = Modifier.padding(top = 10.dp)
+            ) {
+                val dir =  MyApp.app.getExternalFilesDir(Environment.DIRECTORY_PICTURES) ?: File("/")
+                ClickableText(
+                    text = AnnotatedString(
+                        dir.absolutePath, spanStyle = SpanStyle(
+                            color = Color.Blue, textDecoration =
+                            TextDecoration.Underline
+                        )
+                    ), onClick = {
+                        MyApp.app.filesDir?.let {
+                            MyApp.app.startActivity(getOpenDirIntent(dir, MyApp.app))
+                        }
+                    }
+                )
+            }
         }
         Column(Modifier
             .constrainAs(about) {

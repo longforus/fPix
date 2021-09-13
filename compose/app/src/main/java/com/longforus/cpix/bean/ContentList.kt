@@ -1,5 +1,7 @@
 package com.longforus.cpix.bean
 
+import android.content.Context
+import android.os.Environment
 import android.os.Parcelable
 import androidx.compose.ui.semantics.Role
 import io.objectbox.annotation.Convert
@@ -9,6 +11,7 @@ import io.objectbox.annotation.Transient
 import io.objectbox.converter.PropertyConverter
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.parcelize.Parcelize
+import java.io.File
 
 
 data class ContentListBean(
@@ -63,6 +66,10 @@ data class Item(
         }
     val isVideo: Boolean
         get() = type in listOf("film", "animation")
+
+    fun downloadFile(context: Context):File{
+        return File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES),saveName)
+    }
 }
 
 

@@ -7,6 +7,7 @@ import android.content.res.Resources
 import android.graphics.Color
 import android.net.Uri
 import android.os.Build
+import android.provider.DocumentsContract
 import android.util.Log
 import android.view.View
 import android.view.WindowManager
@@ -59,5 +60,24 @@ fun getOpenFileIntent(file: File, context: Context, type: String = "application/
     }
     intent.putExtra(Intent.EXTRA_STREAM, uri)
     intent.setDataAndType(uri, type)
+    return intent
+}
+//android获取一个用于打开文件的intent  
+fun getOpenDirIntent(file: File, context: Context): Intent {
+    val intent = Intent(Intent.ACTION_GET_CONTENT)
+    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+    val uri: Uri
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+        uri = FileProvider.getUriForFile(context,
+            context.packageName + ".fileProvider", file)
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+    } else {
+        uri = Uri.fromFile(file)
+    }
+    intent.addCategory(Intent.CATEGORY_OPENABLE)
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        intent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, uri)
+    }
+    intent.setDataAndType(uri, "*/*")
     return intent
 }
