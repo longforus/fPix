@@ -8,13 +8,19 @@ import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.*
@@ -64,13 +70,17 @@ class MainActivity : AppCompatActivity() {
             NavHost(navController, startDestination = IconScreens.Image.route) {
                 // Bottom Nav
                 composable(IconScreens.Image.route) {
-                    SearchableScreen(navController) {
+                    SearchableScreen(navController, {
+                        navController.navigate("search?isImage=true")
+                    }) {
                         val usePaging by viewModel.usePaging.observeAsState()
                         ContentScreen(usePaging = usePaging ?: false, imageVm = imageVm)
                     }
                 }
                 composable(IconScreens.Video.route) {
-                    SearchableScreen(navController) {
+                    SearchableScreen(navController, {
+                        navController.navigate("search?isImage=false")
+                    }) {
                         val usePaging by viewModel.usePaging.observeAsState()
                         ContentScreen(usePaging = usePaging ?: false, imageVm = videoVm)
                     }
@@ -96,19 +106,89 @@ class MainActivity : AppCompatActivity() {
                     PhotoScreen(it.arguments?.getParcelable("img"), navHostController = navController)
                 }
 
+                dialog("search?isImage={isImage}", arguments = listOf(navArgument("isImage") {
+                    defaultValue = true
+                    type = NavType.BoolType
+                })) {
+                    val isImage = it.arguments?.getBoolean("isImage") ?: true
+                    SearchDialog(isImage, navController)
+                }
+
             }
             navController.graph.addAll(navController.navInflater.inflate(R.navigation.mobile_navigation))
         }
     }
 
+    @Composable
+    fun SearchDialog(isImage: Boolean = true, navController: NavHostController) {
+        var text by remember { mutableStateOf("") }
+        var openDialog by remember { mutableStateOf(true) }
+        if (!openDialog) {
+            navController.navigateUp()
+            return
+        }
+        CPixTheme {
+            Dialog(onDismissRequest = {
+                openDialog = false
+            }) {
+                Surface {
+                    Column {
+                        OutlinedTextField(
+                            value = text,
+                            onValueChange = { text = it },
+                            label = { Text(text = "Search") },
+                            maxLines = 1,
+                            modifier = Modifier.padding(20.dp),
+                            keyboardActions = KeyboardActions(
+                                onGo = {
+                                    if (isImage) {
+                                        imageVm.doSearch(text)
+                                    } else {
+                                        videoVm.doSearch(text)
+                                    }
+                                    openDialog = false
+                                }
+                            )
+                        )
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceAround,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(10.dp)
+                        ) {
+                            Button(onClick = {
+                                openDialog = false
+                            }) {
+                                Text(text = "cancel")
+                            }
+                            Button(onClick = {
+                                if (isImage) {
+                                    imageVm.doSearch(text)
+                                } else {
+                                    videoVm.doSearch(text)
+                                }
+                                openDialog = false
+
+                            }) {
+                                Text(text = "go")
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+    }
+
 
     @Composable
-    fun SearchableScreen(navController: NavHostController, screen: @Composable () -> Unit) {
+    fun SearchableScreen(navController: NavHostController, onFabClick: () -> Unit, screen: @Composable () -> Unit) {
         ScaffoldScreen(
             navController = navController,
             float = {
                 FloatingActionButton(
-                    onClick = { /*TODO*/ },
+                    onClick = onFabClick,
                     backgroundColor = Purple500
                 ) {
                     Icon(

@@ -51,6 +51,12 @@ abstract class ContentViewModel : ViewModel() {
     }
 
 
+    fun doSearch(keyword:String){
+        this.keyWord = keyword
+        currentPageIndex = 1
+        loadMore()
+    }
+
 
     fun loadMore() {
         Log.d(TAG, "on load more")
@@ -66,7 +72,7 @@ abstract class ContentViewModel : ViewModel() {
                 }
             }?.let {
                 LogUtils.d(TAG, it)
-                if (currentPageIndex == 1) {
+                if (currentPageIndex == 1&&it.hits.isNotEmpty()) {
                     topImageUrl.value = it.hits[0]
                     imageList.value = it.hits.drop(1)
                 } else {
