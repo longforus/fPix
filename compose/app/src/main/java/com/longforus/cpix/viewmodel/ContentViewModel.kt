@@ -9,6 +9,7 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
+import androidx.paging.compose.LazyPagingItems
 import com.longforus.cpix.bean.ContentListBean
 import com.longforus.cpix.bean.Item
 import com.longforus.cpix.http.*
@@ -18,9 +19,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import retrofit2.Response
 import java.lang.RuntimeException
-import java.util.*
 
 abstract class ContentViewModel : ViewModel() {
+    var lazyPagingItems: LazyPagingItems<Item>? = null
     private val _selectTab = MutableLiveData<Int>(0)
     val selectTab: LiveData<Int> = _selectTab
 
@@ -51,10 +52,14 @@ abstract class ContentViewModel : ViewModel() {
     }
 
 
-    fun doSearch(keyword:String){
+    fun doSearch(keyword: String, usingPaging: Boolean){
         this.keyWord = keyword
         currentPageIndex = 1
-        loadMore()
+        if (usingPaging) {
+            lazyPagingItems?.refresh()
+        } else {
+            loadMore()
+        }
     }
 
 

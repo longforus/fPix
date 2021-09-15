@@ -57,7 +57,10 @@ fun ContentScreen(usePaging: Boolean, imageVm: ContentViewModel) {
         }
         if (usePaging) {
             val lazyPagingItems = imageVm.imagePager.flow.collectAsLazyPagingItems()
-            ContentListPaging(lazyPagingItems)
+            imageVm.lazyPagingItems = lazyPagingItems
+            ContentListPaging(lazyPagingItems) {
+                imageVm.doSearch("",true)
+            }
         } else {
             val contentList by imageVm.imageList.observeAsState()
             ContentList(contentList ?: emptyList(), imageVm)
@@ -187,19 +190,15 @@ private fun ContentList(list: List<Item>, viewModel: ContentViewModel) {
                     color = Purple500
                 )
             }
-
         }
-
     }
 }
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-private fun ContentListPaging(list: LazyPagingItems<Item>) {
+private fun ContentListPaging(list: LazyPagingItems<Item>, doRefresh: () -> Unit) {
     val navController = LocalNavCtrl.current!!
-    SwipeRefresh(state = rememberSwipeRefreshState(list.loadState.refresh == LoadState.Loading), onRefresh = {
-        list.refresh()
-    }) {
+    SwipeRefresh(state = rememberSwipeRefreshState(list.loadState.refresh == LoadState.Loading), onRefresh = doRefresh) {
         //LazyPagingItems还不支持grid
         LazyColumn(
             modifier = Modifier

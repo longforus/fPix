@@ -18,7 +18,6 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavHostController
@@ -142,9 +141,9 @@ class MainActivity : AppCompatActivity() {
                             keyboardActions = KeyboardActions(
                                 onGo = {
                                     if (isImage) {
-                                        imageVm.doSearch(text)
+                                        imageVm.doSearch(text, viewModel.usePaging.value ?: false)
                                     } else {
-                                        videoVm.doSearch(text)
+                                        videoVm.doSearch(text, viewModel.usePaging.value ?: false)
                                     }
                                     openDialog = false
                                 }
@@ -164,9 +163,9 @@ class MainActivity : AppCompatActivity() {
                             }
                             Button(onClick = {
                                 if (isImage) {
-                                    imageVm.doSearch(text)
+                                    imageVm.doSearch(text, viewModel.usePaging.value ?: false)
                                 } else {
-                                    videoVm.doSearch(text)
+                                    videoVm.doSearch(text, viewModel.usePaging.value ?: false)
                                 }
                                 openDialog = false
 

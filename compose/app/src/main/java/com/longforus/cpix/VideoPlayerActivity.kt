@@ -63,20 +63,20 @@ class VideoPlayerActivity : AppCompatActivity() {
             imageView.load(bean?.coverImageUrl) {
                 crossfade(true)
             }
-            setThumbImageView(imageView)
+            thumbImageView = imageView
             //增加title
-            getTitleTextView().setVisibility(View.VISIBLE)
+            titleTextView.visibility = View.VISIBLE
             //设置返回键
-            getBackButton().setVisibility(View.VISIBLE)
+            backButton.visibility = View.VISIBLE
             //设置旋转
             orientationUtils = OrientationUtils(this@VideoPlayerActivity, videoPlayer)
             //设置全屏按键功能,这是使用的是选择屏幕，而不是全屏
-            getFullscreenButton()
-                ?.setOnClickListener(View.OnClickListener { orientationUtils?.resolveByClick() })
+            fullscreenButton
+                ?.setOnClickListener { orientationUtils?.resolveByClick() }
             //是否可以滑动调整
             setIsTouchWiget(true)
             //设置返回按键功能
-            getBackButton().setOnClickListener(View.OnClickListener { onBackPressed() })
+            backButton.setOnClickListener { onBackPressed() }
             startPlayLogic()
             this.setDialogProgressColor(Purple500.toArgb(),Color.White.toArgb())
         }
@@ -102,8 +102,8 @@ class VideoPlayerActivity : AppCompatActivity() {
 
     override fun onBackPressed() {
         //先返回正常状态
-        if (orientationUtils?.getScreenType() == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
-            videoPlayer?.getFullscreenButton()?.performClick()
+        if (orientationUtils?.screenType == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
+            videoPlayer?.fullscreenButton?.performClick()
             return
         }
         //释放所有
