@@ -31,6 +31,7 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
 import coil.compose.rememberImagePainter
 import coil.size.Scale
+import com.airbnb.lottie.compose.*
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.longforus.cpix.LocalNavCtrl
@@ -59,7 +60,7 @@ fun ContentScreen(usePaging: Boolean, imageVm: ContentViewModel) {
             val lazyPagingItems = imageVm.imagePager.flow.collectAsLazyPagingItems()
             imageVm.lazyPagingItems = lazyPagingItems
             ContentListPaging(lazyPagingItems) {
-                imageVm.doSearch("",true)
+                imageVm.doSearch("", true)
             }
         } else {
             val contentList by imageVm.imageList.observeAsState()
@@ -94,15 +95,17 @@ private fun TopImageView(topImage: Item? = null, imageVm: ContentViewModel) {
         Row(
             horizontalArrangement = Arrangement.End,
             modifier = Modifier.padding(top = 40.dp, end = 10.dp),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.Bottom
         ) {
-            Icon(
-                painter = rememberVectorPainter(image = Icons.Filled.ThumbUpAlt),
-                contentDescription = null,
-                tint = Purple500
+            val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.anim_praise))
+            LottieAnimation(
+                composition,
+                iterations = LottieConstants.IterateForever,
+                modifier = Modifier
+                    .width(30.dp)
+                    .height(30.dp)
             )
-            Spacer(modifier = Modifier.width(3.dp))
-            Text(text = topImage?.likes?.toString() ?: "  ", color = Color.White)
+            Text(text = topImage?.likes?.toString() ?: "  ", color = Color.White, modifier = Modifier.padding(bottom = 3.dp))
         }
     }
 
@@ -178,8 +181,10 @@ private fun ContentList(list: List<Item>, viewModel: ContentViewModel) {
                 .fillMaxWidth(),
             contentAlignment = Alignment.Center
         ) {
-            Column(horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
                 CircularProgressIndicator(color = Purple500)
                 Text(
                     "loading...",

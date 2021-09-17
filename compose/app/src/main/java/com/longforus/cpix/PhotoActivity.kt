@@ -9,6 +9,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -28,6 +29,7 @@ import androidx.lifecycle.ViewModelProvider
 import coil.imageLoader
 import coil.load
 import coil.request.ImageRequest
+import com.airbnb.lottie.compose.*
 import com.github.chrisbanes.photoview.PhotoView
 import com.longforus.cpix.bean.Item
 import com.longforus.cpix.bean.OB
@@ -130,21 +132,60 @@ class PhotoActivity : AppCompatActivity() {
                             },
                             tint = Color.Gray
                         )
-                        Spacer(modifier = Modifier.width(20.dp))
-                        Icon(
-                            Icons.Filled.Favorite,
-                            contentDescription = "favorite the image",
-                            modifier = Modifier.clickable {
-                                if (contains) {
-                                    OB.boxFor<Item>().remove(img.id)
-                                } else {
-                                    img.favoriteDate = System.currentTimeMillis()
-                                    OB.boxFor<Item>().put(img)
-                                }
-                                viewModel.favoriteStateChanged()
-                            },
-                            tint = if (contains) Purple500 else Color.Gray
-                        )
+                        var clicked by remember {
+                            mutableStateOf(false)
+                        }
+                        Spacer(modifier = Modifier.width(10.dp))
+                        if (clicked) {
+                            val composition by rememberLottieComposition(
+                                LottieCompositionSpec.RawRes(
+                                    if (contains) R.raw.anim_fav_cancel else R.raw.anim_fav
+                                )
+                            )
+                            val animatable = rememberLottieAnimatable()
+                            LaunchedEffect(contains, composition) {
+                                composition ?: return@LaunchedEffect
+                                animatable.animate(
+                                    composition,
+                                    continueFromPreviousAnimate = false
+                                )
+                            }
+                            LottieAnimation(
+                                composition,
+                                animatable.progress,
+                                modifier = Modifier
+                                    .clickable {
+                                        if (contains) {
+                                            OB
+                                                .boxFor<Item>()
+                                                .remove(img.id)
+                                        } else {
+                                            img.favoriteDate = System.currentTimeMillis()
+                                            OB
+                                                .boxFor<Item>()
+                                                .put(img)
+                                        }
+                                        viewModel.favoriteStateChanged()
+                                    }
+                                    .width(50.dp)
+                            )
+                        } else {
+                            Icon(
+                                Icons.Filled.Favorite,
+                                contentDescription = "favorite the image",
+                                modifier = Modifier.clickable {
+                                    if (contains) {
+                                        OB.boxFor<Item>().remove(img.id)
+                                    } else {
+                                        img.favoriteDate = System.currentTimeMillis()
+                                        OB.boxFor<Item>().put(img)
+                                    }
+                                    clicked = true
+                                }.width(50.dp),
+                                tint = if (contains) Purple500 else Color.Gray
+                            )
+                        }
+
                     },
                     title = {
                     }

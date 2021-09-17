@@ -23,6 +23,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.*
+import androidx.navigation.navArgument
 import com.longforus.cpix.bean.IconScreens
 import com.longforus.cpix.bean.Item
 import com.longforus.cpix.screen.FavoriteScreen

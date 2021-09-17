@@ -106,7 +106,7 @@ dependencies {
     //navigation
     implementation "androidx.navigation:navigation-fragment-ktx:2.3.5"
     implementation "androidx.navigation:navigation-ui-ktx:2.3.5"
-    implementation "androidx.navigation:navigation-compose:2.4.0-alpha08"
+    implementation "androidx.navigation:navigation-compose:2.4.0-alpha09"
 
 
     debugImplementation "io.objectbox:objectbox-android-objectbrowser:$objectboxVersion"
@@ -127,6 +127,9 @@ dependencies {
 //    implementation 'com.github.CarGuo.GSYVideoPlayer:gsyVideoPlayer-armv5:v8.1.5-jitpack'
 //    implementation 'com.github.CarGuo.GSYVideoPlayer:gsyVideoPlayer-x86:v8.1.5-jitpack'
 //    implementation 'com.github.CarGuo.GSYVideoPlayer:gsyVideoPlayer-x86_64:v8.1.5-jitpack'
+
+
+    implementation "com.airbnb.android:lottie-compose:4.1.0"
 
 
 }
