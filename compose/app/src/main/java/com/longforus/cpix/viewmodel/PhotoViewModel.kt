@@ -23,7 +23,13 @@ class PhotoViewModel(val img: Item) : ViewModel() {
     val downloaded = MutableStateFlow(img.downloadFile(MyApp.app).exists())
     val TAG = "PhotoViewModel"
 
-    fun favoriteStateChanged() {
+    fun favoriteChange() {
+        if (favorited.value) {
+            OB.boxFor<Item>().remove(img.id)
+        } else {
+            img.favoriteDate = System.currentTimeMillis()
+            OB.boxFor<Item>().put(img)
+        }
         viewModelScope.launch {
             favorited.emit(OB.boxFor<Item>().contains(img.id))
         }

@@ -1,8 +1,10 @@
 package com.longforus.cpix
 
 import android.app.Application
+import androidx.compose.ui.text.toLowerCase
 import coil.Coil
 import coil.ImageLoader
+import coil.request.CachePolicy
 import coil.util.CoilUtils
 import com.longforus.cpix.bean.MyObjectBox
 import com.longforus.cpix.bean.OB
@@ -10,9 +12,6 @@ import com.longforus.cpix.http.ProjectCoreHttpManager
 import com.longforus.cpix.util.LogUtils
 import okhttp3.OkHttpClient
 import com.tencent.mmkv.MMKV
-
-
-
 
 class MyApp:Application() {
 
@@ -41,7 +40,6 @@ class MyApp:Application() {
             .build()
         Coil.setImageLoader(imageLoader)
         OB.init(this,MyObjectBox.builder())
-
         val rootDir = MMKV.initialize(this)
         LogUtils.d(TAG, "mmkv root: $rootDir")
     }

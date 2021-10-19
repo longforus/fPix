@@ -1,6 +1,8 @@
 package com.longforus.cpix.screen
 
 import android.graphics.drawable.ColorDrawable
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -11,19 +13,19 @@ import androidx.compose.material.*
 import androidx.compose.material.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PlayCircleOutline
-import androidx.compose.material.icons.filled.ThumbUpAlt
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.os.bundleOf
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
@@ -40,6 +42,7 @@ import com.longforus.cpix.bean.Item
 import com.longforus.cpix.typeList
 import com.longforus.cpix.ui.theme.Purple500
 import com.longforus.cpix.util.LogUtils
+import com.longforus.cpix.util.c
 import com.longforus.cpix.viewmodel.ContentViewModel
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -50,7 +53,7 @@ import kotlin.math.ceil
 private const val TAG = "ImageScreen"
 
 @Composable
-fun ContentScreen(usePaging: Boolean, imageVm: ContentViewModel) {
+fun ContentScreen(usePaging: Boolean = false, imageVm: ContentViewModel = viewModel()) {
     Column {
         Box(contentAlignment = Alignment.BottomCenter) {
             val topImage by imageVm.topImageUrl.observeAsState()
@@ -69,6 +72,7 @@ fun ContentScreen(usePaging: Boolean, imageVm: ContentViewModel) {
     }
 }
 
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 private fun TopImageView(topImage: Item? = null, imageVm: ContentViewModel) {
 
@@ -80,7 +84,6 @@ private fun TopImageView(topImage: Item? = null, imageVm: ContentViewModel) {
                 crossfade(true)
                 placeholder(R.drawable.placeholder)
                 error(ColorDrawable(android.graphics.Color.GREEN))
-                scale(Scale.FIT)
             }),
             contentDescription = null,
             modifier = Modifier
@@ -105,12 +108,14 @@ private fun TopImageView(topImage: Item? = null, imageVm: ContentViewModel) {
                     .width(30.dp)
                     .height(30.dp)
             )
-            Text(text = topImage?.likes?.toString() ?: "  ", color = Color.White, modifier = Modifier.padding(bottom = 3.dp))
+            AnimatedVisibility(visible = !topImage?.likes?.toString().isNullOrEmpty()) {
+                Text(text = topImage?.likes?.toString() ?: "  ", color = Color.White, modifier = Modifier.padding(bottom = 3.dp))
+            }
         }
     }
 
     val selectIndex: Int by imageVm.selectTab.observeAsState(0)
-    TypeRow(typeList, selectIndex) { title, pos ->
+    TabRow(typeList, selectIndex) { title, pos ->
         imageVm.setSelectedTabIndex(pos = pos)
     }
 }
@@ -228,7 +233,6 @@ private fun ContentListPaging(list: LazyPagingItems<Item>, doRefresh: () -> Unit
                             placeholder(R.drawable.placeholder)
                             error(ColorDrawable(android.graphics.Color.GREEN))
                             crossfade(true)
-                            scale(Scale.FIT)
                         }), contentDescription = null,
                         modifier = Modifier
                             .fillMaxWidth(),
@@ -264,7 +268,6 @@ fun ItemImage(item: Item, isLeft: Boolean, navController: NavHostController) {
                 placeholder(R.drawable.placeholder)
                 error(ColorDrawable(android.graphics.Color.RED))
                 crossfade(true)
-                scale(Scale.FIT)
             }), contentDescription = null,
             modifier = Modifier
                 .fillMaxHeight()
@@ -285,10 +288,10 @@ fun ItemImage(item: Item, isLeft: Boolean, navController: NavHostController) {
 
 
 @Composable
-private fun TypeRow(typeList: List<String>, selectIndex: Int = 0, onTabClick: (String, Int) -> Unit) {
+private fun TabRow(typeList: List<String>, selectIndex: Int = 0, onTabClick: (String, Int) -> Unit) {
     ScrollableTabRow(
         selectedTabIndex = selectIndex,
-        backgroundColor = Color(0x22000000),
+        backgroundColor = 0x22000000.c,
         edgePadding = 0.dp,
         indicator = { tabPositions ->
             TabRowDefaults.Indicator(

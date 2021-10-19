@@ -36,7 +36,9 @@ import com.longforus.cpix.bean.OB
 import com.longforus.cpix.ui.theme.Purple500
 import com.longforus.cpix.util.StatusBarUtil
 import com.longforus.cpix.viewmodel.PhotoViewModel
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.io.File
 
 class PhotoActivity : AppCompatActivity() {
 
@@ -132,59 +134,34 @@ class PhotoActivity : AppCompatActivity() {
                             },
                             tint = Color.Gray
                         )
+
+                        Spacer(modifier = Modifier.width(10.dp))
+                        val composition by rememberLottieComposition(
+                            LottieCompositionSpec.RawRes(
+                                if (contains) R.raw.anim_fav else R.raw.anim_fav_cancel
+                            )
+                        )
+                        val animatable = rememberLottieAnimatable()
                         var clicked by remember {
                             mutableStateOf(false)
                         }
-                        Spacer(modifier = Modifier.width(10.dp))
-                        if (clicked) {
-                            val composition by rememberLottieComposition(
-                                LottieCompositionSpec.RawRes(
-                                    if (contains) R.raw.anim_fav_cancel else R.raw.anim_fav
-                                )
-                            )
-                            val animatable = rememberLottieAnimatable()
-                            LaunchedEffect(contains, composition) {
-                                composition ?: return@LaunchedEffect
-                                animatable.animate(
-                                    composition,
-                                    continueFromPreviousAnimate = false
-                                )
-                            }
-                            LottieAnimation(
+                        LaunchedEffect(contains, composition) {
+                            composition ?: return@LaunchedEffect
+                            animatable.animate(
                                 composition,
-                                animatable.progress,
-                                modifier = Modifier
-                                    .clickable {
-                                        if (contains) {
-                                            OB
-                                                .boxFor<Item>()
-                                                .remove(img.id)
-                                        } else {
-                                            img.favoriteDate = System.currentTimeMillis()
-                                            OB
-                                                .boxFor<Item>()
-                                                .put(img)
-                                        }
-                                        viewModel.favoriteStateChanged()
-                                    }
-                                    .width(50.dp)
-                            )
-                        } else {
-                            Icon(
-                                Icons.Filled.Favorite,
-                                contentDescription = "favorite the image",
-                                modifier = Modifier.clickable {
-                                    if (contains) {
-                                        OB.boxFor<Item>().remove(img.id)
-                                    } else {
-                                        img.favoriteDate = System.currentTimeMillis()
-                                        OB.boxFor<Item>().put(img)
-                                    }
-                                    clicked = true
-                                }.width(50.dp),
-                                tint = if (contains) Purple500 else Color.Gray
+                                continueFromPreviousAnimate = false
                             )
                         }
+                        LottieAnimation(
+                            composition,
+                           if (clicked) animatable.progress else 1f,
+                            modifier = Modifier
+                                .clickable {
+                                    clicked = true
+                                    viewModel.favoriteChange()
+                                }
+                                .width(50.dp),
+                        )
 
                     },
                     title = {
