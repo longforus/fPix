@@ -14,7 +14,7 @@ description: fPix flutter module project.
 version: 1.0.0+1
 
 environment:
-  sdk: ">=2.10.0 <3.0.0"
+  sdk: ">=2.11.0 <3.0.0"
 
 dependencies:
   flutter:
@@ -22,34 +22,35 @@ dependencies:
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^1.0.0
-  photo_view: ^0.10.3
-  sqflite: ^1.1.7+2
+  cupertino_icons: ^1.0.3
+  photo_view: ^0.13.0
+  sqflite: ^2.0.0+4
   #cached_network_image: ^2.5.1
-  url_launcher: ^5.7.10
-  rxdart: ^0.25.0
+  url_launcher: ^6.0.12
+  rxdart: ^0.27.2
 #  event_bus: ^1.0.1
-  shared_preferences: ^0.5.12+4
-  path_provider: ^1.6.27
+  shared_preferences: ^2.0.8
+#  mmkv: ^1.2.12
+  path_provider: ^2.0.6
 #  simple_permissions: ^0.1.9
-  permission_handler: ^5.1.0+2
-  uuid: ^2.2.2
+  permission_handler: ^8.2.1
+  uuid: ^3.0.5
 #  custom_chewie: ^0.7.0
-  chewie: ^0.12.2
-  dio: ^3.0.9
-  fluttertoast: ^4.0.1
-  sentry: ^4.0.6
-  get:
-  objectbox: ^0.12.1
-  objectbox_flutter_libs: any
+  chewie: ^1.2.2
+  dio: ^4.0.1
+  fluttertoast: ^8.0.8
+  sentry: ^6.0.1
+  get: ^4.3.8
+  objectbox: ^1.2.0
+  objectbox_flutter_libs: ^1.2.0
 
 
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  build_runner: ^1.0.0
-  objectbox_generator: any
+  build_runner: ^2.1.4
+  objectbox_generator: ^1.2.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://www.dartlang.org/tools/pub/pubspec

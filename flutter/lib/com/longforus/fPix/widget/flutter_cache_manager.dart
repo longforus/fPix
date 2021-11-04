@@ -138,7 +138,9 @@ class CacheManager {
   _shrinkLargeCache() async {
     //Remove oldest objects when cache contains to many items
     if (_box.count() > maxNrOfCacheObjects) {
-      List<CacheObject> oldestValues = _box.query().order(CacheObject_.touched).build().find(limit:_box.count()-maxNrOfCacheObjects);
+      final query = (_box.query()..order(CacheObject_.touched)).build()
+        ..limit =( _box.count()-maxNrOfCacheObjects);
+      List<CacheObject> oldestValues = query.find();
       _box.removeMany(oldestValues.map((e) => e.id));
       oldestValues.forEach((item) async {
         await _removeFile(item);
@@ -251,7 +253,7 @@ class CacheManager {
 
     var response;
     try {
-      response = await http.get(url, headers: headers);
+      response = await http.get(Uri.parse(url), headers: headers);
     } catch (e) {
       debugPrint( "download error $e");
     }

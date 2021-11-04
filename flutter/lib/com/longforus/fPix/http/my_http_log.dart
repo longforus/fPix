@@ -3,7 +3,6 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 
-
 /// [MyLogInterceptor] is used to print logs during network requests.
 /// It's better to add [MyLogInterceptor] to the tail of the interceptor queue,
 /// otherwise the changes made in the interceptor behind A will not be printed out.
@@ -53,10 +52,10 @@ class MyLogInterceptor extends Interceptor {
   void Function(Object object) logPrint;
 
   @override
-  Future onRequest(RequestOptions options) async {
+  Future onRequest(
+      RequestOptions options, RequestInterceptorHandler handler) async {
     logPrint('*** Request ***');
     printKV('uri', options.uri);
-
     if (request) {
       printKV('method', options.method);
       printKV('responseType', options.responseType?.toString());
@@ -74,13 +73,18 @@ class MyLogInterceptor extends Interceptor {
       printAll(encoder.convert(options.data));
     }
     logPrint('');
+    handler.next(options);
   }
 
   @override
-  Future onError(DioError err) async {
+  Future onError(
+    DioError err,
+    ErrorInterceptorHandler handler,
+  ) async {
+     handler.next(err);
     if (error) {
       logPrint('*** DioError ***:');
-      logPrint('uri: ${err.request.uri}');
+      logPrint('uri: ${err.requestOptions.uri}');
       logPrint('$err');
       if (err.response != null) {
         _printResponse(err.response);
@@ -90,16 +94,20 @@ class MyLogInterceptor extends Interceptor {
   }
 
   @override
-  Future onResponse(Response response) async {
+  Future onResponse(
+    Response response,
+    ResponseInterceptorHandler handler,
+  ) async {
     logPrint('*** Response ***');
     _printResponse(response);
+    handler.next(response);
   }
 
   void _printResponse(Response response) {
-    var sb = StringBuffer(response.request?.uri);
+    var sb = StringBuffer(response.requestOptions?.uri);
     sb.write("?");
-    Map<String,Object> data =  response.request.data;
-    data?.forEach((k,v){
+    Map<String, Object> data = response.requestOptions.data;
+    data?.forEach((k, v) {
       sb.write("$k=$v&");
     });
     printKV('uri', sb.toString());

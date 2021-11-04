@@ -88,6 +88,7 @@ class DioManager {
         }
       }
     } on DioError catch (error) {
+      debugPrint(error.message);
       if (_buildContext != null ) {
         dismissDialog(_buildContext);
       }
@@ -96,19 +97,20 @@ class DioManager {
       if (error.response != null) {
         errorResponse = error.response;
       } else {
-        errorResponse = new Response(statusCode: -1, statusMessage: "未知错误");
+        errorResponse = new Response(statusCode: -1, statusMessage: "未知错误",
+            requestOptions: RequestOptions(path: url));
       }
       // 请求超时
-      if (error.type == DioErrorType.CONNECT_TIMEOUT || error.type == DioErrorType.RESPONSE) {
-        errorResponse.statusCode = ResultCode.CONNECT_TIMEOUT;
+      if (error.type == DioErrorType.connectTimeout || error.type == DioErrorType.response) {
+        errorResponse.statusCode = ResultCode.connectTimeout;
         errorResponse.statusMessage = "请求超时";
         shortToast("请求已超时,稍后重试");
-      } else if (error.type == DioErrorType.RECEIVE_TIMEOUT) {
+      } else if (error.type == DioErrorType.receiveTimeout) {
         // 一般服务器错误
         errorResponse.statusCode = ResultCode.RECEIVE_TIMEOUT;
         errorResponse.statusMessage = "接收超时";
       } else {
-        errorResponse = new Response(statusCode: -1, statusMessage: "未知错误");
+        errorResponse = new Response(statusCode: -1, statusMessage: "未知错误",requestOptions: RequestOptions(path: url));
       }
       if (onError != null) {
         onError(errorResponse.statusCode, errorResponse.statusMessage);
@@ -159,10 +161,10 @@ class JsonUtil {
   /// 接收Dio请求库返回的Response对象
   static void printRespond(Response response) {
     Map httpLogMap = Map();
-    httpLogMap.putIfAbsent("requestUrl", () => "${response.request.uri}");
+    httpLogMap.putIfAbsent("requestUrl", () => "${response.requestOptions.uri}");
 //    httpLogMap.putIfAbsent("requestHeaders", () => response.request.headers);
-    httpLogMap.putIfAbsent("requestQueryParameters", () => response.request.queryParameters);
-    httpLogMap.putIfAbsent("requestPostdata", () => response.request.data);
+    httpLogMap.putIfAbsent("requestQueryParameters", () => response.requestOptions.queryParameters);
+    httpLogMap.putIfAbsent("requestPostdata", () => response.requestOptions.data);
     printJson(httpLogMap);
     debugPrint("*** Response ***");
     debugPrint(response.data.toString());
@@ -180,13 +182,13 @@ class ResultCode {
   static const ERROR = 1;
 
   /// When opening  url timeout, it occurs.
-  static const CONNECT_TIMEOUT = 401;
+  static const connectTimeout = 401;
 
   ///It occurs when receiving timeout.
   static const RECEIVE_TIMEOUT = -2;
 
   /// When the server response, but with a incorrect status, such as 404, 503...
-  static const RESPONSE = -3;
+  static const response = -3;
 
   /// When the request is cancelled, dio will throw a error with this type.
   static const CANCEL = -4;
