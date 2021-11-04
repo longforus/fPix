@@ -9,7 +9,7 @@ import 'package:flutter/widgets.dart';
 import 'my_http_log.dart';
 
 typedef SuccessCallback<T> = dynamic Function(T t);
-typedef ErrorCallback = dynamic Function(int code, String msg);
+typedef ErrorCallback = dynamic Function(int? code, String? msg);
 
 /*
  * 网络请求管理类
@@ -17,11 +17,11 @@ typedef ErrorCallback = dynamic Function(int code, String msg);
 class DioManager {
   //写一个单例
   //在 Dart 里，带下划线开头的变量是私有变量
-  static DioManager _instance;
-  static String baseUrl ;
+  static DioManager? _instance;
+  static late String baseUrl ;
   static Map<String, String> reqCons={};
 
-  static DioManager getInstance() {
+  static DioManager? getInstance() {
     if (_instance == null) {
       _instance = DioManager();
     }
@@ -49,19 +49,19 @@ class DioManager {
   }
 
   //get请求
-  Future<T> get<T>(String url, Map<String, dynamic> params,
-      {BuildContext showContext,SuccessCallback<T> onSuccess,  loadingStr = "请求", ErrorCallback onError}) async {
+  Future<T?> get<T>(String url, Map<String, dynamic> params,
+      {BuildContext? showContext,SuccessCallback<T?>? onSuccess,  loadingStr = "请求", ErrorCallback? onError}) async {
     return _requestHttp<T>(showContext,baseUrl + url, onSuccess, loadingStr, onError, 'get', params);
   }
 
   //post请求
-  Future<T> post<T>(String url, Map<String, dynamic> params,
-      {BuildContext showContext,SuccessCallback<T> onSuccess, loadingStr = "请求", ErrorCallback onError}) async {
+  Future<T?> post<T>(String url, Map<String, dynamic> params,
+      {BuildContext? showContext,SuccessCallback<T?>? onSuccess, loadingStr = "请求", ErrorCallback? onError}) async {
     return _requestHttp<T>(showContext,baseUrl + url, onSuccess, loadingStr, onError, "post", params);
   }
 
-  Future<T> _requestHttp<T>(BuildContext _buildContext,String url, SuccessCallback<T> onSuccess, String loadingStr,
-      [ErrorCallback onError, String method, Map<String, dynamic> params]) async {
+  Future<T?> _requestHttp<T>(BuildContext? _buildContext,String url, SuccessCallback<T?>? onSuccess, String loadingStr,
+      [ErrorCallback? onError, String? method, Map<String, dynamic>? params]) async {
     if (params == null) {
       params = {};
     }
@@ -70,7 +70,7 @@ class DioManager {
     if (_buildContext != null) {
       showSimpleLoadingDialog(context: _buildContext, msg: "$loadingStr中...");
     }
-    Response response;
+    late Response response;
     try {
       if (method == 'get') {
         //get请求 拼接参数放queryParameters里面
@@ -93,7 +93,7 @@ class DioManager {
         dismissDialog(_buildContext);
       }
       // 请求错误处理
-      Response errorResponse;
+      Response? errorResponse;
       if (error.response != null) {
         errorResponse = error.response;
       } else {
@@ -102,12 +102,12 @@ class DioManager {
       }
       // 请求超时
       if (error.type == DioErrorType.connectTimeout || error.type == DioErrorType.response) {
-        errorResponse.statusCode = ResultCode.connectTimeout;
+        errorResponse!.statusCode = ResultCode.connectTimeout;
         errorResponse.statusMessage = "请求超时";
         shortToast("请求已超时,稍后重试");
       } else if (error.type == DioErrorType.receiveTimeout) {
         // 一般服务器错误
-        errorResponse.statusCode = ResultCode.RECEIVE_TIMEOUT;
+        errorResponse!.statusCode = ResultCode.RECEIVE_TIMEOUT;
         errorResponse.statusMessage = "接收超时";
       } else {
         errorResponse = new Response(statusCode: -1, statusMessage: "未知错误",requestOptions: RequestOptions(path: url));
@@ -124,7 +124,7 @@ class DioManager {
   }
 
 
-  void showSimpleLoadingDialog({BuildContext context, String msg}) {
+  void showSimpleLoadingDialog({required BuildContext context, String? msg}) {
     showDialog(
         context: context,
         barrierDismissible: false,

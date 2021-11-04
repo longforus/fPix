@@ -16,32 +16,32 @@ import 'package:uuid/uuid.dart';
 @Entity()
 class CacheObject {
 
-    Future<String> getFilePath() async {
+    Future<String?> getFilePath() async {
         if (relativePath == null) {
             return null;
         }
         Directory directory = await getTemporaryDirectory();
-        return directory.path + relativePath;
+        return directory.path + relativePath!;
     }
 
-    String relativePath;
+    String? relativePath;
     @Property(type: PropertyType.date)
-    DateTime validTill;
-    String eTag;
+    DateTime? validTill;
+    String? eTag;
     @Property(type: PropertyType.date)
-    DateTime touched;
-    String url;
-    String cacheKey;
+    DateTime? touched;
+    String? url;
+    String? cacheKey;
     @Transient()
-    Lock lock;
+    Lock? lock;
     @Id(assignable: true)
-    int id;
+    int? id;
 
     final favorite = ToOne<FavoriteBean>();
 
-    CacheObject({String url, this.cacheKey, this.lock}) {
+    CacheObject({String? url, this.cacheKey, this.lock}) {
         this.url = url;
-        if (cacheKey == null || cacheKey.isEmpty) {
+        if (cacheKey == null || cacheKey!.isEmpty) {
             cacheKey = url;
         }
         id = cacheKey.hashCode;
@@ -62,7 +62,7 @@ class CacheObject {
         var ageDuration = new Duration(days: 7);
 
         if (headers.containsKey("cache-control")) {
-            var cacheControl = headers["cache-control"];
+            var cacheControl = headers["cache-control"]!;
             var controlSettings = cacheControl.split(", ");
             controlSettings.forEach((setting) {
                 if (setting.startsWith("max-age=")) {
@@ -83,7 +83,7 @@ class CacheObject {
 
         var fileExtension = "";
         if (headers.containsKey("content-type")) {
-            var type = headers["content-type"].split("/");
+            var type = headers["content-type"]!.split("/");
             if (type.length == 2) {
                 fileExtension = ".${type[1]}";
             }
@@ -108,7 +108,7 @@ class CacheObject {
         }
     }
 
-    setRelativePath(String path) {
+    setRelativePath(String? path) {
         relativePath = path;
     }
 }

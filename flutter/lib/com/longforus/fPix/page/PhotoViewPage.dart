@@ -21,7 +21,7 @@ class PhotoViewPage extends StatefulWidget {
 
   PhotoViewPage(this.imageData, {this.onFavoriteChanged});
 
-  ValueChanged<bool> onFavoriteChanged;
+  ValueChanged<bool>? onFavoriteChanged;
 
   @override
   State<StatefulWidget> createState() => _PhotoViewPageState();
@@ -30,11 +30,11 @@ class PhotoViewPage extends StatefulWidget {
 class _PhotoViewPageState extends State<PhotoViewPage> {
   bool downloaded = false;
   bool favorited = false;
-  Box<FavoriteBean> _box;
+  late Box<FavoriteBean> _box;
   @override
   void initState() {
     if (widget.imageData != null) {
-      _box = OB.getInstance().store.box();
+      _box = OB.getInstance()!.store!.box();
       if (mounted) {
         setState(() {
           favorited = _box.contains(widget.imageData['id']);
@@ -162,7 +162,7 @@ class _PhotoViewPageState extends State<PhotoViewPage> {
       });
     }
     if (widget.onFavoriteChanged != null) {
-      widget.onFavoriteChanged(true);
+      widget.onFavoriteChanged!(true);
     }
   }
 
@@ -180,7 +180,7 @@ class _PhotoViewPageState extends State<PhotoViewPage> {
       manager
           .getFile(widget.imageData['largeImageURL'], cacheKey: getCacheKey(widget.imageData, 'largeImageURL'))
           .then((file) {
-        print('${file.path}');
+        print('${file!.path}');
         file.exists().then((b) {
           if (b) {
             try {
@@ -205,24 +205,24 @@ class _PhotoViewPageState extends State<PhotoViewPage> {
 }
 
 class TagFlowDelegate extends FlowDelegate {
-  EdgeInsets margin = EdgeInsets.zero;
+  EdgeInsets? margin = EdgeInsets.zero;
 
   TagFlowDelegate({this.margin});
 
   @override
   void paintChildren(FlowPaintingContext context) {
-    var x = margin.left;
-    var y = margin.top;
+    var x = margin!.left;
+    var y = margin!.top;
     for (int i = 0; i < context.childCount; i++) {
-      var w = context.getChildSize(i).width + x + margin.right;
+      var w = context.getChildSize(i)!.width + x + margin!.right;
       if (w < context.size.width) {
         context.paintChild(i, transform: new Matrix4.translationValues(x, y, 0.0));
-        x = w + margin.left;
+        x = w + margin!.left;
       } else {
-        x = margin.left;
-        y += context.getChildSize(i).height + margin.top + margin.bottom;
+        x = margin!.left;
+        y += context.getChildSize(i)!.height + margin!.top + margin!.bottom;
         context.paintChild(i, transform: new Matrix4.translationValues(x, y, 0.0));
-        x += context.getChildSize(i).width + margin.left + margin.right;
+        x += context.getChildSize(i)!.width + margin!.left + margin!.right;
       }
     }
   }

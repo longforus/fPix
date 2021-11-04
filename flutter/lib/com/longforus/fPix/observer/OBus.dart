@@ -11,20 +11,20 @@ class OBus {
     if (map[type] == null) {
       map[type] = new List();
     }
-    map[type].add(fun);
+    map[type]!.add(fun);
   }
 
   bool unregister(String type, Function(Object) fun) {
     print('unregister $fun');
-    return map[type].remove(fun);
+    return map[type]!.remove(fun);
   }
 
   void clear(String type) {
-    map[type].clear();
+    map[type]!.clear();
   }
 
   void notify(String type, Object arg) {
-    for (var value in map[type]) {
+    for (var value in map[type]!) {
       value(arg);
       print('  getmore $value');
     }

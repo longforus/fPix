@@ -3,8 +3,6 @@
 // Released under MIT License.
 library flutter_cache_manager;
 
-
-
 import 'dart:io';
 
 import 'package:fPix/com/longforus/fPix/db/OB.dart';
@@ -23,7 +21,7 @@ class CacheManager {
   static int maxNrOfCacheObjects = 200;
   static bool showDebugLogs = true;
 
-  static CacheManager _instance;
+  static CacheManager? _instance;
 
   static Future<CacheManager> getInstance() async {
     if (_instance == null) {
@@ -41,23 +39,22 @@ class CacheManager {
 
   CacheManager._();
 
-  SharedPreferences _prefs;
-  Box<CacheObject> _box;
-  DateTime lastCacheClean;
+  late SharedPreferences _prefs;
+  Box<CacheObject>? _box;
+  late DateTime lastCacheClean;
 
   static Lock _lock = new Lock();
 
   ///Shared preferences is used to keep track of the information about the files
   Future _init() async {
     _prefs = await SharedPreferences.getInstance();
-    _box =  OB.getInstance().store.box();
+    _box = OB.getInstance()!.store!.box();
     _getLastCleanTimestampFromPreferences();
   }
 
   bool _isStoringData = false;
   bool _shouldStoreDataAgain = false;
   Lock _storeLock = new Lock();
-
 
   ///Store all data to shared preferences
   _save() async {
@@ -113,7 +110,7 @@ class CacheManager {
 
     if (force ||
         sinceLastClean > inBetweenCleans ||
-        _box.count() > maxNrOfCacheObjects) {
+        _box!.count() > maxNrOfCacheObjects) {
       await _lock.synchronized(() async {
         await _removeOldObjectsFromCache();
         await _shrinkLargeCache();
@@ -126,10 +123,14 @@ class CacheManager {
   }
 
   _removeOldObjectsFromCache() async {
-    var oldestDateAllowed = new DateTime.now().subtract(maxAgeCacheObject).millisecondsSinceEpoch;
+    var oldestDateAllowed =
+        new DateTime.now().subtract(maxAgeCacheObject).millisecondsSinceEpoch;
     //Remove old objects
-    List<CacheObject> oldValues = _box.query(CacheObject_.touched.lessThan(oldestDateAllowed)).build().find();
-    _box.removeMany(oldValues.map((e) => e.id));
+    List<CacheObject> oldValues = _box!
+        .query(CacheObject_.touched.lessThan(oldestDateAllowed))
+        .build()
+        .find();
+    _box!.removeMany(oldValues.map((e) => e.id) as List<int>);
     for (var oldValue in oldValues) {
       await _removeFile(oldValue);
     }
@@ -137,11 +138,11 @@ class CacheManager {
 
   _shrinkLargeCache() async {
     //Remove oldest objects when cache contains to many items
-    if (_box.count() > maxNrOfCacheObjects) {
-      final query = (_box.query()..order(CacheObject_.touched)).build()
-        ..limit =( _box.count()-maxNrOfCacheObjects);
+    if (_box!.count() > maxNrOfCacheObjects) {
+      final query = (_box!.query()..order(CacheObject_.touched)).build()
+        ..limit = (_box!.count() - maxNrOfCacheObjects);
       List<CacheObject> oldestValues = query.find();
-      _box.removeMany(oldestValues.map((e) => e.id));
+      _box!.removeMany(oldestValues.map((e) => e.id) as List<int>);
       oldestValues.forEach((item) async {
         await _removeFile(item);
       }); //remove them
@@ -153,32 +154,35 @@ class CacheManager {
     if (cacheObject.relativePath == null) {
       return;
     }
-    _box.remove(cacheObject.id);
-    var file = new File(await cacheObject.getFilePath());
+    _box!.remove(cacheObject.id!);
+    var file = new File(await (cacheObject.getFilePath() as Future<String>));
     if (await file.exists()) {
       file.delete();
     }
   }
 
   ///Get the file from the cache or online. Depending on availability and age
-  Future<File> getFile(String url,
-      {String cacheKey, Map<String, String> headers}) async {
+  Future<File?> getFile(String? url,
+      {String? cacheKey, Map<String, String>? headers}) async {
     String log = "[Flutter Cache Manager] Loading $url";
     debugPrint(log);
-    if(cacheKey==null||cacheKey.isEmpty) {
+    if (cacheKey == null || cacheKey.isEmpty) {
       cacheKey = url;
     }
-    assert(_box!=null);
-    CacheObject cacheObject = _box.query(CacheObject_.cacheKey.equals(cacheKey)).build().findFirst();
-    if(cacheObject==null) {
-      cacheObject = new CacheObject(url:url,cacheKey: cacheKey);
+    assert(_box != null);
+    CacheObject? cacheObject = _box!
+        .query(CacheObject_.cacheKey.equals(cacheKey!))
+        .build()
+        .findFirst();
+    if (cacheObject == null) {
+      cacheObject = new CacheObject(url: url, cacheKey: cacheKey);
     }
-    cacheObject = await _checkCache(cacheObject, headers,url,cacheKey);
+    cacheObject = await _checkCache(cacheObject, headers, url, cacheKey);
     debugPrint("after checkCache ${cacheObject.toString()}");
     //If non of the above is true, than we don't have to download anything.
     _save();
     if (showDebugLogs) print(log);
-    if(cacheObject==null) {
+    if (cacheObject == null) {
       return null;
     }
     var path = await cacheObject.getFilePath();
@@ -188,7 +192,8 @@ class CacheManager {
     return new File(path);
   }
 
-  Future<CacheObject> _checkCache(CacheObject cacheObject,Map<String, String> headers,String url,String cacheKey) async {
+  Future<CacheObject?> _checkCache(CacheObject cacheObject,
+      Map<String, String>? headers, String? url, String cacheKey) async {
     // Set touched date to show that this object is being used recently
     cacheObject.touch();
 
@@ -199,12 +204,14 @@ class CacheManager {
     var filePath = await cacheObject.getFilePath();
     //If we have never downloaded this file, do download
     if (filePath == null) {
-      debugPrint( "Downloading for first time.");
+      debugPrint("Downloading for first time.");
+
       /// 为什么下面的代码就不执行了??? 因为刚刚上面的 headers = new Map<String, String>();
       /// 是 headers = new Map(); 被赋值为Map类型不是_downloadFile需要的Map<String, String> 报错了,而
-      CacheObject newCacheObject = await _downloadFile(url, headers,cacheKey: cacheKey);
+      CacheObject? newCacheObject =
+          await _downloadFile(url!, headers, cacheKey: cacheKey);
       if (newCacheObject != null) {
-        _box.put(newCacheObject);
+        _box!.put(newCacheObject);
       }
       return newCacheObject;
     }
@@ -212,39 +219,46 @@ class CacheManager {
     var cachedFile = new File(filePath);
     var cachedFileExists = await cachedFile.exists();
     if (!cachedFileExists) {
-      debugPrint( "Downloading because file does not exist.");
-      CacheObject newCacheObject = await _downloadFile(url, headers, relativePath: cacheObject.relativePath,cacheKey: cacheKey);
+      debugPrint("Downloading because file does not exist.");
+      CacheObject? newCacheObject = await _downloadFile(url!, headers,
+          relativePath: cacheObject.relativePath, cacheKey: cacheKey);
       if (newCacheObject != null) {
-        _box.put(newCacheObject);
+        _box!.put(newCacheObject);
       }
 
-      debugPrint( "Cache file valid till ${cacheObject.validTill?.toIso8601String() ?? "only once.. :("}");
+      debugPrint(
+          "Cache file valid till ${cacheObject.validTill?.toIso8601String() ?? "only once.. :("}");
       return newCacheObject;
     }
     //If file is old, download if server has newer one
-    if (!cacheObject.favorite.hasValue&&(cacheObject.validTill == null ||
-        cacheObject.validTill.isBefore(new DateTime.now()))) {
-      debugPrint( "Updating file in cache.");
-      CacheObject newCacheObject = await _downloadFile(url, headers,
-          relativePath: cacheObject.relativePath, eTag: cacheObject.eTag, cacheKey: cacheKey);
+    if (!cacheObject.favorite.hasValue &&
+        (cacheObject.validTill == null ||
+            cacheObject.validTill!.isBefore(new DateTime.now()))) {
+      debugPrint("Updating file in cache.");
+      CacheObject? newCacheObject = await _downloadFile(url!, headers,
+          relativePath: cacheObject.relativePath,
+          eTag: cacheObject.eTag,
+          cacheKey: cacheKey);
       if (newCacheObject != null) {
-        _box.put(newCacheObject);
+        _box!.put(newCacheObject);
       }
-      debugPrint( "New cache file valid till ${cacheObject.validTill?.toIso8601String() ?? "only once.. :("}");
+      debugPrint(
+          "New cache file valid till ${cacheObject.validTill?.toIso8601String() ?? "only once.. :("}");
       return newCacheObject;
     }
-    debugPrint( "Using file from cache.\nCache valid till ${cacheObject.validTill?.toIso8601String() ?? "only once.. "
-        ":("}");
+    debugPrint(
+        "Using file from cache.\nCache valid till ${cacheObject.validTill?.toIso8601String() ?? "only once.. "
+            ":("}");
     return cacheObject;
   }
 
-
   ///Download the file from the url
-  Future<CacheObject> _downloadFile(String url, Map<String, String> headers, {String cacheKey,String relativePath, String eTag}) async {
-    if(cacheKey==null||cacheKey.isEmpty) {
+  Future<CacheObject?> _downloadFile(String url, Map<String, String> headers,
+      {String? cacheKey, String? relativePath, String? eTag}) async {
+    if (cacheKey == null || cacheKey.isEmpty) {
       cacheKey = url;
     }
-    var newCache = new CacheObject(url:url,cacheKey: cacheKey);
+    var newCache = new CacheObject(url: url, cacheKey: cacheKey);
     newCache.setRelativePath(relativePath);
 
     if (eTag != null) {
@@ -255,10 +269,10 @@ class CacheManager {
     try {
       response = await http.get(Uri.parse(url), headers: headers);
     } catch (e) {
-      debugPrint( "download error $e");
+      debugPrint("download error $e");
     }
     if (response != null) {
-      switch(response.statusCode){
+      switch (response.statusCode) {
         case 200:
           await newCache.setDataFromHeaders(response.headers);
 
@@ -276,7 +290,7 @@ class CacheManager {
           return newCache;
           break;
         case 400:
-          _box.remove(newCache.id);
+          _box!.remove(newCache.id!);
           break;
       }
     }

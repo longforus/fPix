@@ -5,10 +5,10 @@ import 'package:objectbox/objectbox.dart';
 class FavoriteBean{
 
     @Id(assignable: true)
-    int id;
-    String tags;
-    String pageURL;
-    String largeImageURL;
+    int? id;
+    String? tags;
+    String? pageURL;
+    String? largeImageURL;
     final cache = ToOne<CacheObject>();
 
     FavoriteBean();
@@ -30,7 +30,7 @@ class FavoriteBean{
     }
 
     String getCacheKey() {
-        String imgUrl = largeImageURL;
+        String? imgUrl = largeImageURL;
         if(imgUrl==null||imgUrl.isEmpty){
             return "";
         }

@@ -18,16 +18,17 @@ import 'package:get/get.dart';
 /// @date 12/20/2018  3:46 PM
 
 class ImageGridView extends StatelessWidget {
-  ImageGridView({Key key, this.imageType, this.isVideo = false}) : super(key: key) {
+  ImageGridView({Key? key, this.imageType, this.isVideo = false})
+      : super(key: key) {
     imageGridDelegate = new ImageGridDelegate(
       imageType: imageType,
       isVideo: this.isVideo,
     );
   }
 
-  final String imageType;
+  final String? imageType;
   final bool isVideo;
-  ImageGridDelegate imageGridDelegate;
+  late ImageGridDelegate imageGridDelegate;
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +49,8 @@ class ImageGridView extends StatelessWidget {
     );
   }
 
-  void showSearchDialog(BuildContext context, void Function(String searchContent) callback) {
+  void showSearchDialog(
+      BuildContext context, void Function(String? searchContent) callback) {
     imageGridDelegate.showSearchDialog(context, callback);
   }
 
@@ -58,9 +60,10 @@ class ImageGridView extends StatelessWidget {
 }
 
 class ImageGridDelegate extends StatefulWidget {
-  ImageGridDelegate({Key key, this.imageType, this.isVideo = false}) : super(key: key);
-  final String imageType;
-  Future<void> Function(String keyword) onRefresh;
+  ImageGridDelegate({Key? key, this.imageType, this.isVideo = false})
+      : super(key: key);
+  final String? imageType;
+  late Future<void> Function(String? keyword) onRefresh;
   final bool isVideo;
 
   Future<void> _onRefresh() {
@@ -69,13 +72,14 @@ class ImageGridDelegate extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() {
-    var imageGridDelegateState = _ImageGridDelegateState(imageType);
+    var imageGridDelegateState = _ImageGridDelegateState(imageType!);
     onRefresh = imageGridDelegateState._onRefresh;
     return imageGridDelegateState;
   }
 
-  Future<void> showSearchDialog(BuildContext context, void Function(String searchContent) callback) async {
-    String content;
+  Future<void> showSearchDialog(BuildContext context,
+      void Function(String? searchContent) callback) async {
+    String? content;
     return showDialog<void>(
       context: context,
       barrierDismissible: false, // user must tap button!
@@ -121,8 +125,8 @@ class _ImageGridDelegateState extends State<ImageGridDelegate> {
 
   int currentPageIndex = 1;
   final pageSize = 10;
-  String keyword;
-  List dataList = new List();
+  String? keyword;
+  List dataList = List.empty(growable: true);
 
   _ImageGridDelegateState(String type) : this.imageType = type.toLowerCase();
 
@@ -132,25 +136,26 @@ class _ImageGridDelegateState extends State<ImageGridDelegate> {
     super.initState();
   }
 
-  void getImageData([Completer completer]) async {
+  void getImageData([Completer? completer]) async {
     bool success = false;
     var reqMap = {
-      'category':imageType,
-      'page':currentPageIndex,
-      'per_page':pageSize,
+      'category': imageType,
+      'page': currentPageIndex,
+      'per_page': pageSize,
     };
-    if (keyword != null && keyword.isNotEmpty) {
-        reqMap['q']=keyword;
+    if (keyword?.isNotEmpty == true) {
+      reqMap['q'] = keyword!;
     }
-    List resultList;
+    List? resultList;
     try {
-     var result =  await DioManager.getInstance().get(widget.isVideo ? '/videos' : '',reqMap ,onError: (code,msg){
-        shortToast( msg);
+      var result = await DioManager.getInstance()!
+          .get(widget.isVideo ? '/videos' : '', reqMap, onError: (code, msg) {
+        shortToast(msg!);
       });
-     resultList = result['hits'];
-     success = resultList.isNotEmpty;
+      resultList = result['hits'];
+      success = resultList!.isNotEmpty;
     } catch (exception) {
-      shortToast( 'Failed getting');
+      shortToast('Failed getting');
     }
     completer?.complete();
 
@@ -162,16 +167,18 @@ class _ImageGridDelegateState extends State<ImageGridDelegate> {
     if (success) {
       if (currentPageIndex == 1) {
         final TopImageController topData = Get.find();
-        topData.topData = resultList[0];
+        topData.topData = resultList![0];
         // eventBus.fire(OnTopImageChangeEvent(resultList[0]));
       }
       setState(() {
-        dataList.addAll(currentPageIndex == 1 ? resultList.sublist(1, resultList.length - 1) : resultList);
+        dataList.addAll(currentPageIndex == 1
+            ? resultList!.sublist(1, resultList.length - 1)
+            : resultList!);
       });
     }
   }
 
-  Future<void> _onRefresh(String keyword) {
+  Future<void> _onRefresh(String? keyword) {
     currentPageIndex = 1;
     this.keyword = keyword;
     dataList.clear();
@@ -186,9 +193,8 @@ class _ImageGridDelegateState extends State<ImageGridDelegate> {
   }
 
   void _onCardTap(Map<String, dynamic> item) {
-    Get.to(()=>widget.isVideo
-        ? new VideoPlayerPage(item)
-        : new PhotoViewPage(item));
+    Get.to(() =>
+        widget.isVideo ? new VideoPlayerPage(item) : new PhotoViewPage(item));
     // Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) {
     //   return widget.isVideo
     //       ? new VideoPlayerPage(item)
@@ -235,7 +241,8 @@ class _ImageGridDelegateState extends State<ImageGridDelegate> {
                       child: widget.isVideo
                           ? buildContainer(index)
                           : Hero(
-                              tag: dataList.isEmpty || dataList.length - 1 < index
+                              tag: dataList.isEmpty ||
+                                      dataList.length - 1 < index
                                   ? "heroImage"
                                   : dataList[index]['largeImageURL'],
                               child: buildContainer(index))),
@@ -276,8 +283,9 @@ class _ImageGridDelegateState extends State<ImageGridDelegate> {
                           placeholder: AssetImage(
                             'images/placeholder.png',
                           ),
-                          image: CachedNetworkImageProvider(
-                              widget.isVideo ? getVideoImageUrl(dataList[index]) : dataList[index]['webformatURL']))
+                          image: CachedNetworkImageProvider(widget.isVideo
+                              ? getVideoImageUrl(dataList[index])
+                              : dataList[index]['webformatURL']))
                       .image,
               fit: BoxFit.cover)),
     );
