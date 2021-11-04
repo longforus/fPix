@@ -58,7 +58,7 @@ class MyLogInterceptor extends Interceptor {
     printKV('uri', options.uri);
     if (request) {
       printKV('method', options.method);
-      printKV('responseType', options.responseType?.toString());
+      printKV('responseType', options.responseType.toString());
       printKV('followRedirects', options.followRedirects);
       printKV('connectTimeout', options.connectTimeout);
       printKV('receiveTimeout', options.receiveTimeout);
@@ -81,13 +81,13 @@ class MyLogInterceptor extends Interceptor {
     DioError err,
     ErrorInterceptorHandler handler,
   ) async {
-     handler.next(err);
+    handler.next(err);
     if (error) {
       logPrint('*** DioError ***:');
       logPrint('uri: ${err.requestOptions.uri}');
       logPrint('$err');
       if (err.response != null) {
-        _printResponse(err.response);
+        _printResponse(err.response!);
       }
       logPrint('');
     }
@@ -104,9 +104,9 @@ class MyLogInterceptor extends Interceptor {
   }
 
   void _printResponse(Response response) {
-    var sb = StringBuffer(response.requestOptions?.uri);
+    var sb = StringBuffer(response.requestOptions.uri);
     sb.write("?");
-    Map<String, Object> data = response.requestOptions.data;
+    Map<String, Object>? data = response.requestOptions.data;
     data?.forEach((k, v) {
       sb.write("$k=$v&");
     });
@@ -128,7 +128,7 @@ class MyLogInterceptor extends Interceptor {
     logPrint('');
   }
 
-  void printKV(String key, Object v) {
+  void printKV(String key, Object? v) {
     logPrint('$key: $v');
   }
 

@@ -10,6 +10,7 @@ import 'package:fPix/com/longforus/fPix/SentryConfig.dart' as sentryConfig;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
 void main() {
   runZoned<Future<void>>(() async {
     runApp(MyApp());
@@ -21,7 +22,7 @@ void main() {
       } else {
         // In production mode, report to the application zone to report to
         // Sentry.
-        Zone.current.handleUncaughtError(details.exception, details.stack);
+        Zone.current.handleUncaughtError(details.exception, details.stack!);
       }
     };
   }, onError: (error, stacktrace) {
@@ -32,10 +33,9 @@ void main() {
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
 
-
   @override
   Widget build(BuildContext context) {
-      // SharedPreferences.setMockInitialValues({});
+    // SharedPreferences.setMockInitialValues({});
     return GetMaterialApp(
       title: 'fPix',
       theme: ThemeData(
@@ -96,9 +96,8 @@ class MyAppState extends State<MyApp>{
 }*/
 
 class MyHomePage extends StatefulWidget {
-
-  final String title;
-  MyHomePage({Key key, this.title}) : super(key: key);
+  final String? title;
+  MyHomePage({Key? key, this.title}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
@@ -106,24 +105,19 @@ class MyHomePage extends StatefulWidget {
   }
 }
 
-
-class HomePageState extends State<MyHomePage>{
-
+class HomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
     CacheManager.showDebugLogs = !kReleaseMode;
     OB.getInstance();
     DioManager.baseUrl = 'https://pixabay.com/api';
-    DioManager.reqCons = {
-      'key':'11042541-60a032dcf49543f53d415848c'
-    };
+    DioManager.reqCons = {'key': '11042541-60a032dcf49543f53d415848c'};
   }
 
-
   @override
-  void dispose(){
-    OB.getInstance().dispose();
+  void dispose() {
+    OB.getInstance()!.dispose();
     super.dispose();
   }
 
@@ -133,16 +127,17 @@ class HomePageState extends State<MyHomePage>{
     final IndexController ic = Get.put(IndexController());
 
     return Scaffold(
-        bottomNavigationBar: Obx(()=>BottomNavigationBar(
-          items: _getBottomNvBar(context,ic.index),
-          currentIndex: ic.index,
-          onTap: (index) {
-            ic.index = index;
-          },
-        )),
-        body:Obx(()=> _getPage(ic.index)) // This trailing comma makes auto-formatting nicer
-      // for build methods.
-    );
+        bottomNavigationBar: Obx(() => BottomNavigationBar(
+              items: _getBottomNvBar(context, ic.index),
+              currentIndex: ic.index,
+              onTap: (index) {
+                ic.index = index;
+              },
+            )),
+        body: Obx(() => _getPage(
+            ic.index)) // This trailing comma makes auto-formatting nicer
+        // for build methods.
+        );
   }
 
   Widget _getPage(int selectedPageIndex) {
@@ -158,18 +153,20 @@ class HomePageState extends State<MyHomePage>{
         );
       case 2:
         return new FavoritePage();
-      case 3:
+      default:
         return new SettingsPage();
     }
   }
 
-  List<BottomNavigationBarItem> _getBottomNvBar(BuildContext context,int pageIndex) {
+  List<BottomNavigationBarItem> _getBottomNvBar(
+      BuildContext context, int pageIndex) {
     return List.generate(4, (index) {
-      return _genBNVItem(context,index, index == pageIndex);
+      return _genBNVItem(context, index, index == pageIndex);
     }).toList();
   }
 
-  BottomNavigationBarItem _genBNVItem(BuildContext context,int index, bool selected) {
+  BottomNavigationBarItem _genBNVItem(
+      BuildContext context, int index, bool selected) {
     Color accentColor = Theme.of(context).accentColor;
     switch (index) {
       case 0:
@@ -214,7 +211,7 @@ class HomePageState extends State<MyHomePage>{
               "Favorite",
               style: TextStyle(color: selected ? accentColor : Colors.grey),
             ));
-      case 3:
+      default:
         return new BottomNavigationBarItem(
             icon: new Icon(
               Icons.settings,
@@ -232,11 +229,8 @@ class HomePageState extends State<MyHomePage>{
   }
 }
 
-
 class IndexController extends GetxController {
-
   final _obj = 0.obs;
   set index(value) => _obj.value = value;
   get index => _obj.value;
 }
-

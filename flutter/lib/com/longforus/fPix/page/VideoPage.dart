@@ -8,7 +8,7 @@ import 'package:flutter/widgets.dart';
 @deprecated
 class VideoPage extends StatefulWidget {
   const VideoPage({
-    Key key,
+    Key? key,
   }) : super(key: key);
 
   @override

@@ -15,12 +15,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 /// @date 12/26/2018  10:57 AM
 
 class FileManager {
-    static FileManager _manager;
+    static FileManager? _manager;
 
-    static Future<FileManager> get(BuildContext context) async {
+    static Future<FileManager?> get(BuildContext context) async {
         if (_manager == null) {
             _manager = new FileManager();
-            bool result = await _manager._checkPermissions(context);
+            bool result = await _manager!._checkPermissions(context);
             if (!result) {
                 return null;
             }
@@ -45,7 +45,7 @@ class FileManager {
         SharedPreferences prefs = await SharedPreferences.getInstance();
         var savePath = prefs.getString(DEFAULT_IMG_SAVE_PATH_KEY);
         if (savePath == null || savePath.isEmpty) {
-            var sDCardDir = (await getExternalStorageDirectory()).path;
+            var sDCardDir = (await getExternalStorageDirectory())!.path;
             savePath = "$sDCardDir/fPix/image";
         }
         return savePath;

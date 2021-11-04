@@ -6,17 +6,17 @@ import 'package:sqflite/sqflite.dart';
 /// @date 12/25/2018  10:09 AM
 @deprecated
 class FavoriteDao {
-  Database mDb;
-  static FavoriteDao dao;
+  Database? mDb;
+  static FavoriteDao? dao;
 
-  static FavoriteDao get() {
+  static FavoriteDao? get() {
     if (dao == null) {
       dao = FavoriteDao();
     }
     return dao;
   }
 
-  Future<Database> getDb() async {
+  Future<Database?> getDb() async {
     if (mDb == null) {
       var databasesPath = await getDatabasesPath();
       String path = join(databasesPath, 'fPix.db');
@@ -32,32 +32,32 @@ class FavoriteDao {
   }
 
   void closeDb() async {
-    await mDb.close();
+    await mDb!.close();
   }
-
 
   Future<List<Map<String, dynamic>>> getAllImgUrl() async {
-    var database = await getDb();
-     var list = await database.query('FavoriteTable');
+    var database = await (getDb() as Future<Database>);
+    var list = await database.query('FavoriteTable');
     List<Map<String, dynamic>> result = new List();
-     list.forEach((item){
-       Map<String, dynamic> map = new Map();
-       item.forEach((k,v){
-         map[k] = v;
-       });
-       map['id']=item['imgId'];
-       result.add(map);
-     });
-     return result;
+    list.forEach((item) {
+      Map<String, dynamic> map = new Map();
+      item.forEach((k, v) {
+        map[k] = v;
+      });
+      map['id'] = item['imgId'];
+      result.add(map);
+    });
+    return result;
   }
 
-  Future<int> insert(int id,String tags,String pageURL, String largeImageURL) {
+  Future<int> insert(
+      int id, String tags, String pageURL, String largeImageURL) {
     return getDb().then((db) {
-      return db.transaction((txn) async {
+      return db!.transaction((txn) async {
         int resultId = await txn.rawInsert(
             'INSERT INTO FavoriteTable (imgId,tags,pageURL, largeImageURL) '
             'VALUES (?,?,?,?)',
-            [id,tags,pageURL, largeImageURL]);
+            [id, tags, pageURL, largeImageURL]);
         print('inserted: $resultId');
         return resultId;
       });
@@ -67,7 +67,7 @@ class FavoriteDao {
 
   Future<int> deleteFid(int id) async {
     return await getDb().then((db) {
-      return db.transaction((txn) async {
+      return db!.transaction((txn) async {
         int count = await txn
             .rawDelete('DELETE FROM FavoriteTable WHERE imgId = ?', [id]);
         print('delete Count : $count ');
@@ -79,20 +79,20 @@ class FavoriteDao {
 
   Future<int> deleteFurl(String largeImageURL) async {
     return await getDb().then((db) {
-      db.transaction((txn) async {
+      db!.transaction((txn) async {
         int count = await txn.rawDelete(
             'DELETE FROM FavoriteTable WHERE largeImageURL = ?',
             [largeImageURL]);
         print('delete Count : $count ');
         return count;
       });
-    });
+    } as Future<int> Function(Database?));
     // Insert some records in a transaction
   }
 
   Future<bool> contains(int id) async {
     List list = await getDb().then((db) {
-      return db.query('FavoriteTable',
+      return db!.query('FavoriteTable',
           columns: ['id'], where: "imgId=?", whereArgs: [id]);
     });
 //    print('contains : ${list.isNotEmpty}');

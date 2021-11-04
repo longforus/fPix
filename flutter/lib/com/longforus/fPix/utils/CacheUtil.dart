@@ -3,7 +3,7 @@
 /// @date 12/26/2018  2:38 PM
 
 String getCacheKey(Map<String, dynamic> imageData, String imgKey) {
-  String imgUrl = imageData[imgKey];
+  String? imgUrl = imageData[imgKey];
   if(imgUrl==null||imgUrl.isEmpty){
       return "";
   }

@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
 class ImageAndVideoPage extends StatefulWidget {
-  const ImageAndVideoPage({Key key, this.isVideo = false}) : super(key: key);
+  const ImageAndVideoPage({Key? key, this.isVideo = false}) : super(key: key);
   final bool isVideo;
 
   @override
@@ -17,16 +17,16 @@ class ImageAndVideoPage extends StatefulWidget {
 }
 
 class _ImageAndVideoPageState extends State<ImageAndVideoPage> with SingleTickerProviderStateMixin {
-  String searchContent;
+  String? searchContent;
   final bool isVideo;
-  TabController _tabController;
-  TabBarView tabBarView;
-  ImageTopBar imageTopBar;
+  TabController? _tabController;
+  late TabBarView tabBarView;
+  late ImageTopBar imageTopBar;
 
   void _onTabChange() {
     debugPrint("onchangge  $searchContent");
     if (searchContent != null) {
-      ImageGridView currentImageGridView = tabBarView.children[_tabController.index];
+      ImageGridView currentImageGridView = tabBarView.children[_tabController!.index] as ImageGridView;
       currentImageGridView.clearSearchStatus();
       setState(() {
         searchContent = null;
@@ -37,7 +37,7 @@ class _ImageAndVideoPageState extends State<ImageAndVideoPage> with SingleTicker
   @override
   void initState() {
     _tabController = TabController(length: typeList.length, vsync: this);
-    _tabController.addListener(_onTabChange);
+    _tabController!.addListener(_onTabChange);
     tabBarView = TabBarView(
       // These are the contents of the tab views, below the tabs.
       children: typeList.map((String type) {
@@ -57,7 +57,7 @@ class _ImageAndVideoPageState extends State<ImageAndVideoPage> with SingleTicker
 
   @override
   void dispose() {
-    _tabController.removeListener(_onTabChange);
+    _tabController!.removeListener(_onTabChange);
     super.dispose();
   }
 
@@ -76,7 +76,7 @@ class _ImageAndVideoPageState extends State<ImageAndVideoPage> with SingleTicker
       floatingActionButton: searchContent != null
           ? FloatingActionButton.extended(
               onPressed: () {
-                ImageGridView currentImageGridView = tabBarView.children[_tabController.index];
+                ImageGridView currentImageGridView = tabBarView.children[_tabController!.index] as ImageGridView;
                 currentImageGridView.clearSearchStatus();
                 setState(() {
                   searchContent = null;
@@ -86,7 +86,7 @@ class _ImageAndVideoPageState extends State<ImageAndVideoPage> with SingleTicker
               label: Row(
                 children: <Widget>[
                   Text(
-                    searchContent,
+                    searchContent!,
                     style: TextStyle(color: Colors.white, fontSize: 12),
                   ),
                   Icon(
@@ -102,7 +102,7 @@ class _ImageAndVideoPageState extends State<ImageAndVideoPage> with SingleTicker
             )
           : FloatingActionButton(
               onPressed: () {
-                ImageGridView currentImageGridView = tabBarView.children[_tabController.index];
+                ImageGridView currentImageGridView = tabBarView.children[_tabController!.index] as ImageGridView;
                 currentImageGridView.showSearchDialog(context, (str) {
                   if (str != null && str.isNotEmpty) {
                     setState(() {

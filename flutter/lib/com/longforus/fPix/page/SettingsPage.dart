@@ -7,7 +7,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({
-    Key key,
+    Key? key,
   }) : super(key: key);
 
   @override
@@ -21,7 +21,7 @@ class _SettingsPageState extends State<SettingsPage> {
   static const githubUrl = 'https://github.com/longforus';
 
   void _getImgDownloadDir() async {
-    var manager = await FileManager.get(context);
+    var manager = await (FileManager.get(context) as Future<FileManager>);
     manager.getImgDownloadDir().then((dir) {
       setState(() {
         currentImgDownloadDir = dir;
@@ -75,7 +75,10 @@ class _SettingsPageState extends State<SettingsPage> {
                     )),
                     FlatButton.icon(
                       onPressed: _onChangeImageDownloadDir,
-                      icon: Icon(Icons.image,color: Colors.lightBlue,),
+                      icon: Icon(
+                        Icons.image,
+                        color: Colors.lightBlue,
+                      ),
                       label: Text(
                         "change",
                         textAlign: TextAlign.end,
@@ -102,7 +105,9 @@ class _SettingsPageState extends State<SettingsPage> {
                     new GestureDetector(
                       child: new Text(
                         githubUrl,
-                        style: new TextStyle(color: Colors.blue, decoration: TextDecoration.underline),
+                        style: new TextStyle(
+                            color: Colors.blue,
+                            decoration: TextDecoration.underline),
                       ),
                       onTap: onGo2Github,
                     )
@@ -120,7 +125,8 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 
   void _onChangeImageDownloadDir() async {
-    String path = await Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) {
+    String? path = await Navigator.push(context,
+        MaterialPageRoute(builder: (BuildContext context) {
       return new DirSelector();
     }));
     if (path != null && path.isNotEmpty) {

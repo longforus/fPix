@@ -8,9 +8,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class ImageTopBar extends StatefulWidget {
-    ImageTopBar({Key key, this.isVideo,this.tabController}) : super(key: key);
-    final bool isVideo;
-    final TabController tabController;
+    ImageTopBar({Key? key, this.isVideo,this.tabController}) : super(key: key);
+    final bool? isVideo;
+    final TabController? tabController;
     @override
     State<StatefulWidget> createState() {
         return new ImageTopBarState();
@@ -22,7 +22,7 @@ class ImageTopBarState extends State<ImageTopBar> {
 
 
     void _go2PhotoPage() {
-       Get.to(()=>widget.isVideo
+       Get.to(()=>widget.isVideo!
            ? new VideoPlayerPage(tc.topData)
            : new PhotoViewPage(tc.topData,
        ));
@@ -43,8 +43,8 @@ class ImageTopBarState extends State<ImageTopBar> {
                 )
                     : GestureDetector(
                     child: CachedNetworkImage(
-                        imageUrl: widget.isVideo ? getVideoImageUrl(tc.topData) : tc.topData['webformatURL'],
-                        cacheKey: widget.isVideo ? getVideoImageUrl(tc.topData) : getCacheKey(tc.topData, 'webformatURL'),
+                        imageUrl: widget.isVideo! ? getVideoImageUrl(tc.topData) : tc.topData['webformatURL'],
+                        cacheKey: widget.isVideo! ? getVideoImageUrl(tc.topData) : getCacheKey(tc.topData, 'webformatURL'),
                         fit: BoxFit.cover,
                     ),
                     onTap: _go2PhotoPage,

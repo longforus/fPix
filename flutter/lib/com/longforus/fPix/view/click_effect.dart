@@ -3,18 +3,18 @@ import 'package:flutter/material.dart';
 /// A custom widget that lets clicks have the effect of changing the background color
 class ClickEffect extends StatefulWidget {
   ClickEffect(
-      {Key key,
+      {Key? key,
       this.margin,
       this.padding,
       this.normalColor: Colors.transparent,
       this.selectColor: const Color(0xffcccccc),
-      @required this.onTap,
-      @required this.child})
+      required this.onTap,
+      required this.child})
       : super(key: key);
 
-  final EdgeInsetsGeometry margin;
+  final EdgeInsetsGeometry? margin;
 
-  final EdgeInsetsGeometry padding;
+  final EdgeInsetsGeometry? padding;
 
   final Color normalColor;
 
@@ -29,7 +29,7 @@ class ClickEffect extends StatefulWidget {
 }
 
 class _ClickEffectState extends State<ClickEffect> {
-  Color color;
+  Color? color;
 
   @override
   void initState() {
