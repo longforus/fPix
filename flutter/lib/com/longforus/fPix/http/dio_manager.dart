@@ -30,7 +30,7 @@ class DioManager {
 
   Dio _dio = new Dio();
 
-  static get currentTime => DateTime.now().millisecondsSinceEpoch ?? '';
+  static get currentTime => DateTime.now().millisecondsSinceEpoch;
 
   DioManager() {
     // Set default configs

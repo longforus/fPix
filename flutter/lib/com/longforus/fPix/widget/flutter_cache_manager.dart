@@ -34,7 +34,7 @@ class CacheManager {
         }
       });
     }
-    return _instance;
+    return _instance!;
   }
 
   CacheManager._();
@@ -277,18 +277,18 @@ class CacheManager {
           await newCache.setDataFromHeaders(response.headers);
 
           var filePath = await newCache.getFilePath();
+          if(filePath==null){
+            return null;
+          }
           var folder = new File(filePath).parent;
           if (!(await folder.exists())) {
             folder.createSync(recursive: true);
           }
           await new File(filePath).writeAsBytes(response.bodyBytes);
           return newCache;
-          break;
-
         case 304:
           await newCache.setDataFromHeaders(response.headers);
           return newCache;
-          break;
         case 400:
           _box!.remove(newCache.id!);
           break;

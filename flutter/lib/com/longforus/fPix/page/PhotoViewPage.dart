@@ -177,8 +177,7 @@ class _PhotoViewPageState extends State<PhotoViewPage> {
 
   void _onDownload(BuildContext context) async {
     CacheManager.getInstance().then((manager) {
-      manager
-          .getFile(widget.imageData['largeImageURL'], cacheKey: getCacheKey(widget.imageData, 'largeImageURL'))
+      manager.getFile(widget.imageData['largeImageURL'], cacheKey: getCacheKey(widget.imageData, 'largeImageURL'))
           .then((file) {
         print('${file!.path}');
         file.exists().then((b) {
