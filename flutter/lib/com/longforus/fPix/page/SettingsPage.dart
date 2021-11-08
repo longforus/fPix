@@ -21,8 +21,8 @@ class _SettingsPageState extends State<SettingsPage> {
   static const githubUrl = 'https://github.com/longforus';
 
   void _getImgDownloadDir() async {
-    var manager = await (FileManager.get(context) as Future<FileManager>);
-    manager.getImgDownloadDir().then((dir) {
+    var manager = await FileManager.get(context);
+    manager?.getImgDownloadDir().then((dir) {
       setState(() {
         currentImgDownloadDir = dir;
       });

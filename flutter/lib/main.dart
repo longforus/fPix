@@ -13,7 +13,7 @@ import 'package:get/get.dart';
 import 'package:mmkv/mmkv.dart';
 
 void main() {
-  runZoned<Future<void>>(() async {
+  runZonedGuarded<Future<void>>(() async {
     final mmkvRootPath = await MMKV.initialize();
     debugPrint('MMKV for flutter with rootDir = $mmkvRootPath');
     runApp(MyApp());
@@ -28,7 +28,7 @@ void main() {
         Zone.current.handleUncaughtError(details.exception, details.stack!);
       }
     };
-  }, onError: (error, stacktrace) {
+  },(error, stacktrace) {
     sentryConfig.reportError(error, stacktrace);
   });
 }
@@ -38,18 +38,12 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // SharedPreferences.setMockInitialValues({});
     return GetMaterialApp(
       title: 'fPix',
-      theme: ThemeData(
-        primaryColorBrightness: Brightness.dark,
-        primaryColor: Color(0xff03A9F4),
-        primaryColorDark: Color(0xff0288D1),
-        primaryColorLight: Color(0xffB3E5FC),
-        accentColor: Color(0xff8BC34A),
-        dividerColor: Color(0xffBDBDBD),
-        dialogBackgroundColor: Color.fromARGB(80, 255, 255, 255),
-      ),
+      theme: ThemeData.from(
+          colorScheme: ColorScheme.light(
+              primary: Color(0xff03A9F4),
+              secondary: Color(0xff8BC34A))),
       home: MyHomePage(title: 'fPix'),
     );
   }
@@ -100,6 +94,7 @@ class MyAppState extends State<MyApp>{
 
 class MyHomePage extends StatefulWidget {
   final String? title;
+
   MyHomePage({Key? key, this.title}) : super(key: key);
 
   @override
@@ -234,6 +229,8 @@ class HomePageState extends State<MyHomePage> {
 
 class IndexController extends GetxController {
   final _obj = 0.obs;
+
   set index(value) => _obj.value = value;
+
   get index => _obj.value;
 }
