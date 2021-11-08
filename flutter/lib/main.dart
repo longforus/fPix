@@ -10,9 +10,12 @@ import 'package:fPix/com/longforus/fPix/SentryConfig.dart' as sentryConfig;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:mmkv/mmkv.dart';
 
 void main() {
   runZoned<Future<void>>(() async {
+    final mmkvRootPath = await MMKV.initialize();
+    debugPrint('MMKV for flutter with rootDir = $mmkvRootPath');
     runApp(MyApp());
     // This captures errors reported by the Flutter framework.
     FlutterError.onError = (FlutterErrorDetails details) {

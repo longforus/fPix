@@ -38,7 +38,7 @@ class FavoriteDao {
   Future<List<Map<String, dynamic>>> getAllImgUrl() async {
     var database = await (getDb() as Future<Database>);
     var list = await database.query('FavoriteTable');
-    List<Map<String, dynamic>> result = new List();
+    List<Map<String, dynamic>> result = [];
     list.forEach((item) {
       Map<String, dynamic> map = new Map();
       item.forEach((k, v) {

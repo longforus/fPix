@@ -29,8 +29,8 @@ dependencies:
   url_launcher: ^6.0.12
   rxdart: ^0.27.2
 #  event_bus: ^1.0.1
-  shared_preferences: ^2.0.8
-#  mmkv: ^1.2.12
+#  shared_preferences: ^2.0.8
+  mmkv: ^1.2.12
   path_provider: ^2.0.6
 #  simple_permissions: ^0.1.9
   permission_handler: ^8.2.1

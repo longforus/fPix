@@ -6,9 +6,9 @@ import 'package:fPix/com/longforus/fPix/Const.dart';
 import 'package:fPix/com/longforus/fPix/utils/fpix_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:mmkv/mmkv.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 /// @describe
 /// @author  XQ Yang
@@ -42,8 +42,8 @@ class FileManager {
     }
 
     Future<String> getImgDownloadDir() async {
-        SharedPreferences prefs = await SharedPreferences.getInstance();
-        var savePath = prefs.getString(DEFAULT_IMG_SAVE_PATH_KEY);
+        MMKV prefs = MMKV.defaultMMKV();
+        var savePath = prefs.decodeString(DEFAULT_IMG_SAVE_PATH_KEY);
         if (savePath == null || savePath.isEmpty) {
             var sDCardDir = (await getExternalStorageDirectory())!.path;
             savePath = "$sDCardDir/fPix/image";
@@ -52,8 +52,8 @@ class FileManager {
     }
 
     void setImgDownloadDir(String path) async {
-        SharedPreferences prefs = await SharedPreferences.getInstance();
-        prefs.setString(DEFAULT_IMG_SAVE_PATH_KEY, path);
+        MMKV prefs = MMKV.defaultMMKV();
+        prefs.encodeString(DEFAULT_IMG_SAVE_PATH_KEY, path);
     }
 
     Future<bool> _checkPermissions(BuildContext context) async {

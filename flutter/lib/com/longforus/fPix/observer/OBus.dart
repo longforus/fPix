@@ -9,7 +9,7 @@ class OBus {
 
   void register(String type, Function(Object) fun) {
     if (map[type] == null) {
-      map[type] = new List();
+      map[type] = [];
     }
     map[type]!.add(fun);
   }

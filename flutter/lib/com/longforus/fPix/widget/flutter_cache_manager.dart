@@ -10,7 +10,7 @@ import 'package:fPix/com/longforus/fPix/bean/cache_object.dart';
 import 'package:fPix/objectbox.g.dart';
 import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:mmkv/mmkv.dart';
 import 'package:synchronized/synchronized.dart';
 
 class CacheManager {
@@ -39,7 +39,7 @@ class CacheManager {
 
   CacheManager._();
 
-  late SharedPreferences _prefs;
+  late MMKV _prefs;
   Box<CacheObject>? _box;
   late DateTime lastCacheClean;
 
@@ -47,7 +47,7 @@ class CacheManager {
 
   ///Shared preferences is used to keep track of the information about the files
   Future _init() async {
-    _prefs = await SharedPreferences.getInstance();
+    _prefs = MMKV.defaultMMKV();
     _box = OB.getInstance()!.store!.box();
     _getLastCleanTimestampFromPreferences();
   }
@@ -96,12 +96,12 @@ class CacheManager {
 
   _getLastCleanTimestampFromPreferences() {
     // Get data about when the last clean action has been performed
-    var cleanMillis = _prefs.getInt(_keyCacheCleanDate);
-    if (cleanMillis != null) {
+    var cleanMillis = _prefs.decodeInt(_keyCacheCleanDate);
+    if (cleanMillis != 0) {
       lastCacheClean = new DateTime.fromMillisecondsSinceEpoch(cleanMillis);
     } else {
       lastCacheClean = new DateTime.now();
-      _prefs.setInt(_keyCacheCleanDate, lastCacheClean.millisecondsSinceEpoch);
+      _prefs.encodeInt(_keyCacheCleanDate, lastCacheClean.millisecondsSinceEpoch);
     }
   }
 
@@ -116,7 +116,7 @@ class CacheManager {
         await _shrinkLargeCache();
 
         lastCacheClean = new DateTime.now();
-        _prefs.setInt(
+        _prefs.encodeInt(
             _keyCacheCleanDate, lastCacheClean.millisecondsSinceEpoch);
       });
     }
