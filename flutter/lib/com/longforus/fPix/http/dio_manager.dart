@@ -74,14 +74,14 @@ class DioManager {
     try {
       if (method == 'get') {
         //get请求 拼接参数放queryParameters里面
-        if (params != null && params.isNotEmpty) {
+        if (params.isNotEmpty) {
           response = await _dio.get(url, queryParameters: params);
         } else {
           response = await _dio.get(url);
         }
       } else if (method == 'post') {
         //post请求 对象放data里面
-        if (params != null && params.isNotEmpty) {
+        if (params.isNotEmpty) {
           response = await _dio.post(url, data: params);
         } else {
           response = await _dio.post(url);

@@ -116,10 +116,8 @@ class MyLogInterceptor extends Interceptor {
       if (response.isRedirect == true) {
         printKV('redirect', response.realUri);
       }
-      if (response.headers != null) {
-        logPrint('headers:');
-        response.headers.forEach((key, v) => printKV(' $key', v.join(',')));
-      }
+      logPrint('headers:');
+      response.headers.forEach((key, v) => printKV(' $key', v.join(',')));
     }
     if (responseBody) {
       logPrint('Response Text:');

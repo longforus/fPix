@@ -46,7 +46,7 @@ class PhotoActivity : AppCompatActivity() {
     private val imgBean by lazy { intent.getParcelableExtra<Item>("bean") }
     private val viewModel by viewModels<PhotoViewModel> {
         object : ViewModelProvider.Factory {
-            override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+            override fun <T : ViewModel> create(modelClass: Class<T>): T {
                 return PhotoViewModel(imgBean!!) as T
             }
         }

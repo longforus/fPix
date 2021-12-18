@@ -1,7 +1,7 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
     ext {
-        compose_version = '1.0.4'
+        compose_version = '1.0.5'
         gradle_plugin_version = '4.2.1'
         kotlin_version = '1.5.31'
         kotlin_coroutines_version = '1.4.3'
@@ -13,7 +13,7 @@ buildscript {
         glideVersion = '4.8.0'
         retrofitVersion = '2.9.0'
         anko_version = '0.10.8'
-        lifecycle_version = '2.3.1'
+        lifecycle_version = '2.4.0'
     }
     repositories {
         maven { url 'https://maven.aliyun.com/repository/public' }
