@@ -49,7 +49,6 @@ class _ImageAndVideoPageState extends State<ImageAndVideoPage> with SingleTicker
       controller: _tabController,
     );
     imageTopBar = new ImageTopBar(
-      isVideo: isVideo,
       tabController: _tabController,
     );
     super.initState();

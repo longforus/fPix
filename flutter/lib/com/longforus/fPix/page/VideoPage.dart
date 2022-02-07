@@ -23,7 +23,7 @@ class _VideoPageState extends State<VideoPage>
 
   @override
   Widget build(BuildContext context) {
-    var imageTopBar = new ImageTopBar(isVideo: true,);
+    var imageTopBar = new ImageTopBar();
     return DefaultTabController(
       length: typeList.length, // This is the number of tabs.
       child: NestedScrollView(

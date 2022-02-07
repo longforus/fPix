@@ -55,7 +55,7 @@ object OB {
     }
 
     @Deprecated("没有测试过的哦")
-    fun <K, V> mapFromJson2(str: String): Map<K, V>? {
+    fun <K, V> mapFromJson2(str: String): Map<K, V> {
         val fromJson = sGson.fromJson(str, JsonObject::class.java)
         val map = mutableMapOf<K, V>()
         for (entry in fromJson.entrySet()) {
@@ -79,7 +79,7 @@ object OB {
         return sGson.fromJson(str, T::class.java)
     }
 
-    inline fun <reified T> listFromJson(str: String): List<T>? {
+    inline fun <reified T> listFromJson(str: String): List<T> {
         return Gson().fromJson(str, Array<T>::class.java).toMutableList()
     }
 
@@ -93,7 +93,7 @@ object OB {
         return sGson.toJson(list)
     }
 
-    fun <T> list2StringList(list: List<T>?): List<String>? {
+    fun <T> list2StringList(list: List<T>?): List<String> {
         if (list != null && list.isNotEmpty()) {
             val type = object : TypeToken<T>() {
 
@@ -104,7 +104,7 @@ object OB {
             }
             return result
         }
-        return null
+        return emptyList()
     }
 
     inline fun <reified T> boxFor(): Box<T> {

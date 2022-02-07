@@ -9,6 +9,7 @@ import 'package:fPix/com/longforus/fPix/widget/cached_network_image.dart';
 import 'package:fPix/com/longforus/fPix/widget/flutter_cache_manager.dart';
 import 'package:fPix/objectbox.g.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:fPix/com/longforus/fPix/utils/CacheUtil.dart';
@@ -33,7 +34,7 @@ class _PhotoViewPageState extends State<PhotoViewPage> {
   late Box<FavoriteBean> _box;
   @override
   void initState() {
-    if (widget.imageData != null) {
+    if (widget.imageData.isNotEmpty) {
       _box = OB.getInstance()!.store!.box();
       if (mounted) {
         setState(() {
@@ -78,7 +79,7 @@ class _PhotoViewPageState extends State<PhotoViewPage> {
       backgroundColor: Colors.black87,
       appBar: new AppBar(
         backgroundColor: Colors.transparent,
-        brightness: Brightness.dark,
+        systemOverlayStyle:SystemUiOverlayStyle.light ,
         iconTheme: new IconThemeData(color: Colors.grey[600]),
         actions: <Widget>[
           new IconButton(
