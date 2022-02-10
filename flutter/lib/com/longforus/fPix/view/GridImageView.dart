@@ -96,14 +96,14 @@ class ImageGridDelegate extends StatefulWidget {
             },
           ),
           actions: <Widget>[
-            FlatButton(
+            TextButton(
               child: Text('cancel'),
               onPressed: () {
                 Get.back();
                 callback(null);
               },
             ),
-            FlatButton(
+            TextButton(
               child: Text('go'),
               onPressed: () {
 //                          debugger();

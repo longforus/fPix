@@ -73,7 +73,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       ),
                       softWrap: true,
                     )),
-                    FlatButton.icon(
+                    TextButton.icon(
                       onPressed: _onChangeImageDownloadDir,
                       icon: Icon(
                         Icons.image,

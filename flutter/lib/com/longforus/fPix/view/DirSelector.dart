@@ -265,13 +265,13 @@ class _DirSelectorState extends State<DirSelector> {
                   ),
                 ),
                 actions: <Widget>[
-                  new FlatButton(
+                  new TextButton(
                     child: new Text("CANCEL"),
                     onPressed: () {
                       Navigator.of(context).pop();
                     },
                   ),
-                  new FlatButton(
+                  new TextButton(
                     child: new Text("OK"),
                     onPressed: () {
                       var directory = new Directory(
