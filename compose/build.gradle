@@ -1,9 +1,9 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
     ext {
-        compose_version = '1.0.5'
+        compose_version = '1.1.1'
         gradle_plugin_version = '4.2.1'
-        kotlin_version = '1.5.31'
+        kotlin_version = '1.6.10'
         kotlin_coroutines_version = '1.4.3'
         compileSdkVersion = 30
         buildToolsVersion = '30.0.3'
@@ -13,7 +13,7 @@ buildscript {
         glideVersion = '4.8.0'
         retrofitVersion = '2.9.0'
         anko_version = '0.10.8'
-        lifecycle_version = '2.4.0'
+        lifecycle_version = '2.4.1'
     }
     repositories {
         maven { url 'https://maven.aliyun.com/repository/public' }
@@ -23,7 +23,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath "com.android.tools.build:gradle:7.0.3"
+        classpath "com.android.tools.build:gradle:7.0.4"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlin_version}"
         classpath "io.objectbox:objectbox-gradle-plugin:$objectboxVersion"
         // NOTE: Do not place your application dependencies here; they belong
