@@ -5,7 +5,7 @@
   "entities": [
     {
       "id": "2:7873147608112356309",
-      "lastPropertyId": "25:8410370439542937135",
+      "lastPropertyId": "27:3398325537993294531",
       "name": "Item",
       "properties": [
         {
@@ -148,6 +148,16 @@
         {
           "id": "25:8410370439542937135",
           "name": "videos",
+          "type": 9
+        },
+        {
+          "id": "26:6379251042065918263",
+          "name": "largeImageURL",
+          "type": 9
+        },
+        {
+          "id": "27:3398325537993294531",
+          "name": "webformatURL",
           "type": 9
         }
       ],
