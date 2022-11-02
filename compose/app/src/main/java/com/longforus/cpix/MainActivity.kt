@@ -149,7 +149,10 @@ class MainActivity : AppCompatActivity() {
                                     }
                                     openDialog = false
                                 }
-                            )
+                            ),
+                            placeholder = {
+                                Text(text = "input to search")
+                            }
                         )
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
